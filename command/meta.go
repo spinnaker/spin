@@ -10,7 +10,7 @@ import (
 	gate "github.com/spinnaker/spin/gateapi"
 )
 
-// Meta is the state & utility shared by our command parser.
+// ApiMeta is the state & utility shared by our commands.
 type ApiMeta struct {
 	// The exported fields below should be set by anyone using a command
 	// with an ApiMeta field. These are expected to be set externally
