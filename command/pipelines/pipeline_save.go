@@ -48,7 +48,7 @@ func (c *PipelineSaveCommand) parsePipelineFile() (map[string]interface{}, error
 	return pipelineJson, nil
 }
 
-// pipelineIsValid validates that the passed pipelineJson is formatted properly.
+// pipelineIsValid validates that the passed pipelineJson is formatteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeed properly.
 // Flag overrides should be processed before this is called.
 func (c *PipelineSaveCommand) pipelineIsValid(pipelineJson map[string]interface{}) bool {
 	// TODO: Dry-run pipeline save and report errors?
