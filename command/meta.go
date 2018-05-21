@@ -94,7 +94,7 @@ func (m *ApiMeta) Process(args []string) ([]string, error) {
 	configLocation := filepath.Join(usr.HomeDir, ".spin", "config")
 	yamlFile, err := ioutil.ReadFile(configLocation)
 	if err != nil {
-		m.Ui.Warn(fmt.Sprintf("Could not read configuration file from %d.", configLocation))
+		m.Ui.Warn(fmt.Sprintf("Could not read configuration file from %s.", configLocation))
 	}
 
 	if yamlFile != nil {
