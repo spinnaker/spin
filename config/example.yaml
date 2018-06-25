@@ -19,3 +19,5 @@ auth:
       -----BEGIN RSA PRIVATE KEY-----
       BLAHBLAHBLAHBLAHBLAHBLAH==
       -----END RSA PRIVATE KEY-----
+
+  # TODO(jacobkiefer): oauth2 config block example.
