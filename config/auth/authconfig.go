@@ -22,6 +22,6 @@ import (
 // AuthConfig is the CLI's authentication configuration.
 type AuthConfig struct {
 	Enabled bool                 `yaml:"enabled"`
-	X509    *x509.X509Config     `yaml:"x509"`
-	OAuth2  *oauth2.OAuth2Config `yaml:"oauth2"`
+	X509    *x509.X509Config     `yaml:"x509,omitempty"`
+	OAuth2  *oauth2.OAuth2Config `yaml:"oauth2,omitempty"`
 }

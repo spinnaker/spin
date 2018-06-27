@@ -14,14 +14,19 @@
 
 package oauth2
 
+import (
+	"golang.org/x/oauth2"
+)
+
 // OAuth2Config is the configuration for using OAuth2.0 to
 // authenticate with Spinnaker
 type OAuth2Config struct {
-	TokenUrl     string   `yaml:"tokenUrl"`
-	AuthUrl      string   `yaml:"authUrl"`
-	ClientId     string   `yaml:"clientId"`
-	ClientSecret string   `yaml:"clientSecret"`
-	Scopes       []string `yaml:"scopes"`
+	TokenUrl     string        `yaml:"tokenUrl"`
+	AuthUrl      string        `yaml:"authUrl"`
+	ClientId     string        `yaml:"clientId"`
+	ClientSecret string        `yaml:"clientSecret"`
+	Scopes       []string      `yaml:"scopes"`
+	CachedToken  *oauth2.Token `yaml:"cachedToken,omitempty"`
 }
 
 func (x *OAuth2Config) IsValid() bool {

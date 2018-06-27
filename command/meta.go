@@ -19,7 +19,6 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -64,6 +63,9 @@ type ApiMeta struct {
 
 	// This is the set of flags global to the command parser.
 	gateEndpoint string
+
+	// Location of the spin config.
+	configLocation string
 }
 
 // GlobalFlagSet adds all global options to the flagset, and returns the flagset object
@@ -113,10 +115,10 @@ func (m *ApiMeta) Process(args []string) ([]string, error) {
 	}
 
 	// TODO(jacobkiefer): Add flag for config location?
-	configLocation := filepath.Join(usr.HomeDir, ".spin", "config")
-	yamlFile, err := ioutil.ReadFile(configLocation)
+	m.configLocation = filepath.Join(usr.HomeDir, ".spin", "config")
+	yamlFile, err := ioutil.ReadFile(m.configLocation)
 	if err != nil {
-		m.Ui.Warn(fmt.Sprintf("Could not read configuration file from %s.", configLocation))
+		m.Ui.Warn(fmt.Sprintf("Could not read configuration file from %s.", m.configLocation))
 	}
 
 	if yamlFile != nil {
@@ -135,10 +137,6 @@ func (m *ApiMeta) Process(args []string) ([]string, error) {
 		m.Ui.Error(fmt.Sprintf("OAuth2 Authentication failed."))
 		return args, err
 	}
-	m.Ui.Output(fmt.Sprintf("contex with oauth2 access token: %v\n", m.Context))
-	m.Ui.Output(fmt.Sprintf("just the access token: %s\n", m.Context.Value(gate.ContextAccessToken).(string)))
-	// TODO: token.SetAuthHeader() in the actual calls.
-	// Prolly do this in some type of filter, or in the DefaultHeader, or in the Client.
 
 	client, err := m.InitializeClient()
 	if err != nil {
@@ -230,7 +228,7 @@ func (m *ApiMeta) initializeX509Config(client http.Client, clientCA []byte, cert
 	client.Transport.(*http.Transport).TLSClientConfig.MinVersion = tls.VersionTLS12
 	client.Transport.(*http.Transport).TLSClientConfig.PreferServerCipherSuites = true
 	client.Transport.(*http.Transport).TLSClientConfig.Certificates = []tls.Certificate{cert}
-	client.Transport.(*http.Transport).TLSClientConfig.InsecureSkipVerify = true // TODO(jacobkiefer): Add a flag this.
+	client.Transport.(*http.Transport).TLSClientConfig.InsecureSkipVerify = true // TODO(jacobkiefer): Add a flag for this.
 
 	return &client
 }
@@ -240,15 +238,10 @@ func (m *ApiMeta) Authenticate() error {
 	if auth != nil && auth.Enabled && auth.OAuth2 != nil {
 		OAuth2 := auth.OAuth2
 		if !OAuth2.IsValid() {
+			// TODO(jacobkiefer): Improve this error message.
 			return errors.New("Incorrect OAuth2 auth configuration.")
 		}
 
-		usr, err := user.Current()
-		if err != nil {
-			m.Ui.Error(fmt.Sprintf("Could not read current user from environment, failing."))
-			return err
-		}
-		credentialsLocation := filepath.Join(usr.HomeDir, ".spin", "credentials")
 		config := &oauth2.Config{
 			ClientID:     OAuth2.ClientId,
 			ClientSecret: OAuth2.ClientSecret,
@@ -260,27 +253,12 @@ func (m *ApiMeta) Authenticate() error {
 			},
 		}
 		var newToken *oauth2.Token
+		var err error
 
-		if _, err := os.Stat(credentialsLocation); err == nil {
+		if auth.OAuth2.CachedToken != nil {
 			// Look up cached credentials to save oauth2 roundtrip.
-			var token oauth2.Token
-			tokenBytes, err := ioutil.ReadFile(credentialsLocation)
-			if err != nil {
-				m.Ui.Error(fmt.Sprintf("Could not read credentials file at %s", credentialsLocation))
-				return err
-			}
-			err = json.Unmarshal(tokenBytes, &token)
-			if err != nil {
-				m.Ui.Error(fmt.Sprintf("Could not parse OAuth2 token: %s", string(tokenBytes)))
-				return err
-			}
-			fmt.Printf("Read oauth2 token from cached file: %v\n", token)
-
-			tokenSource := config.TokenSource(oauth2.NoContext, &token)
-			if err != nil {
-				m.Ui.Error(fmt.Sprintf("Could not create token source from token: %v", token))
-				return err
-			}
+			token := auth.OAuth2.CachedToken
+			tokenSource := config.TokenSource(oauth2.NoContext, token)
 			newToken, err = tokenSource.Token()
 			if err != nil {
 				m.Ui.Error(fmt.Sprintf("Could not refresh token from source: %v", tokenSource))
@@ -305,9 +283,11 @@ func (m *ApiMeta) Authenticate() error {
 			}
 		}
 
-		m.Ui.Output(fmt.Sprintf("Caching oauth2 token."))
-		buf, _ := json.Marshal(&newToken)
-		ioutil.WriteFile(credentialsLocation, buf, 0777) // TODO: Which file mode?
+		m.Ui.Output("Caching oauth2 token.")
+		OAuth2.CachedToken = newToken
+		buf, _ := yaml.Marshal(&m.Config)
+		info, _ := os.Stat(m.configLocation)
+		ioutil.WriteFile(m.configLocation, buf, info.Mode())
 		m.Context = context.WithValue(context.Background(), gate.ContextAccessToken, newToken.AccessToken)
 	}
 	return nil
