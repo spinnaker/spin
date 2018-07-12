@@ -62,24 +62,12 @@ func (c *PipelineExecuteCommand) executePipeline() (gate.HttpEntity, *http.Respo
 }
 
 func (c *PipelineExecuteCommand) queryExecution() ([]interface{}, *http.Response, error) {
-	config, resp, err := c.ApiMeta.GateClient.ApplicationControllerApi.GetPipelineConfigUsingGET(
+	return c.ApiMeta.GateClient.ExecutionsControllerApi.SearchForPipelineExecutionsByTriggerUsingGET(
 		c.ApiMeta.Context,
 		c.application,
-		c.name)
-	if err != nil {
-		return nil, nil, err
-	}
-	if resp != nil && resp.StatusCode != http.StatusOK {
-		c.ApiMeta.Ui.Error(fmt.Sprintf("Encountered an error executing pipeline, status code: %d\n", resp.StatusCode))
-		return nil, resp, err
-	}
-
-	return c.ApiMeta.GateClient.ExecutionsControllerApi.GetLatestExecutionsByConfigIdsUsingGET(
-		c.ApiMeta.Context,
-		config["id"].(string),
 		map[string]interface{}{
-			"limit":    int32(1),
-			"statuses": "RUNNING",
+			"pipelineName": c.name,
+			"statuses":     "RUNNING",
 		})
 }
 
@@ -104,7 +92,7 @@ func (c *PipelineExecuteCommand) Run(args []string) int {
 	_, resp, err := c.executePipeline()
 
 	if err != nil {
-		c.ApiMeta.Ui.Error(fmt.Sprintf("%s\n", err))
+		c.ApiMeta.Ui.Error(fmt.Sprintf("Execute pipeline failed with response: %v and error: %s\n", resp, err))
 		return 1
 	}
 
@@ -115,7 +103,7 @@ func (c *PipelineExecuteCommand) Run(args []string) int {
 
 	executions := make([]interface{}, 0)
 	attempts := 0
-	for len(executions) != 1 && attempts < 5 {
+	for len(executions) == 0 && attempts < 5 {
 		executions, resp, err = c.queryExecution()
 		attempts += 1
 	}
@@ -123,17 +111,20 @@ func (c *PipelineExecuteCommand) Run(args []string) int {
 		c.ApiMeta.Ui.Error(fmt.Sprintf("%s\n", err))
 		return 1
 	}
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		c.ApiMeta.Ui.Error(fmt.Sprintf("Encountered an error querying pipeline execution, status code: %d\n", resp.StatusCode))
 		return 1
 	}
-	if len(executions) != 1 {
-		c.ApiMeta.Ui.Error(fmt.Sprintf("Expected one forked execution, found %d with refIds: %v.", len(executions), executions))
+	if len(executions) == 0 {
+		c.ApiMeta.Ui.Error(fmt.Sprintf("Unable to start any executions, server response was: %v", resp))
 		return 1
 	}
 
-	execution := executions[0].(map[string]interface{})
-	c.ApiMeta.Ui.Output(fmt.Sprintf("Started pipeline execution with id: %s\n", execution["id"].(string)))
+	refIds := make([]string, 0)
+	for _, execution := range executions {
+		refIds = append(refIds, execution.(map[string]interface{})["id"].(string))
+	}
+	c.ApiMeta.Ui.Output(fmt.Sprintf("%v", refIds))
 	return 0
 }
 
