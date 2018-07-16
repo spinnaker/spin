@@ -78,7 +78,7 @@ func (m *ApiMeta) GlobalFlagSet(cmd string) *flag.FlagSet {
 	f.StringVar(&m.gateEndpoint, "gate-endpoint", "http://localhost:8084",
 		"Gate (API server) endpoint")
 
-        f.BoolVar(&m.ignoreCertErrors, "ignore-cert-errors", false, "Ignore Certificate Errors")
+        f.BoolVar(&m.ignoreCertErrors, "insecure", false, "Ignore Certificate Errors")
 
 	f.Usage = func() {}
 
@@ -315,7 +315,7 @@ Global Options:
 
 	--gate-endpoint               Gate (API server) endpoint.
         --no-color                    Removes color from CLI output.
-        --ignore-cert-errors=false    Ignore Certificate Errors.
+        --insecure=false              Ignore certificate errors during connection to endpoints.
 	`
 
 	return strings.TrimSpace(help)
