@@ -224,12 +224,6 @@ func (m *ApiMeta) InitializeClient() (*http.Client, error) {
 			// Misconfigured.
 			return nil, errors.New("Incorrect x509 auth configuration.\nMust specify certPath/keyPath or cert/key pair.")
 		}
-	} else if auth != nil && auth.Enabled && auth.Basic != nil {
-		m.Context = context.WithValue(context.Background(), gate.ContextBasicAuth, gate.BasicAuth{
-			UserName: auth.Basic.Username,
-			Password: auth.Basic.Password,
-		})
-		return &client, nil
 	} else {
 		return &client, nil
 	}
