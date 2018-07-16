@@ -64,6 +64,8 @@ type ApiMeta struct {
 	// This is the set of flags global to the command parser.
 	gateEndpoint string
 
+        ignoreCertErrors bool
+
 	// Location of the spin config.
 	configLocation string
 }
@@ -75,6 +77,8 @@ func (m *ApiMeta) GlobalFlagSet(cmd string) *flag.FlagSet {
 
 	f.StringVar(&m.gateEndpoint, "gate-endpoint", "http://localhost:8084",
 		"Gate (API server) endpoint")
+
+        f.BoolVar(&m.ignoreCertErrors, "ignore-cert-errors", false, "Ignore Certificate Errors")
 
 	f.Usage = func() {}
 
@@ -171,6 +175,10 @@ func (m *ApiMeta) InitializeClient() (*http.Client, error) {
 		Jar: cookieJar,
 	}
 
+	if m.ignoreCertErrors {
+             http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+        }
+
 	if auth != nil && auth.Enabled && auth.X509 != nil {
 		X509 := auth.X509
 		client.Transport = &http.Transport{
@@ -216,6 +224,12 @@ func (m *ApiMeta) InitializeClient() (*http.Client, error) {
 			// Misconfigured.
 			return nil, errors.New("Incorrect x509 auth configuration.\nMust specify certPath/keyPath or cert/key pair.")
 		}
+	} else if auth != nil && auth.Enabled && auth.Basic != nil {
+		m.Context = context.WithValue(context.Background(), gate.ContextBasicAuth, gate.BasicAuth{
+			UserName: auth.Basic.Username,
+			Password: auth.Basic.Password,
+		})
+		return &client, nil
 	} else {
 		return &client, nil
 	}
@@ -228,8 +242,9 @@ func (m *ApiMeta) initializeX509Config(client http.Client, clientCA []byte, cert
 	client.Transport.(*http.Transport).TLSClientConfig.MinVersion = tls.VersionTLS12
 	client.Transport.(*http.Transport).TLSClientConfig.PreferServerCipherSuites = true
 	client.Transport.(*http.Transport).TLSClientConfig.Certificates = []tls.Certificate{cert}
-	client.Transport.(*http.Transport).TLSClientConfig.InsecureSkipVerify = true // TODO(jacobkiefer): Add a flag for this.
-
+ 	if m.ignoreCertErrors {
+           client.Transport.(*http.Transport).TLSClientConfig.InsecureSkipVerify = true
+        }
 	return &client
 }
 
@@ -304,8 +319,9 @@ func (m *ApiMeta) Help() string {
 	help := `
 Global Options:
 
-	--gate-endpoint         Gate (API server) endpoint.
-        --no-color              Removes color from CLI output.
+	--gate-endpoint               Gate (API server) endpoint.
+        --no-color                    Removes color from CLI output.
+        --ignore-cert-errors=false    Ignore Certificate Errors.
 	`
 
 	return strings.TrimSpace(help)
