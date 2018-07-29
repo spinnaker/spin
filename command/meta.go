@@ -61,10 +61,7 @@ type ApiMeta struct {
 	// Internal fields
 	color bool
 
-	// This is the set of flags global to the command parser.
-	gateEndpoint string
-
-        ignoreCertErrors bool
+	ignoreCertErrors bool
 
 	// Location of the spin config.
 	configLocation string
@@ -75,10 +72,10 @@ type ApiMeta struct {
 func (m *ApiMeta) GlobalFlagSet(cmd string) *flag.FlagSet {
 	f := flag.NewFlagSet(cmd, flag.ContinueOnError)
 
-	f.StringVar(&m.gateEndpoint, "gate-endpoint", "http://localhost:8084",
+	f.StringVar(&m.Config.GateEndpoint, "gate-endpoint", "http://localhost:8084",
 		"Gate (API server) endpoint")
 
-        f.BoolVar(&m.ignoreCertErrors, "insecure", false, "Ignore Certificate Errors")
+	f.BoolVar(&m.ignoreCertErrors, "insecure", false, "Ignore Certificate Errors")
 
 	f.Usage = func() {}
 
@@ -149,7 +146,7 @@ func (m *ApiMeta) Process(args []string) ([]string, error) {
 	}
 
 	cfg := &gate.Configuration{
-		BasePath:      m.gateEndpoint,
+		BasePath:      m.Config.GateEndpoint,
 		DefaultHeader: make(map[string]string),
 		UserAgent:     "Spin CLI version", // TODO(jacobkiefer): Add a reasonable UserAgent.
 		HTTPClient:    client,
@@ -176,8 +173,8 @@ func (m *ApiMeta) InitializeClient() (*http.Client, error) {
 	}
 
 	if m.ignoreCertErrors {
-             http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-        }
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
 
 	if auth != nil && auth.Enabled && auth.X509 != nil {
 		X509 := auth.X509
@@ -245,9 +242,9 @@ func (m *ApiMeta) initializeX509Config(client http.Client, clientCA []byte, cert
 	client.Transport.(*http.Transport).TLSClientConfig.MinVersion = tls.VersionTLS12
 	client.Transport.(*http.Transport).TLSClientConfig.PreferServerCipherSuites = true
 	client.Transport.(*http.Transport).TLSClientConfig.Certificates = []tls.Certificate{cert}
- 	if m.ignoreCertErrors {
-           client.Transport.(*http.Transport).TLSClientConfig.InsecureSkipVerify = true
-        }
+	if m.ignoreCertErrors {
+		client.Transport.(*http.Transport).TLSClientConfig.InsecureSkipVerify = true
+	}
 	return &client
 }
 

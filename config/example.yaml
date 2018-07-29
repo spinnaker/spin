@@ -1,5 +1,5 @@
 # NOTE: Copy this file to ~/.spin/config
-
+gateEndpoint: http://localhost:8080
 auth:
   enabled: true
   x509:
