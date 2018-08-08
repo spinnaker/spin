@@ -4,27 +4,9 @@ __This is under active development, and not yet intended for production use.__
 
 Edit pipelines, applications & intents.
 
-# Installation
+# Installation & Configuration
 
 Follow the instructions at [spinnaker.io](https://www.spinnaker.io/guides/spin/cli/#install-and-configure-spin-cli).
-
-# Configuration
-
-The configuration file for this CLI should live in `$HOME/.spin/config`. We include
-a template with all the configuration options in the `config/` directory.
-
-Here is also a small example of a configuration file:
-
-```yaml
-# ~/.spin/config
-
-# Example using x509 authentication.
-auth:
-  enabled: true
-  x509:
-    keyPath: ~/.spin/keyfile
-    certPath: ~/.spin/certfile
-```
 
 # Development
 
