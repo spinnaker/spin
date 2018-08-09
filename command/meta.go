@@ -135,7 +135,7 @@ func (m *ApiMeta) Process(args []string) ([]string, error) {
 	}
 
 	if yamlFile != nil {
-		err = yaml.Unmarshal(yamlFile, &m.Config)
+		err = yaml.UnmarshalStrict(yamlFile, &m.Config)
 		if err != nil {
 			m.Ui.Error(fmt.Sprintf("Could not deserialize config file with contents: %d, failing.", yamlFile))
 			return args, err
