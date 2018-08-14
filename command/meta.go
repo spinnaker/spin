@@ -62,9 +62,6 @@ type ApiMeta struct {
 	// Internal fields
 	color bool
 
-	// This is the set of flags global to the command parser.
-	gateEndpoint string
-
 	ignoreCertErrors bool
 
 	// Location of the spin config.
@@ -76,7 +73,7 @@ type ApiMeta struct {
 func (m *ApiMeta) GlobalFlagSet(cmd string) *flag.FlagSet {
 	f := flag.NewFlagSet(cmd, flag.ContinueOnError)
 
-	f.StringVar(&m.gateEndpoint, "gate-endpoint", "http://localhost:8084",
+	f.StringVar(&m.Config.GateEndpoint, "gate-endpoint", "http://localhost:8084",
 		"Gate (API server) endpoint")
 
 	f.BoolVar(&m.ignoreCertErrors, "insecure", false, "Ignore Certificate Errors")
@@ -159,7 +156,7 @@ func (m *ApiMeta) Process(args []string) ([]string, error) {
 	}
 
 	cfg := &gate.Configuration{
-		BasePath:      m.gateEndpoint,
+		BasePath:      m.Config.GateEndpoint,
 		DefaultHeader: make(map[string]string),
 		UserAgent:     fmt.Sprintf("%s/%s", version.UserAgent, version.String()),
 		HTTPClient:    client,
