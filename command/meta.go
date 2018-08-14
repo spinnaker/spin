@@ -36,6 +36,7 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/spinnaker/spin/config"
 	gate "github.com/spinnaker/spin/gateapi"
+	"github.com/spinnaker/spin/version"
 	"golang.org/x/oauth2"
 	"gopkg.in/yaml.v2"
 )
@@ -109,14 +110,23 @@ func (m *ApiMeta) Process(args []string) ([]string, error) {
 	}
 
 	// CLI configuration.
+	userHome := ""
 	usr, err := user.Current()
 	if err != nil {
-		m.Ui.Error(fmt.Sprintf("Could not read current user from environment, failing."))
-		return args, err
+		// Fallback by trying to read $HOME
+		userHome = os.Getenv("HOME")
+		if userHome != "" {
+			err = nil
+		} else {
+			m.Ui.Error(fmt.Sprintf("Could not read current user from environment, failing."))
+			return args, err
+		}
+	} else {
+		userHome = usr.HomeDir
 	}
 
 	// TODO(jacobkiefer): Add flag for config location?
-	m.configLocation = filepath.Join(usr.HomeDir, ".spin", "config")
+	m.configLocation = filepath.Join(userHome, ".spin", "config")
 	yamlFile, err := ioutil.ReadFile(m.configLocation)
 	if err != nil {
 		m.Ui.Warn(fmt.Sprintf("Could not read configuration file from %s.", m.configLocation))
@@ -148,7 +158,7 @@ func (m *ApiMeta) Process(args []string) ([]string, error) {
 	cfg := &gate.Configuration{
 		BasePath:      m.Config.GateEndpoint,
 		DefaultHeader: make(map[string]string),
-		UserAgent:     "Spin CLI version", // TODO(jacobkiefer): Add a reasonable UserAgent.
+		UserAgent:     fmt.Sprintf("%s/%s", version.UserAgent, version.String()),
 		HTTPClient:    client,
 	}
 	m.GateClient = gate.NewAPIClient(cfg)
@@ -312,7 +322,7 @@ func (m *ApiMeta) Prompt() string {
 	reader := bufio.NewReader(os.Stdin)
 	m.Ui.Output(fmt.Sprintf("Paste authorization code:"))
 	text, _ := reader.ReadString('\n')
-	return text
+	return strings.TrimSpace(text)
 }
 
 func (m *ApiMeta) Help() string {
