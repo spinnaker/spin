@@ -56,12 +56,12 @@ func (c *ApplicationSaveCommand) flagSet() *flag.FlagSet {
 
 // parseApplicationFile reads and deserializes the application input from Stdin or a file.
 func (c *ApplicationSaveCommand) parseApplicationFile() (map[string]interface{}, error) {
-	applicationJson, err := util.ParseJsonFromFileOrStdin(c.applicationFile)
+	application, err := util.ParseJsonFromFileOrStdin(c.applicationFile)
 	if err != nil && strings.HasPrefix(err.Error(), "No json input") {
 		// Apps can be created with no json input and only flags.
 		return nil, nil
 	}
-	return applicationJson, err
+	return application, err
 }
 
 // saveApplication calls the Gate endpoint to save the application.
