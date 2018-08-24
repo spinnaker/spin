@@ -47,8 +47,8 @@ type ApiMeta struct {
 	// with an ApiMeta field. These are expected to be set externally
 	// (not from within the command itself).
 
-	Color bool   // True if output should be colored
-	Ui    cli.Ui // Ui for output
+	Color bool        // True if output should be colored
+	Ui    *ColorizeUi // Ui for output
 
 	// Gate Api client.
 	GateClient *gate.APIClient
@@ -58,6 +58,8 @@ type ApiMeta struct {
 
 	// Context for OAuth2 access token.
 	Context context.Context
+
+	JsonPath string
 
 	// This is the set of flags global to the command parser.
 	gateEndpoint string
@@ -77,12 +79,12 @@ func (m *ApiMeta) GlobalFlagSet(cmd string) *flag.FlagSet {
 
 	f.StringVar(&m.gateEndpoint, "gate-endpoint", "http://localhost:8084",
 		"Gate (API server) endpoint")
-
 	f.BoolVar(&m.ignoreCertErrors, "insecure", false, "Ignore Certificate Errors")
-
 	f.BoolVar(&m.quiet, "quiet", false, "Squelch non-essentual output")
-
 	f.BoolVar(&m.Color, "no-color", true, "Disable color")
+	// TODO(jacobkiefer): Codify the json-path as part of an OutputConfig or
+	// something similar. Sets the stage for yaml output, etc.
+	f.StringVar(&m.JsonPath, "jsonpath", "", "Filter a subpath of the output")
 
 	f.Usage = func() {}
 
