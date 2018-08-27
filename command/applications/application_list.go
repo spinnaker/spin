@@ -75,7 +75,7 @@ func (c *ApplicationListCommand) Run(args []string) int {
 		return 1
 	}
 
-	c.ApiMeta.Ui.JsonOutput(appList, c.ApiMeta.JsonPath)
+	c.ApiMeta.Ui.JsonOutput(appList, c.ApiMeta.OutputFormat)
 	return 0
 }
 

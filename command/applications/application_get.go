@@ -94,7 +94,7 @@ func (c *ApplicationGetCommand) Run(args []string) int {
 		return 1
 	}
 
-	c.ApiMeta.Ui.JsonOutput(app, c.ApiMeta.JsonPath)
+	c.ApiMeta.Ui.JsonOutput(app, c.ApiMeta.OutputFormat)
 	return 0
 }
 

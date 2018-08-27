@@ -34,6 +34,7 @@ import (
 	"github.com/mitchellh/cli"
 	"github.com/mitchellh/colorstring"
 	"github.com/mitchellh/go-homedir"
+	"github.com/spinnaker/spin/command/output"
 	"github.com/spinnaker/spin/config"
 	gate "github.com/spinnaker/spin/gateapi"
 	"github.com/spinnaker/spin/version"
@@ -59,7 +60,7 @@ type ApiMeta struct {
 	// Context for OAuth2 access token.
 	Context context.Context
 
-	JsonPath string
+	OutputFormat *output.OutputFormat
 
 	// This is the set of flags global to the command parser.
 	gateEndpoint string
@@ -70,6 +71,8 @@ type ApiMeta struct {
 
 	// Location of the spin config.
 	configLocation string
+
+	outputFormat string
 }
 
 // GlobalFlagSet adds all global options to the flagset, and returns the flagset object
@@ -84,7 +87,7 @@ func (m *ApiMeta) GlobalFlagSet(cmd string) *flag.FlagSet {
 	f.BoolVar(&m.Color, "no-color", true, "Disable color")
 	// TODO(jacobkiefer): Codify the json-path as part of an OutputConfig or
 	// something similar. Sets the stage for yaml output, etc.
-	f.StringVar(&m.JsonPath, "jsonpath", "", "Filter a subpath of the output")
+	f.StringVar(&m.outputFormat, "output", "", "Configure output formatting")
 
 	f.Usage = func() {}
 
@@ -104,6 +107,12 @@ func (m *ApiMeta) Process(args []string) ([]string, error) {
 		InfoColor:  "[blue]",
 		Ui:         &cli.BasicUi{Writer: os.Stdout},
 		Quiet:      m.quiet,
+	}
+
+	var err error
+	m.OutputFormat, err = output.ParseOutputFormat(m.outputFormat)
+	if err != nil {
+		return args, err
 	}
 
 	// CLI configuration.

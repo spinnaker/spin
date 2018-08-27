@@ -89,7 +89,7 @@ func (c *PipelineGetCommand) Run(args []string) int {
 		return 1
 	}
 
-	c.ApiMeta.Ui.JsonOutput(successPayload, c.ApiMeta.JsonPath)
+	c.ApiMeta.Ui.JsonOutput(successPayload, c.ApiMeta.OutputFormat)
 	return 0
 }
 
