@@ -32,13 +32,14 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/hashicorp/go-version"
 	"github.com/mitchellh/cli"
 	"github.com/mitchellh/colorstring"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spinnaker/spin/command/output"
 	"github.com/spinnaker/spin/config"
 	gate "github.com/spinnaker/spin/gateapi"
-	"github.com/spinnaker/spin/version"
+	spinversion "github.com/spinnaker/spin/version"
 	"golang.org/x/oauth2"
 	"gopkg.in/yaml.v2"
 )
@@ -171,15 +172,64 @@ func (m *ApiMeta) Process(args []string) ([]string, error) {
 		return args, err
 	}
 
+	spinVersion := spinversion.String()
 	cfg := &gate.Configuration{
 		BasePath:      m.GateEndpoint(),
 		DefaultHeader: make(map[string]string),
-		UserAgent:     fmt.Sprintf("%s/%s", version.UserAgent, version.String()),
+		UserAgent:     fmt.Sprintf("%s/%s", spinversion.UserAgent, spinVersion),
 		HTTPClient:    client,
 	}
 	m.GateClient = gate.NewAPIClient(cfg)
 
+	err = m.gateVersionCheck()
+	if err != nil {
+		return args, err
+	}
+
 	return args, nil
+}
+
+func (m *ApiMeta) gateVersionCheck() error {
+	spinVersion := spinversion.String()
+	gateVersion, resp, err := m.GateClient.VersionControllerApi.GetVersionUsingGET(m.Context)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("Encountered an error getting Gate version, status code: %d\n", resp.StatusCode)
+	}
+
+	spinMajMin, err := m.majorMinor(spinVersion)
+	if err != nil {
+		return err
+	}
+	gateMajMin, err := m.majorMinor(gateVersion.Version)
+	if err != nil {
+		return err
+	}
+
+	if spinMajMin != gateMajMin {
+		m.Ui.Warn(fmt.Sprintf("Spin version %s does not match Gate version %s. Some API operations may be unsupported.", spinMajMin, gateMajMin))
+	}
+	return nil
+}
+
+func (m *ApiMeta) majorMinor(semVer string) (string, error) {
+	if semVer == "" {
+		return "", errors.New("Empty version string supplied.")
+	}
+
+	fullSemVer, err := version.NewVersion(semVer)
+	if err != nil {
+		return "", err
+	}
+
+	segments := fullSemVer.Segments()
+	if len(segments) < 3 {
+		return "", fmt.Errorf("Malformed semantic version: %v\n", fullSemVer)
+	}
+	return fmt.Sprintf("%d.%d", segments[0], segments[1]), nil
 }
 
 // Colorize initializes the ui colorization.
