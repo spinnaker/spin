@@ -26,6 +26,7 @@ import (
 	"github.com/spinnaker/spin/command"
 )
 
+// TODO(jacobkiefer): Factor this out into a shared package.
 const (
 	NAME  = "app"
 	EMAIL = "appowner@spinnaker-test.net"

@@ -18,15 +18,23 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
 	"github.com/spinnaker/spin/command"
+	"github.com/spinnaker/spin/version"
 )
 
 const (
 	APP = "app"
 )
+
+func TestMain(m *testing.M) {
+	version.Version = "1.2.3" // Dummy version for testing.
+	version.ReleasePhase = ""
+	os.Exit(m.Run())
+}
 
 func TestApplicationGet_basic(t *testing.T) {
 	ts := testGateApplicationGetSuccess()
