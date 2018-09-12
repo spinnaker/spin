@@ -79,5 +79,5 @@ fi
 LD_FLAGS="-X github.com/spinnaker/spin/version.Version=${VERSION} \
 -X github.com/spinnaker/spin/version.ReleasePhase=${RELEASE_PHASE}"
 go clean
-go get -d -v
+dep ensure -v
 CGO_ENABLED=0 go build -ldflags "${LD_FLAGS}" .

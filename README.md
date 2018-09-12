@@ -31,10 +31,14 @@ Enter the code's directory
 cd $GOPATH/src/github.com/spinnaker/spin
 ```
 
-Fetch dependencies and build with with
+Fetch dependencies use [dep](https://github.com/golang/dep)
 
 ```bash
-go get -d -v
+dep ensure -v
+```
+
+For build 
+```bash
 go build -v
 ```
 
