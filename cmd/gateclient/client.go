@@ -12,7 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-package command
+package gateclient
 
 import (
 	"bufio"
@@ -21,7 +21,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -32,10 +31,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/mitchellh/cli"
-	"github.com/mitchellh/colorstring"
+	"github.com/spf13/pflag"
+
+	"github.com/spinnaker/spin/util"
+
 	"github.com/mitchellh/go-homedir"
-	"github.com/spinnaker/spin/command/output"
 	"github.com/spinnaker/spin/config"
 	gate "github.com/spinnaker/spin/gateapi"
 	"github.com/spinnaker/spin/version"
@@ -49,9 +49,6 @@ type ApiMeta struct {
 	// with an ApiMeta field. These are expected to be set externally
 	// (not from within the command itself).
 
-	Color bool        // True if output should be colored
-	Ui    *ColorizeUi // Ui for output
-
 	// Gate Api client.
 	GateClient *gate.APIClient
 
@@ -61,37 +58,13 @@ type ApiMeta struct {
 	// Context for OAuth2 access token.
 	Context context.Context
 
-	OutputFormat *output.OutputFormat
-
 	// This is the set of flags global to the command parser.
 	gateEndpoint string
 
 	ignoreCertErrors bool
 
-	quiet bool
-
 	// Location of the spin config.
 	configLocation string
-
-	outputFormat string
-}
-
-// GlobalFlagSet adds all global options to the flagset, and returns the flagset object
-// for further modification by the subcommand.
-func (m *ApiMeta) GlobalFlagSet(cmd string) *flag.FlagSet {
-	f := flag.NewFlagSet(cmd, flag.ContinueOnError)
-
-	f.StringVar(&m.gateEndpoint, "gate-endpoint", "",
-		"Gate (API server) endpoint. Default http://localhost:8084.")
-	f.BoolVar(&m.ignoreCertErrors, "insecure", false, "Ignore Certificate Errors")
-	f.BoolVar(&m.quiet, "quiet", false, "Squelch non-essentual output")
-	f.BoolVar(&m.Color, "no-color", true, "Disable color")
-	// TODO(jacobkiefer): Codify the json-path as part of an OutputConfig or
-	// something similar. Sets the stage for yaml output, etc.
-	f.StringVar(&m.outputFormat, "output", "", "Configure output formatting")
-	f.Usage = func() {}
-
-	return f
 }
 
 func (m *ApiMeta) GateEndpoint() string {
@@ -107,52 +80,57 @@ func (m *ApiMeta) GateEndpoint() string {
 // Process will process the meta-parameters out of the arguments. This
 // potentially modifies the args in-place. It will return the resulting slice.
 // NOTE: This expects the flag set to be parsed prior to invoking it.
-func (m *ApiMeta) Process(args []string) ([]string, error) {
-	// Do the Ui initialization so we can properly warn if Process() fails.
-	// Set the Ui.
-	m.Ui = &ColorizeUi{
-		Colorize:   m.Colorize(),
-		ErrorColor: "[red]",
-		WarnColor:  "[yellow]",
-		InfoColor:  "[blue]",
-		Ui:         &cli.BasicUi{Writer: os.Stdout},
-		Quiet:      m.quiet,
-	}
-
-	var err error
-	m.OutputFormat, err = output.ParseOutputFormat(m.outputFormat)
+func NewGateClient(flags *pflag.FlagSet) (*gate.APIClient, error) {
+	gateEndpoint, err := flags.GetString("gate-endpoint")
 	if err != nil {
-		return args, err
+		util.UI.Error(fmt.Sprintf("%s\n", err))
+		return nil, err
+	}
+	configLocationFlag, err := flags.GetString("config")
+	if err != nil {
+		util.UI.Error(fmt.Sprintf("%s\n", err))
+		return nil, err
+	}
+	ignoreCertErrors, err := flags.GetBool("insecure")
+	if err != nil {
+		util.UI.Error(fmt.Sprintf("%s\n", err))
+		return nil, err
+	}
+	m := ApiMeta{
+		gateEndpoint:     gateEndpoint,
+		ignoreCertErrors: ignoreCertErrors,
 	}
 
 	// CLI configuration.
-	userHome := ""
-	usr, err := user.Current()
-	if err != nil {
-		// Fallback by trying to read $HOME
-		userHome = os.Getenv("HOME")
-		if userHome != "" {
-			err = nil
-		} else {
-			m.Ui.Error(fmt.Sprintf("Could not read current user from environment, failing."))
-			return args, err
-		}
+	if configLocationFlag != "" {
+		m.configLocation = configLocationFlag
 	} else {
-		userHome = usr.HomeDir
+		userHome := ""
+		usr, err := user.Current()
+		if err != nil {
+			// Fallback by trying to read $HOME
+			userHome = os.Getenv("HOME")
+			if userHome != "" {
+				err = nil
+			} else {
+				util.UI.Error(fmt.Sprintf("Could not read current user from environment, failing."))
+				return nil, err
+			}
+		} else {
+			userHome = usr.HomeDir
+		}
+		m.configLocation = filepath.Join(userHome, ".spin", "config")
 	}
-
-	// TODO(jacobkiefer): Add flag for config location?
-	m.configLocation = filepath.Join(userHome, ".spin", "config")
 	yamlFile, err := ioutil.ReadFile(m.configLocation)
 	if err != nil {
-		m.Ui.Warn(fmt.Sprintf("Could not read configuration file from %s.", m.configLocation))
+		util.UI.Warn(fmt.Sprintf("Could not read configuration file from %s.", m.configLocation))
 	}
 
 	if yamlFile != nil {
 		err = yaml.UnmarshalStrict(yamlFile, &m.Config)
 		if err != nil {
-			m.Ui.Error(fmt.Sprintf("Could not deserialize config file with contents: %d, failing.", yamlFile))
-			return args, err
+			util.UI.Error(fmt.Sprintf("Could not deserialize config file with contents: %d, failing.", yamlFile))
+			return nil, err
 		}
 	} else {
 		m.Config = config.Config{}
@@ -161,14 +139,14 @@ func (m *ApiMeta) Process(args []string) ([]string, error) {
 	// Api client initialization.
 	err = m.Authenticate()
 	if err != nil {
-		m.Ui.Error(fmt.Sprintf("OAuth2 Authentication failed."))
-		return args, err
+		util.UI.Error(fmt.Sprintf("OAuth2 Authentication failed."))
+		return nil, err
 	}
 
 	client, err := m.InitializeClient()
 	if err != nil {
-		m.Ui.Error(fmt.Sprintf("Could not initialize http client, failing."))
-		return args, err
+		util.UI.Error(fmt.Sprintf("Could not initialize http client, failing."))
+		return nil, err
 	}
 
 	cfg := &gate.Configuration{
@@ -177,18 +155,8 @@ func (m *ApiMeta) Process(args []string) ([]string, error) {
 		UserAgent:     fmt.Sprintf("%s/%s", version.UserAgent, version.String()),
 		HTTPClient:    client,
 	}
-	m.GateClient = gate.NewAPIClient(cfg)
-
-	return args, nil
-}
-
-// Colorize initializes the ui colorization.
-func (m *ApiMeta) Colorize() *colorstring.Colorize {
-	return &colorstring.Colorize{
-		Colors:  colorstring.DefaultColors,
-		Disable: !m.Color,
-		Reset:   true,
-	}
+	gateClient := gate.NewAPIClient(cfg)
+	return gateClient, nil
 }
 
 func (m *ApiMeta) InitializeClient() (*http.Client, error) {
@@ -249,7 +217,7 @@ func (m *ApiMeta) InitializeClient() (*http.Client, error) {
 		}
 	} else if auth != nil && auth.Enabled && auth.Basic != nil {
 		if !auth.Basic.IsValid() {
-			return nil, errors.New("Incorrect Basic auth configuration. Must include username and password.")
+			return nil, errors.New("incorrect Basic auth configuration. Must include username and password")
 		}
 		m.Context = context.WithValue(context.Background(), gate.ContextBasicAuth, gate.BasicAuth{
 			UserName: auth.Basic.Username,
@@ -280,7 +248,7 @@ func (m *ApiMeta) Authenticate() error {
 		OAuth2 := auth.OAuth2
 		if !OAuth2.IsValid() {
 			// TODO(jacobkiefer): Improve this error message.
-			return errors.New("Incorrect OAuth2 auth configuration.")
+			return errors.New("incorrect OAuth2 auth configuration")
 		}
 
 		config := &oauth2.Config{
@@ -302,7 +270,7 @@ func (m *ApiMeta) Authenticate() error {
 			tokenSource := config.TokenSource(context.TODO(), token)
 			newToken, err = tokenSource.Token()
 			if err != nil {
-				m.Ui.Error(fmt.Sprintf("Could not refresh token from source: %v", tokenSource))
+				util.UI.Error(fmt.Sprintf("Could not refresh token from source: %v", tokenSource))
 				return err
 			}
 		} else {
@@ -316,7 +284,7 @@ func (m *ApiMeta) Authenticate() error {
 
 			verifierBytes := make([]byte, 5)
 			if _, err := rand.Read(verifierBytes); err != nil {
-				m.Ui.Error("Could not generate random string for code_verifier")
+				util.UI.Error("Could not generate random string for code_verifier")
 				return err
 			}
 			verifier := string(verifierBytes)
@@ -324,7 +292,7 @@ func (m *ApiMeta) Authenticate() error {
 			codeVerifier := oauth2.SetAuthURLParam("code_verifier", verifier)
 
 			authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline, oauth2.ApprovalForce, codeChallenge)
-			m.Ui.Output(fmt.Sprintf("Navigate to %s and authenticate", authURL))
+			util.UI.Output(fmt.Sprintf("Navigate to %s and authenticate", authURL))
 			code := m.Prompt()
 
 			newToken, err = config.Exchange(context.TODO(), code, codeVerifier)
@@ -333,7 +301,7 @@ func (m *ApiMeta) Authenticate() error {
 			}
 		}
 
-		m.Ui.Info("Caching oauth2 token.")
+		util.UI.Info("Caching oauth2 token.")
 		OAuth2.CachedToken = newToken
 		buf, _ := yaml.Marshal(&m.Config)
 		info, _ := os.Stat(m.configLocation)
@@ -345,21 +313,7 @@ func (m *ApiMeta) Authenticate() error {
 
 func (m *ApiMeta) Prompt() string {
 	reader := bufio.NewReader(os.Stdin)
-	m.Ui.Output(fmt.Sprintf("Paste authorization code:"))
+	util.UI.Output(fmt.Sprintf("Paste authorization code:"))
 	text, _ := reader.ReadString('\n')
 	return strings.TrimSpace(text)
-}
-
-func (m *ApiMeta) Help() string {
-	help := `
-Global Options:
-
-	--gate-endpoint               Gate (API server) endpoint.
-        --no-color                    Removes color from CLI output.
-        --insecure=false              Ignore certificate errors during connection to endpoints.
-        --quiet=false                 Squelch non-essential output.
-        --output <output format>      Formats CLI output.
-	`
-
-	return strings.TrimSpace(help)
 }
