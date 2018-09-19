@@ -15,7 +15,6 @@
 package pipeline
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -73,13 +72,13 @@ func getPipeline(cmd *cobra.Command, options GetOptions) error {
 		util.UI.Error(fmt.Sprintf("%s\n", err))
 		return err
 	}
-	reqContext := context.Background()
+
 	if options.application == "" || options.name == "" {
 		util.UI.Error("One of required parameters 'application' or 'name' not set.\n")
 		return errors.New("one of required parameters 'application' or 'name' not set")
 	}
 
-	successPayload, resp, err := gateClient.ApplicationControllerApi.GetPipelineConfigUsingGET(reqContext,
+	successPayload, resp, err := gateClient.ApplicationControllerApi.GetPipelineConfigUsingGET(gateClient.Context,
 		options.application,
 		options.name)
 

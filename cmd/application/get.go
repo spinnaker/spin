@@ -15,7 +15,6 @@
 package application
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -34,7 +33,7 @@ type GetOptions struct {
 var (
 	getApplicationShort   = "Get the specified application"
 	getApplicationLong    = "Get the specified application"
-	getApplicationExample = "usage: spin application get [options] applicationName"
+	getApplicationExample = "usage: spin application get [options] application-name"
 )
 
 func NewGetCmd(appOptions applicationOptions) *cobra.Command {
@@ -61,7 +60,6 @@ func getApplication(cmd *cobra.Command, args []string) error {
 		util.UI.Error(fmt.Sprintf("%s\n", err))
 		return err
 	}
-	reqContext := context.Background()
 	if len(args) == 0 || args[0] == "" {
 		return errors.New("application name required")
 	}
@@ -70,7 +68,7 @@ func getApplication(cmd *cobra.Command, args []string) error {
 	// since json.Marshal* doesn't serialize it properly (it is not treated as a Map).
 	// We need to think of a strategy (e.g. Concrete types or deferring to just returning Object)
 	// In the cases where we use 'HashMap' currently.
-	app, resp, err := gateClient.ApplicationControllerApi.GetApplicationUsingGET(reqContext, applicationName, map[string]interface{}{})
+	app, resp, err := gateClient.ApplicationControllerApi.GetApplicationUsingGET(gateClient.Context, applicationName, map[string]interface{}{})
 	if resp != nil {
 		if resp.StatusCode == http.StatusNotFound {
 			util.UI.Error(fmt.Sprintf("Application '%s' not found\n", applicationName))

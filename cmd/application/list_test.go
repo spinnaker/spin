@@ -23,7 +23,6 @@ import (
 	"testing"
 )
 
-
 func TestApplicationList_basic(t *testing.T) {
 	ts := testGateApplicationListSuccess()
 	defer ts.Close()
@@ -129,4 +128,3 @@ const applicationListJson = `
   }
 ]
 `
-

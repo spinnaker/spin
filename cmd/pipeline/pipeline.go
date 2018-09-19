@@ -34,4 +34,3 @@ func NewPipelineCmd(out io.Writer) *cobra.Command {
 	cmd.AddCommand(NewExecuteCmd(options))
 	return cmd
 }
-

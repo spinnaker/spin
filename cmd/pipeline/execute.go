@@ -15,7 +15,6 @@
 package pipeline
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -78,7 +77,7 @@ func executePipeline(cmd *cobra.Command, options ExecuteOptions) error {
 		util.UI.Error(fmt.Sprintf("%s\n", err))
 		return err
 	}
-	reqContext := context.Background()
+
 	if options.application == "" || options.name == "" {
 		util.UI.Error("One of required parameters 'application' or 'name' not set.\n")
 		return errors.New("one of required parameters 'application' or 'name' not set")
@@ -98,7 +97,7 @@ func executePipeline(cmd *cobra.Command, options ExecuteOptions) error {
 		trigger["parameters"] = parameters
 	}
 
-	_, resp, err := gateClient.PipelineControllerApi.InvokePipelineConfigUsingPOST1(reqContext,
+	_, resp, err := gateClient.PipelineControllerApi.InvokePipelineConfigUsingPOST1(gateClient.Context,
 		options.application,
 		options.name,
 		map[string]interface{}{"trigger": trigger})
@@ -117,7 +116,7 @@ func executePipeline(cmd *cobra.Command, options ExecuteOptions) error {
 	attempts := 0
 	for len(executions) == 0 && attempts < 5 {
 		executions, resp, err = gateClient.ExecutionsControllerApi.SearchForPipelineExecutionsByTriggerUsingGET(
-			reqContext,
+			gateClient.Context,
 			options.application,
 			map[string]interface{}{
 				"pipelineName": options.name,

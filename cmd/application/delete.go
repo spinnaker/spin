@@ -15,7 +15,6 @@
 package application
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -31,7 +30,7 @@ type DeleteOptions struct {
 
 var (
 	deleteApplicationShort   = "Delete the specified application."
-	deleteApplicationLong    = "Delete the provided application --applicationName: Name of the Spinnaker application to delete"
+	deleteApplicationLong    = "Delete the provided application --application-name: Name of the Spinnaker application to delete"
 	deleteApplicationExample = "usage: spin application get [options] applicationName"
 )
 
@@ -71,8 +70,7 @@ func deleteApplication(cmd *cobra.Command, args []string) error {
 		"application": applicationName,
 		"description": fmt.Sprintf("Delete Application: %s", applicationName),
 	}
-	reqContext := context.Background()
-	_, resp, err := gateClient.TaskControllerApi.TaskUsingPOST1(reqContext, createAppTask)
+	_, resp, err := gateClient.TaskControllerApi.TaskUsingPOST1(gateClient.Context, createAppTask)
 
 	if err != nil {
 		util.UI.Error(fmt.Sprintf("%s\n", err))

@@ -15,7 +15,6 @@
 package pipeline
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -71,7 +70,7 @@ func savePipeline(cmd *cobra.Command, options SaveOptions) error {
 		util.UI.Error(fmt.Sprintf("%s\n", err))
 		return err
 	}
-	reqContext := context.Background()
+
 	pipelineJson, err := util.ParseJsonFromFileOrStdin(options.pipelineFile)
 	if err != nil {
 		util.UI.Error(fmt.Sprintf("%s\n", err))
@@ -97,7 +96,7 @@ func savePipeline(cmd *cobra.Command, options SaveOptions) error {
 		return errors.New(fmt.Sprintf("Submitted pipeline is invalid: %s\n", pipelineJson))
 	}
 
-	resp, err := gateClient.PipelineControllerApi.SavePipelineUsingPOST(reqContext, pipelineJson)
+	resp, err := gateClient.PipelineControllerApi.SavePipelineUsingPOST(gateClient.Context, pipelineJson)
 
 	if err != nil {
 		util.UI.Error(fmt.Sprintf("%s\n", err))

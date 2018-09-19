@@ -15,7 +15,6 @@
 package application
 
 import (
-	"context"
 	"fmt"
 	"strings"
 	"time"
@@ -120,8 +119,7 @@ func saveApplication(cmd *cobra.Command, options SaveOptions) error {
 		"description": fmt.Sprintf("Create Application: %s", app["name"]),
 	}
 
-	reqContext := context.Background()
-	ref, _, err := gateClient.TaskControllerApi.TaskUsingPOST1(reqContext, createAppTask)
+	ref, _, err := gateClient.TaskControllerApi.TaskUsingPOST1(gateClient.Context, createAppTask)
 	if err != nil {
 		util.UI.Error(fmt.Sprintf("%s\n", err))
 		return err
@@ -130,13 +128,13 @@ func saveApplication(cmd *cobra.Command, options SaveOptions) error {
 	toks := strings.Split(ref["ref"].(string), "/")
 	id := toks[len(toks)-1]
 
-	task, resp, err := gateClient.TaskControllerApi.GetTaskUsingGET1(reqContext, id)
+	task, resp, err := gateClient.TaskControllerApi.GetTaskUsingGET1(gateClient.Context, id)
 	attempts := 0
 	for (task == nil || !taskCompleted(task)) && attempts < 5 {
 		toks := strings.Split(ref["ref"].(string), "/")
 		id := toks[len(toks)-1]
 
-		task, resp, err = gateClient.TaskControllerApi.GetTaskUsingGET1(reqContext, id)
+		task, resp, err = gateClient.TaskControllerApi.GetTaskUsingGET1(gateClient.Context, id)
 		attempts += 1
 		time.Sleep(time.Duration(attempts*attempts) * time.Second)
 	}

@@ -15,7 +15,6 @@
 package pipeline
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -74,11 +73,11 @@ func deletePipeline(cmd *cobra.Command, options DeleteOptions) error {
 		util.UI.Error(fmt.Sprintf("%s\n", err))
 		return err
 	}
-	reqContext := context.Background()
+
 	if options.application == "" || options.name == "" {
 		return errors.New("one of required parameters 'application' or 'name' not set")
 	}
-	resp, err := gateClient.PipelineControllerApi.DeletePipelineUsingDELETE(reqContext, options.application, options.name)
+	resp, err := gateClient.PipelineControllerApi.DeletePipelineUsingDELETE(gateClient.Context, options.application, options.name)
 
 	if err != nil {
 		util.UI.Error(fmt.Sprintf("%s\n", err))

@@ -43,14 +43,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// ApiMeta is the state & utility shared by our commands.
-type ApiMeta struct {
+// GatewayClient is the wrapper with authentication
+type GatewayClient struct {
 	// The exported fields below should be set by anyone using a command
-	// with an ApiMeta field. These are expected to be set externally
+	// with an GatewayClient field. These are expected to be set externally
 	// (not from within the command itself).
 
-	// Gate Api client.
-	GateClient *gate.APIClient
+	// Generate Gate Api client.
+	*gate.APIClient
 
 	// Spin CLI configuration.
 	Config config.Config
@@ -67,7 +67,7 @@ type ApiMeta struct {
 	configLocation string
 }
 
-func (m *ApiMeta) GateEndpoint() string {
+func (m *GatewayClient) GateEndpoint() string {
 	if m.Config.Gate.Endpoint == "" && m.gateEndpoint == "" {
 		return "http://localhost:8084"
 	}
@@ -77,10 +77,8 @@ func (m *ApiMeta) GateEndpoint() string {
 	return m.Config.Gate.Endpoint
 }
 
-// Process will process the meta-parameters out of the arguments. This
-// potentially modifies the args in-place. It will return the resulting slice.
-// NOTE: This expects the flag set to be parsed prior to invoking it.
-func NewGateClient(flags *pflag.FlagSet) (*gate.APIClient, error) {
+// Create new spinnaker gateway client with flag
+func NewGateClient(flags *pflag.FlagSet) (*GatewayClient, error) {
 	gateEndpoint, err := flags.GetString("gate-endpoint")
 	if err != nil {
 		util.UI.Error(fmt.Sprintf("%s\n", err))
@@ -96,14 +94,14 @@ func NewGateClient(flags *pflag.FlagSet) (*gate.APIClient, error) {
 		util.UI.Error(fmt.Sprintf("%s\n", err))
 		return nil, err
 	}
-	m := ApiMeta{
+	gateClient := &GatewayClient{
 		gateEndpoint:     gateEndpoint,
 		ignoreCertErrors: ignoreCertErrors,
 	}
 
 	// CLI configuration.
 	if configLocationFlag != "" {
-		m.configLocation = configLocationFlag
+		gateClient.configLocation = configLocationFlag
 	} else {
 		userHome := ""
 		usr, err := user.Current()
@@ -119,47 +117,47 @@ func NewGateClient(flags *pflag.FlagSet) (*gate.APIClient, error) {
 		} else {
 			userHome = usr.HomeDir
 		}
-		m.configLocation = filepath.Join(userHome, ".spin", "config")
+		gateClient.configLocation = filepath.Join(userHome, ".spin", "config")
 	}
-	yamlFile, err := ioutil.ReadFile(m.configLocation)
+	yamlFile, err := ioutil.ReadFile(gateClient.configLocation)
 	if err != nil {
-		util.UI.Warn(fmt.Sprintf("Could not read configuration file from %s.", m.configLocation))
+		util.UI.Warn(fmt.Sprintf("Could not read configuration file from %s.", gateClient.configLocation))
 	}
 
 	if yamlFile != nil {
-		err = yaml.UnmarshalStrict(yamlFile, &m.Config)
+		err = yaml.UnmarshalStrict(yamlFile, &gateClient.Config)
 		if err != nil {
 			util.UI.Error(fmt.Sprintf("Could not deserialize config file with contents: %d, failing.", yamlFile))
 			return nil, err
 		}
 	} else {
-		m.Config = config.Config{}
+		gateClient.Config = config.Config{}
 	}
 
 	// Api client initialization.
-	err = m.Authenticate()
+	err = gateClient.Authenticate()
 	if err != nil {
 		util.UI.Error(fmt.Sprintf("OAuth2 Authentication failed."))
 		return nil, err
 	}
 
-	client, err := m.InitializeClient()
+	httpClient, err := gateClient.InitializeClient()
 	if err != nil {
 		util.UI.Error(fmt.Sprintf("Could not initialize http client, failing."))
 		return nil, err
 	}
 
 	cfg := &gate.Configuration{
-		BasePath:      m.GateEndpoint(),
+		BasePath:      gateClient.GateEndpoint(),
 		DefaultHeader: make(map[string]string),
 		UserAgent:     fmt.Sprintf("%s/%s", version.UserAgent, version.String()),
-		HTTPClient:    client,
+		HTTPClient:    httpClient,
 	}
-	gateClient := gate.NewAPIClient(cfg)
+	gateClient.APIClient = gate.NewAPIClient(cfg)
 	return gateClient, nil
 }
 
-func (m *ApiMeta) InitializeClient() (*http.Client, error) {
+func (m *GatewayClient) InitializeClient() (*http.Client, error) {
 	auth := m.Config.Auth
 	cookieJar, _ := cookiejar.New(nil)
 	client := http.Client{
@@ -217,7 +215,7 @@ func (m *ApiMeta) InitializeClient() (*http.Client, error) {
 		}
 	} else if auth != nil && auth.Enabled && auth.Basic != nil {
 		if !auth.Basic.IsValid() {
-			return nil, errors.New("incorrect Basic auth configuration. Must include username and password")
+			return nil, errors.New("Incorrect Basic auth configuration. Must include username and password.")
 		}
 		m.Context = context.WithValue(context.Background(), gate.ContextBasicAuth, gate.BasicAuth{
 			UserName: auth.Basic.Username,
@@ -229,7 +227,7 @@ func (m *ApiMeta) InitializeClient() (*http.Client, error) {
 	}
 }
 
-func (m *ApiMeta) initializeX509Config(client http.Client, clientCA []byte, cert tls.Certificate) *http.Client {
+func (m *GatewayClient) initializeX509Config(client http.Client, clientCA []byte, cert tls.Certificate) *http.Client {
 	clientCertPool := x509.NewCertPool()
 	clientCertPool.AppendCertsFromPEM(clientCA)
 
@@ -242,7 +240,7 @@ func (m *ApiMeta) initializeX509Config(client http.Client, clientCA []byte, cert
 	return &client
 }
 
-func (m *ApiMeta) Authenticate() error {
+func (m *GatewayClient) Authenticate() error {
 	auth := m.Config.Auth
 	if auth != nil && auth.Enabled && auth.OAuth2 != nil {
 		OAuth2 := auth.OAuth2
@@ -311,7 +309,7 @@ func (m *ApiMeta) Authenticate() error {
 	return nil
 }
 
-func (m *ApiMeta) Prompt() string {
+func (m *GatewayClient) Prompt() string {
 	reader := bufio.NewReader(os.Stdin)
 	util.UI.Output(fmt.Sprintf("Paste authorization code:"))
 	text, _ := reader.ReadString('\n')

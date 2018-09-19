@@ -15,7 +15,6 @@
 package application
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
@@ -57,12 +56,11 @@ func listApplication(cmd *cobra.Command, args []string) error {
 		util.UI.Ui.Error(fmt.Sprintf("%s\n", err))
 		return err
 	}
-	reqContext := context.Background()
 	// TODO(jacobkiefer): Turns out using the type 'HashMap' doesn't help much in the CLI
 	// since json.Marshal* doesn't serialize it properly (it is not treated as a Map).
 	// We need to think of a strategy (e.g. Concrete types or deferring to just returning Object)
 	// In the cases where we use 'HashMap' currently.
-	appList, resp, err := gateClient.ApplicationControllerApi.GetAllApplicationsUsingGET(reqContext, map[string]interface{}{})
+	appList, resp, err := gateClient.ApplicationControllerApi.GetAllApplicationsUsingGET(gateClient.Context, map[string]interface{}{})
 	if err != nil {
 		util.UI.Ui.Error(fmt.Sprintf("%s\n", err))
 		return err

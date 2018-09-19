@@ -3,13 +3,10 @@ package cmd
 import (
 	"io"
 
-	"github.com/spinnaker/spin/util"
-
-	"github.com/spinnaker/spin/cmd/pipeline"
-
-	"github.com/spinnaker/spin/cmd/application"
-
 	"github.com/spf13/cobra"
+	"github.com/spinnaker/spin/cmd/application"
+	"github.com/spinnaker/spin/cmd/pipeline"
+	"github.com/spinnaker/spin/util"
 )
 
 type RootOptions struct {
