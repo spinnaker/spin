@@ -32,14 +32,14 @@ type GetOptions struct {
 }
 
 var (
-	getPipelineShort   = "Get the pipeline with the provided name from the provided pipeline"
+	getPipelineShort   = "Get the pipeline with the provided name from the provided application"
 	getPipelineLong    = "Get the specified pipeline"
 	getPipelineExample = `
 	usage: spin pipeline get [options]
 
-List the pipelines for the provided pipeline
+List the pipelines for the provided application
 
---pipeline: Pipeline the pipeline lives in
+--application: Application the pipeline lives in
 --name: Name of the pipeline
 `
 )
