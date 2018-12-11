@@ -67,7 +67,7 @@ func (a *PipelineTemplatesControllerApiService) CreateUsingPOST(ctx context.Cont
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
 	// body params
-	localVarPostBody = &pipelineTemplate
+	localVarPostBody = pipelineTemplate
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return nil, err
