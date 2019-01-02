@@ -73,7 +73,6 @@ func (o *oauthReceiver) killWhenReady(n net.Conn, s http.ConnState) {
 // NewOAuthConfig creates a new OAuth config
 func (o *oauthReceiver) NewOAuthConfig() *oauth2.Config {
 
-	// return oauth2 Config
 	return &oauth2.Config{
 		ClientID:     o.clientId,
 		ClientSecret: o.clientSecret,
@@ -119,9 +118,7 @@ func (o *oauthReceiver) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var validateStateFunc func(string, string) bool
-
-	validateStateFunc = ValidIAPStateToken
+	validateStateFunc := ValidIAPStateToken
 
 	if !validateStateFunc(state, o.clientState) {
 		response := fmt.Errorf("Invalid state token received from server")

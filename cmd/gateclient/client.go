@@ -32,7 +32,7 @@ import (
 	"strings"
 
 	"github.com/spinnaker/spin/config"
-	config2 "github.com/spinnaker/spin/config/auth/iap"
+	iap "github.com/spinnaker/spin/config/auth/iap"
 	"github.com/spinnaker/spin/util"
 	"github.com/spinnaker/spin/version"
 
@@ -359,7 +359,7 @@ func (m *GatewayClient) authenticateOAuth2() error {
 func (m *GatewayClient) authenticateIAP() (string, error) {
 	auth := m.Config.Auth
 	iapConfig := auth.Iap
-	token, err := config2.GetIapToken(*iapConfig)
+	token, err := iap.GetIapToken(*iapConfig)
 	return token, err
 }
 
