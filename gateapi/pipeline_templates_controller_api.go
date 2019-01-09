@@ -30,13 +30,14 @@ type PipelineTemplatesControllerApiService service
 /* PipelineTemplatesControllerApiService Create a pipeline template.
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param pipelineTemplate pipelineTemplate
- @return */
-func (a *PipelineTemplatesControllerApiService) CreateUsingPOST(ctx context.Context, pipelineTemplate interface{}) ( *http.Response, error) {
+ @return map[string]interface{}*/
+func (a *PipelineTemplatesControllerApiService) CreateUsingPOST(ctx context.Context, pipelineTemplate interface{}) (map[string]interface{},  *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Post")
 		localVarPostBody interface{}
 		localVarFileName string
 		localVarFileBytes []byte
+	 	successPayload  map[string]interface{}
 	)
 
 	// create path and map variables
@@ -70,20 +71,25 @@ func (a *PipelineTemplatesControllerApiService) CreateUsingPOST(ctx context.Cont
 	localVarPostBody = &pipelineTemplate
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return nil, err
+		return successPayload, nil, err
 	}
 
 	localVarHttpResponse, err := a.client.callAPI(r)
 	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
+		return successPayload, localVarHttpResponse, err
 	}
 	defer localVarHttpResponse.Body.Close()
 	if localVarHttpResponse.StatusCode >= 300 {
 		bodyBytes, _ := ioutil.ReadAll(localVarHttpResponse.Body)
-		return localVarHttpResponse, reportError("Status: %v, Body: %s", localVarHttpResponse.Status, bodyBytes)
+		return successPayload, localVarHttpResponse, reportError("Status: %v, Body: %s", localVarHttpResponse.Status, bodyBytes)
 	}
 
-	return localVarHttpResponse, err
+	if err = json.NewDecoder(localVarHttpResponse.Body).Decode(&successPayload); err != nil {
+		return successPayload, localVarHttpResponse, err
+	}
+
+
+	return successPayload, localVarHttpResponse, err
 }
 
 /* PipelineTemplatesControllerApiService Delete a pipeline template.
@@ -446,13 +452,14 @@ func (a *PipelineTemplatesControllerApiService) ResolveTemplatesUsingGET(ctx con
  @param pipelineTemplate pipelineTemplate
  @param optional (nil or map[string]interface{}) with one or more of:
      @param "skipPlanDependents" (bool) skipPlanDependents
- @return */
-func (a *PipelineTemplatesControllerApiService) UpdateUsingPOST(ctx context.Context, id string, pipelineTemplate interface{}, localVarOptionals map[string]interface{}) ( *http.Response, error) {
+ @return map[string]interface{}*/
+func (a *PipelineTemplatesControllerApiService) UpdateUsingPOST(ctx context.Context, id string, pipelineTemplate interface{}, localVarOptionals map[string]interface{}) (map[string]interface{},  *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Post")
 		localVarPostBody interface{}
 		localVarFileName string
 		localVarFileBytes []byte
+	 	successPayload  map[string]interface{}
 	)
 
 	// create path and map variables
@@ -464,7 +471,7 @@ func (a *PipelineTemplatesControllerApiService) UpdateUsingPOST(ctx context.Cont
 	localVarFormParams := url.Values{}
 
 	if err := typeCheckParameter(localVarOptionals["skipPlanDependents"], "bool", "skipPlanDependents"); err != nil {
-		return nil, err
+		return successPayload, nil, err
 	}
 
 	if localVarTempParam, localVarOk := localVarOptionals["skipPlanDependents"].(bool); localVarOk {
@@ -493,19 +500,24 @@ func (a *PipelineTemplatesControllerApiService) UpdateUsingPOST(ctx context.Cont
 	localVarPostBody = &pipelineTemplate
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return nil, err
+		return successPayload, nil, err
 	}
 
 	localVarHttpResponse, err := a.client.callAPI(r)
 	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
+		return successPayload, localVarHttpResponse, err
 	}
 	defer localVarHttpResponse.Body.Close()
 	if localVarHttpResponse.StatusCode >= 300 {
 		bodyBytes, _ := ioutil.ReadAll(localVarHttpResponse.Body)
-		return localVarHttpResponse, reportError("Status: %v, Body: %s", localVarHttpResponse.Status, bodyBytes)
+		return successPayload, localVarHttpResponse, reportError("Status: %v, Body: %s", localVarHttpResponse.Status, bodyBytes)
 	}
 
-	return localVarHttpResponse, err
+	if err = json.NewDecoder(localVarHttpResponse.Body).Decode(&successPayload); err != nil {
+		return successPayload, localVarHttpResponse, err
+	}
+
+
+	return successPayload, localVarHttpResponse, err
 }
 

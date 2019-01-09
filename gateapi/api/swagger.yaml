@@ -3779,6 +3779,11 @@ paths:
       responses:
         201:
           description: "Created"
+          schema:
+            type: "object"
+            additionalProperties:
+              type: "object"
+              properties: {}
         202:
           description: "Accepted"
           schema:
@@ -4836,6 +4841,11 @@ paths:
       responses:
         201:
           description: "Created"
+          schema:
+            type: "object"
+            additionalProperties:
+              type: "object"
+              properties: {}
         202:
           description: "Accepted"
           schema:

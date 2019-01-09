@@ -14,7 +14,7 @@ Method | HTTP request | Description
 
 
 # **CreateUsingPOST**
-> CreateUsingPOST(ctx, pipelineTemplate)
+> map[string]interface{} CreateUsingPOST(ctx, pipelineTemplate)
 Create a pipeline template.
 
 ### Required Parameters
@@ -26,7 +26,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
- (empty response body)
+[**map[string]interface{}**](interface{}.md)
 
 ### Authorization
 
@@ -205,7 +205,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **UpdateUsingPOST**
-> UpdateUsingPOST(ctx, id, pipelineTemplate, optional)
+> map[string]interface{} UpdateUsingPOST(ctx, id, pipelineTemplate, optional)
 Update a pipeline template.
 
 ### Required Parameters
@@ -228,7 +228,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
- (empty response body)
+[**map[string]interface{}**](interface{}.md)
 
 ### Authorization
 
