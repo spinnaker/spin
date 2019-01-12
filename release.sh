@@ -86,7 +86,7 @@ if [ -z "$SPIN_GCS_BUCKET_PATH" ]; then
   SPIN_GCS_BUCKET_PATH=$PROD_SPIN_GCS_BUCKET_PATH
 fi
 
-for elem in darwin,amd64 linux,amd64; do
+for elem in darwin,amd64 linux,amd64 windows,amd64; do
   IFS="," read os arch <<< "${elem}"
   echo "Building for $os $arch"
   env CGO_ENABLED=0 GOOS=$os GOARCH=$arch go build .
