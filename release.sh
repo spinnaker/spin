@@ -91,11 +91,16 @@ for elem in darwin,amd64 linux,amd64 windows,amd64; do
   echo "Building for $os $arch"
   env CGO_ENABLED=0 GOOS=$os GOARCH=$arch go build .
 
-  path=${SPIN_GCS_BUCKET_PATH}/${VERSION}/${os}/${arch}/
-  echo "Copying to $path"
+  file="spin"
+  if [ "$os" = "windows"]; then
+    file="$file.exe"
+  fi
 
-  gsutil cp spin $path
-  rm spin
+  path=${SPIN_GCS_BUCKET_PATH}/${VERSION}/${os}/${arch}/
+  echo "Copying $file to $path"
+
+  gsutil cp $file $path
+  rm $file
 done
 
 echo $VERSION > latest
