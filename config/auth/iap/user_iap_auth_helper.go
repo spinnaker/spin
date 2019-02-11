@@ -36,6 +36,10 @@ const (
 
 // returns the token get from google for IAP
 func GetIapToken(iapConfig IapConfig) (string, error) {
+	if iapConfig.IapIdToken != "" {
+		return iapConfig.IapIdToken, nil
+	}
+
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	done := make(chan error)
 
@@ -56,6 +60,7 @@ func GetIapToken(iapConfig IapConfig) (string, error) {
 	url := getOauthUrl(clientId, clientState, port)
 
 	if err = execcmd.OpenUrl(url); err != nil {
+		err = nil
 		fmt.Printf("Go to the following link in your browser:\n%s\n\n", url)
 	} else {
 		fmt.Printf("Your browser has been opened to visit:\n%s\n\n", url)
