@@ -21,25 +21,25 @@ import (
 )
 
 func ReadArgsOrStdin(args []string) (string, error) {
-	if len(args) == 0 || args[0] == "" {
-		stdin := os.Stdin
-    fi, err := stdin.Stat()
-    if err != nil {
-      return "", err
-		}
-
-		pipedStdin := (fi.Mode() & os.ModeCharDevice) == 0
-		if fi.Size() <= 0 && !pipedStdin {
-			err = nil
-				return "", errors.New("no args or STDIN provided")
-		}
-
-    scanner := bufio.NewScanner(os.Stdin)
-    input := ""
-    for scanner.Scan() {
-			input = scanner.Text()
-		}
-    return input, nil
+	if len(args) > 0 {
+		return args[0], nil
 	}
-	return args[0], nil
+
+	stdin := os.Stdin
+	fi, err := stdin.Stat()
+	if err != nil {
+		return "", err
+	}
+
+	pipedStdin := (fi.Mode() & os.ModeCharDevice) == 0
+	if fi.Size() <= 0 && !pipedStdin {
+		return "", errors.New("no args or STDIN provided")
+	}
+
+	scanner := bufio.NewScanner(os.Stdin)
+	input := ""
+	for scanner.Scan() {
+		input = scanner.Text()
+	}
+	return input, nil
 }

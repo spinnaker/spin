@@ -15,8 +15,8 @@
 package execution
 
 import (
-"github.com/spf13/cobra"
-"io"
+	"github.com/spf13/cobra"
+	"io"
 )
 
 type executionOptions struct{}

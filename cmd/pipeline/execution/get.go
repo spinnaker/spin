@@ -53,7 +53,7 @@ func getExecution(cmd *cobra.Command, args []string) error {
 
 	id, err := util.ReadArgsOrStdin(args)
 	if err != nil {
-    return err
+		return err
 	}
 
 	query := map[string]interface{}{

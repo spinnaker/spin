@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/mitchellh/cli"
 	"github.com/mitchellh/colorstring"
@@ -109,12 +110,8 @@ func (u *ColorizeUi) JsonOutput(input interface{}, outputFormat *output.OutputFo
 }
 
 func (u *ColorizeUi) unquote(input string) string {
-	if len(input) > 0 && input[0] == '"' {
-		input = input[1:]
-	}
-	if len(input) > 0 && input[len(input)-1] == '"' {
-		input = input[:len(input)-1]
-	}
+	input = strings.TrimPrefix(input, "\"")
+	input = strings.TrimSuffix(input, "\"")
 	return input
 }
 
