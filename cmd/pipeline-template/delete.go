@@ -15,7 +15,6 @@
 package pipeline_template
 
 import (
-	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/cmd/gateclient"
@@ -49,10 +48,10 @@ func deletePipelineTemplate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if len(args) == 0 || args[0] == "" {
-		return errors.New("pipeline template id required")
+	id, err := util.ReadArgsOrStdin(args)
+	if err != nil {
+		return err
 	}
-	id := args[0]
 
 	_, resp, err := gateClient.V2PipelineTemplatesControllerApi.DeleteUsingDELETE1(gateClient.Context, id, nil)
 

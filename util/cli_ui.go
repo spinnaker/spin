@@ -103,8 +103,19 @@ func (u *ColorizeUi) JsonOutput(input interface{}, outputFormat *output.OutputFo
 		if err != nil {
 			u.Error(fmt.Sprintf("%v", err))
 		}
-		u.Output(u.colorize(string(prettyStr), u.OutputColor))
+		// unquote since go quotes the string if the bytes is a string.
+		u.Output(u.colorize(u.unquote(string(prettyStr)), u.OutputColor))
 	}
+}
+
+func (u *ColorizeUi) unquote(input string) string {
+	if len(input) > 0 && input[0] == '"' {
+		input = input[1:]
+	}
+	if len(input) > 0 && input[len(input)-1] == '"' {
+		input = input[:len(input)-1]
+	}
+	return input
 }
 
 // parseJsonPath finds the values specified in the input data as specified with the template.

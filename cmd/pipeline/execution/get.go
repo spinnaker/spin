@@ -15,7 +15,6 @@
 package execution
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -52,10 +51,10 @@ func getExecution(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if len(args) == 0 || args[0] == "" {
-		return errors.New("pipeline execution id required")
+	id, err := util.ReadArgsOrStdin(args)
+	if err != nil {
+    return err
 	}
-	id := args[0]
 
 	query := map[string]interface{}{
 		"executionIds": id, // Status filtering is ignored when executionId is supplied
