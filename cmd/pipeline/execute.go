@@ -107,7 +107,7 @@ func executePipeline(cmd *cobra.Command, options ExecuteOptions) error {
 	if err != nil {
 		return err
 	}
-	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+	if resp.StatusCode <= 200 || resp.StatusCode > 299 {
 		return fmt.Errorf("Encountered an error querying pipeline execution, status code: %d\n", resp.StatusCode)
 	}
 	if len(executions) == 0 {
