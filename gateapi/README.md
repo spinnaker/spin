@@ -40,6 +40,7 @@ Class | Method | HTTP request | Description
 *ApplicationControllerApi* | [**InvokePipelineConfigUsingPOST**](docs/ApplicationControllerApi.md#invokepipelineconfigusingpost) | **Post** /applications/{application}/pipelineConfigs/{pipelineName} | Invoke pipeline config
 *ApplicationControllerApi* | [**TaskUsingPOST**](docs/ApplicationControllerApi.md#taskusingpost) | **Post** /applications/{application}/tasks | Create task
 *ArtifactControllerApi* | [**AllUsingGET**](docs/ArtifactControllerApi.md#allusingget) | **Get** /artifacts/credentials | Retrieve the list of artifact accounts configured in Clouddriver.
+*ArtifactControllerApi* | [**ArtifactVersionsUsingGET**](docs/ArtifactControllerApi.md#artifactversionsusingget) | **Get** /artifacts/account/{accountName}/versions | Retrieve the list of artifact versions by account and artifact names
 *AuditEventsMvcEndpointApi* | [**FindByPrincipalAndAfterAndTypeUsingGET**](docs/AuditEventsMvcEndpointApi.md#findbyprincipalandafterandtypeusingget) | **Get** /auditevents | findByPrincipalAndAfterAndType
 *AuditEventsMvcEndpointApi* | [**FindByPrincipalAndAfterAndTypeUsingGET1**](docs/AuditEventsMvcEndpointApi.md#findbyprincipalandafterandtypeusingget1) | **Get** /auditevents.json | findByPrincipalAndAfterAndType
 *AuthControllerApi* | [**GetServiceAccountsUsingGET**](docs/AuthControllerApi.md#getserviceaccountsusingget) | **Get** /auth/user/serviceAccounts | Get service accounts
@@ -122,10 +123,14 @@ Class | Method | HTTP request | Description
 *PipelineTemplatesControllerApi* | [**ResolveTemplatesUsingGET**](docs/PipelineTemplatesControllerApi.md#resolvetemplatesusingget) | **Get** /pipelineTemplates/resolve | Resolve a pipeline template.
 *PipelineTemplatesControllerApi* | [**UpdateUsingPOST**](docs/PipelineTemplatesControllerApi.md#updateusingpost) | **Post** /pipelineTemplates/{id} | Update a pipeline template.
 *ProjectControllerApi* | [**AllPipelinesForProjectUsingGET**](docs/ProjectControllerApi.md#allpipelinesforprojectusingget) | **Get** /projects/{id}/pipelines | Get all pipelines for project
-*PubsubSubscriptionControllerApi* | [**AllUsingGET3**](docs/PubsubSubscriptionControllerApi.md#allusingget3) | **Get** /pubsub/subscriptions | Retrieve the list of pub/sub subscriptions configured in Echo.
+*ProjectControllerApi* | [**AllUsingGET3**](docs/ProjectControllerApi.md#allusingget3) | **Get** /projects | Get all projects
+*ProjectControllerApi* | [**GetClustersUsingGET3**](docs/ProjectControllerApi.md#getclustersusingget3) | **Get** /projects/{id}/clusters | Get a project&#39;s clusters
+*ProjectControllerApi* | [**GetUsingGET1**](docs/ProjectControllerApi.md#getusingget1) | **Get** /projects/{id} | Get a project
+*PubsubSubscriptionControllerApi* | [**AllUsingGET4**](docs/PubsubSubscriptionControllerApi.md#allusingget4) | **Get** /pubsub/subscriptions | Retrieve the list of pub/sub subscriptions configured in Echo.
+*ReorderPipelinesControllerApi* | [**ReorderPipelinesUsingPOST**](docs/ReorderPipelinesControllerApi.md#reorderpipelinesusingpost) | **Post** /actions/pipelines/reorder | Re-order pipelines
 *SearchControllerApi* | [**SearchUsingGET**](docs/SearchControllerApi.md#searchusingget) | **Get** /search | Search infrastructure
 *SecurityGroupControllerApi* | [**AllByAccountUsingGET1**](docs/SecurityGroupControllerApi.md#allbyaccountusingget1) | **Get** /securityGroups/{account} | Retrieve a list of security groups for a given account, grouped by region
-*SecurityGroupControllerApi* | [**AllUsingGET4**](docs/SecurityGroupControllerApi.md#allusingget4) | **Get** /securityGroups | Retrieve a list of security groups, grouped by account, cloud provider, and region
+*SecurityGroupControllerApi* | [**AllUsingGET5**](docs/SecurityGroupControllerApi.md#allusingget5) | **Get** /securityGroups | Retrieve a list of security groups, grouped by account, cloud provider, and region
 *SecurityGroupControllerApi* | [**GetSecurityGroupUsingGET1**](docs/SecurityGroupControllerApi.md#getsecuritygroupusingget1) | **Get** /securityGroups/{account}/{region}/{name} | Retrieve a security group&#39;s details
 *ServerGroupControllerApi* | [**GetServerGroupDetailsUsingGET**](docs/ServerGroupControllerApi.md#getservergroupdetailsusingget) | **Get** /applications/{applicationName}/serverGroups/{account}/{region}/{serverGroupName} | Retrieve a server group&#39;s details
 *ServerGroupControllerApi* | [**GetServerGroupsForApplicationUsingGET**](docs/ServerGroupControllerApi.md#getservergroupsforapplicationusingget) | **Get** /applications/{applicationName}/serverGroups | Retrieve a list of server groups for a given application
@@ -139,13 +144,25 @@ Class | Method | HTTP request | Description
 *TaskControllerApi* | [**GetTaskDetailsUsingGET1**](docs/TaskControllerApi.md#gettaskdetailsusingget1) | **Get** /tasks/{id}/details/{taskDetailsId} | Get task details
 *TaskControllerApi* | [**GetTaskUsingGET1**](docs/TaskControllerApi.md#gettaskusingget1) | **Get** /tasks/{id} | Get task
 *TaskControllerApi* | [**TaskUsingPOST1**](docs/TaskControllerApi.md#taskusingpost1) | **Post** /tasks | Create task
-*V2PipelineTemplatesControllerApi* | [**CreateUsingPOST1**](docs/V2PipelineTemplatesControllerApi.md#createusingpost1) | **Post** /v2/pipelineTemplates | Create a pipeline template.
+*V2CanaryConfigControllerApi* | [**CreateCanaryConfigUsingPOST**](docs/V2CanaryConfigControllerApi.md#createcanaryconfigusingpost) | **Post** /v2/canaryConfig | Create a canary configuration
+*V2CanaryConfigControllerApi* | [**DeleteCanaryConfigUsingDELETE**](docs/V2CanaryConfigControllerApi.md#deletecanaryconfigusingdelete) | **Delete** /v2/canaryConfig/{id} | Delete a canary configuration
+*V2CanaryConfigControllerApi* | [**GetCanaryConfigUsingGET**](docs/V2CanaryConfigControllerApi.md#getcanaryconfigusingget) | **Get** /v2/canaryConfig/{id} | Retrieve a canary configuration by id
+*V2CanaryConfigControllerApi* | [**GetCanaryConfigsUsingGET**](docs/V2CanaryConfigControllerApi.md#getcanaryconfigsusingget) | **Get** /v2/canaryConfig | Retrieve a list of canary configurations
+*V2CanaryConfigControllerApi* | [**UpdateCanaryConfigUsingPUT**](docs/V2CanaryConfigControllerApi.md#updatecanaryconfigusingput) | **Put** /v2/canaryConfig/{id} | Update a canary configuration
+*V2CanaryControllerApi* | [**GetCanaryResultUsingGET**](docs/V2CanaryControllerApi.md#getcanaryresultusingget) | **Get** /v2/canaries/canary/{canaryConfigId}/{canaryExecutionId} | Retrieve a canary result
+*V2CanaryControllerApi* | [**GetCanaryResultsByApplicationUsingGET**](docs/V2CanaryControllerApi.md#getcanaryresultsbyapplicationusingget) | **Get** /v2/canaries/{application}/executions | Retrieve a list of an application&#39;s canary results
+*V2CanaryControllerApi* | [**GetMetricSetPairListUsingGET**](docs/V2CanaryControllerApi.md#getmetricsetpairlistusingget) | **Get** /v2/canaries/metricSetPairList/{metricSetPairListId} | Retrieve a metric set pair list
+*V2CanaryControllerApi* | [**InitiateCanaryUsingPOST**](docs/V2CanaryControllerApi.md#initiatecanaryusingpost) | **Post** /v2/canaries/canary/{canaryConfigId} | Start a canary execution
+*V2CanaryControllerApi* | [**ListCredentialsUsingGET**](docs/V2CanaryControllerApi.md#listcredentialsusingget) | **Get** /v2/canaries/credentials | Retrieve a list of configured Kayenta accounts
+*V2CanaryControllerApi* | [**ListJudgesUsingGET**](docs/V2CanaryControllerApi.md#listjudgesusingget) | **Get** /v2/canaries/judges | Retrieve a list of all configured canary judges
+*V2CanaryControllerApi* | [**ListMetricsServiceMetadataUsingGET**](docs/V2CanaryControllerApi.md#listmetricsservicemetadatausingget) | **Get** /v2/canaries/metadata/metricsService | Retrieve a list of descriptors for use in populating the canary config ui
+*V2PipelineTemplatesControllerApi* | [**CreateUsingPOST1**](docs/V2PipelineTemplatesControllerApi.md#createusingpost1) | **Post** /v2/pipelineTemplates/create | Create a pipeline template.
 *V2PipelineTemplatesControllerApi* | [**DeleteUsingDELETE1**](docs/V2PipelineTemplatesControllerApi.md#deleteusingdelete1) | **Delete** /v2/pipelineTemplates/{id} | Delete a pipeline template.
-*V2PipelineTemplatesControllerApi* | [**GetUsingGET1**](docs/V2PipelineTemplatesControllerApi.md#getusingget1) | **Get** /v2/pipelineTemplates/{id} | Get a pipeline template.
+*V2PipelineTemplatesControllerApi* | [**GetUsingGET2**](docs/V2PipelineTemplatesControllerApi.md#getusingget2) | **Get** /v2/pipelineTemplates/{id} | Get a pipeline template.
 *V2PipelineTemplatesControllerApi* | [**ListPipelineTemplateDependentsUsingGET1**](docs/V2PipelineTemplatesControllerApi.md#listpipelinetemplatedependentsusingget1) | **Get** /v2/pipelineTemplates/{id}/dependents | List all pipelines that implement a pipeline template
 *V2PipelineTemplatesControllerApi* | [**ListUsingGET1**](docs/V2PipelineTemplatesControllerApi.md#listusingget1) | **Get** /v2/pipelineTemplates | List pipeline templates.
 *V2PipelineTemplatesControllerApi* | [**PlanUsingPOST**](docs/V2PipelineTemplatesControllerApi.md#planusingpost) | **Post** /v2/pipelineTemplates/plan | Plan a pipeline template configuration.
-*V2PipelineTemplatesControllerApi* | [**UpdateUsingPOST1**](docs/V2PipelineTemplatesControllerApi.md#updateusingpost1) | **Post** /v2/pipelineTemplates/{id} | Update a pipeline template.
+*V2PipelineTemplatesControllerApi* | [**UpdateUsingPOST1**](docs/V2PipelineTemplatesControllerApi.md#updateusingpost1) | **Post** /v2/pipelineTemplates/update/{id} | Update a pipeline template.
 *VersionControllerApi* | [**GetVersionUsingGET**](docs/VersionControllerApi.md#getversionusingget) | **Get** /version | Fetch Gate&#39;s current version
 *WebhookControllerApi* | [**PreconfiguredWebhooksUsingGET**](docs/WebhookControllerApi.md#preconfiguredwebhooksusingget) | **Get** /webhooks/preconfigured | Retrieve a list of preconfigured webhooks in Orca
 *WebhookControllerApi* | [**WebhooksUsingPOST**](docs/WebhookControllerApi.md#webhooksusingpost) | **Post** /webhooks/{type}/{source} | Endpoint for posting webhooks to Spinnaker&#39;s webhook service
@@ -160,6 +177,7 @@ Class | Method | HTTP request | Description
  - [HttpEntity](docs/HttpEntity.md)
  - [Mapstringstring](docs/Mapstringstring.md)
  - [PipelineTemplateDependent](docs/PipelineTemplateDependent.md)
+ - [ReorderPipelinesCommand](docs/ReorderPipelinesCommand.md)
  - [ResponseEntity](docs/ResponseEntity.md)
  - [User](docs/User.md)
  - [Version](docs/Version.md)

@@ -29,7 +29,7 @@ Method | HTTP request | Description
 
 
 # **CancelPipelineUsingPUT1**
-> map[string]interface{} CancelPipelineUsingPUT1(ctx, id, optional)
+> CancelPipelineUsingPUT1(ctx, id, optional)
 Cancel a pipeline execution
 
 ### Required Parameters
@@ -51,7 +51,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**map[string]interface{}**](interface{}.md)
+ (empty response body)
 
 ### Authorization
 
@@ -433,7 +433,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **PausePipelineUsingPUT**
-> map[string]interface{} PausePipelineUsingPUT(ctx, id)
+> PausePipelineUsingPUT(ctx, id)
 Pause a pipeline execution
 
 ### Required Parameters
@@ -445,7 +445,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**map[string]interface{}**](interface{}.md)
+ (empty response body)
 
 ### Authorization
 

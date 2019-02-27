@@ -33,14 +33,13 @@ type PipelineControllerApiService service
  @param optional (nil or map[string]interface{}) with one or more of:
      @param "reason" (string) reason
      @param "force" (bool) force
- @return map[string]interface{}*/
-func (a *PipelineControllerApiService) CancelPipelineUsingPUT1(ctx context.Context, id string, localVarOptionals map[string]interface{}) (map[string]interface{},  *http.Response, error) {
+ @return */
+func (a *PipelineControllerApiService) CancelPipelineUsingPUT1(ctx context.Context, id string, localVarOptionals map[string]interface{}) ( *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Put")
 		localVarPostBody interface{}
 		localVarFileName string
 		localVarFileBytes []byte
-	 	successPayload  map[string]interface{}
 	)
 
 	// create path and map variables
@@ -52,10 +51,10 @@ func (a *PipelineControllerApiService) CancelPipelineUsingPUT1(ctx context.Conte
 	localVarFormParams := url.Values{}
 
 	if err := typeCheckParameter(localVarOptionals["reason"], "string", "reason"); err != nil {
-		return successPayload, nil, err
+		return nil, err
 	}
 	if err := typeCheckParameter(localVarOptionals["force"], "bool", "force"); err != nil {
-		return successPayload, nil, err
+		return nil, err
 	}
 
 	if localVarTempParam, localVarOk := localVarOptionals["reason"].(string); localVarOk {
@@ -85,25 +84,20 @@ func (a *PipelineControllerApiService) CancelPipelineUsingPUT1(ctx context.Conte
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return successPayload, nil, err
+		return nil, err
 	}
 
 	localVarHttpResponse, err := a.client.callAPI(r)
 	if err != nil || localVarHttpResponse == nil {
-		return successPayload, localVarHttpResponse, err
+		return localVarHttpResponse, err
 	}
 	defer localVarHttpResponse.Body.Close()
 	if localVarHttpResponse.StatusCode >= 300 {
 		bodyBytes, _ := ioutil.ReadAll(localVarHttpResponse.Body)
-		return successPayload, localVarHttpResponse, reportError("Status: %v, Body: %s", localVarHttpResponse.Status, bodyBytes)
+		return localVarHttpResponse, reportError("Status: %v, Body: %s", localVarHttpResponse.Status, bodyBytes)
 	}
 
-	if err = json.NewDecoder(localVarHttpResponse.Body).Decode(&successPayload); err != nil {
-		return successPayload, localVarHttpResponse, err
-	}
-
-
-	return successPayload, localVarHttpResponse, err
+	return localVarHttpResponse, err
 }
 
 /* PipelineControllerApiService Delete a pipeline definition
@@ -968,14 +962,13 @@ func (a *PipelineControllerApiService) InvokePipelineConfigViaEchoUsingPOST(ctx 
 /* PipelineControllerApiService Pause a pipeline execution
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param id id
- @return map[string]interface{}*/
-func (a *PipelineControllerApiService) PausePipelineUsingPUT(ctx context.Context, id string) (map[string]interface{},  *http.Response, error) {
+ @return */
+func (a *PipelineControllerApiService) PausePipelineUsingPUT(ctx context.Context, id string) ( *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Put")
 		localVarPostBody interface{}
 		localVarFileName string
 		localVarFileBytes []byte
-	 	successPayload  map[string]interface{}
 	)
 
 	// create path and map variables
@@ -1008,25 +1001,20 @@ func (a *PipelineControllerApiService) PausePipelineUsingPUT(ctx context.Context
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return successPayload, nil, err
+		return nil, err
 	}
 
 	localVarHttpResponse, err := a.client.callAPI(r)
 	if err != nil || localVarHttpResponse == nil {
-		return successPayload, localVarHttpResponse, err
+		return localVarHttpResponse, err
 	}
 	defer localVarHttpResponse.Body.Close()
 	if localVarHttpResponse.StatusCode >= 300 {
 		bodyBytes, _ := ioutil.ReadAll(localVarHttpResponse.Body)
-		return successPayload, localVarHttpResponse, reportError("Status: %v, Body: %s", localVarHttpResponse.Status, bodyBytes)
+		return localVarHttpResponse, reportError("Status: %v, Body: %s", localVarHttpResponse.Status, bodyBytes)
 	}
 
-	if err = json.NewDecoder(localVarHttpResponse.Body).Decode(&successPayload); err != nil {
-		return successPayload, localVarHttpResponse, err
-	}
-
-
-	return successPayload, localVarHttpResponse, err
+	return localVarHttpResponse, err
 }
 
 /* PipelineControllerApiService Rename a pipeline definition

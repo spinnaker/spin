@@ -30,8 +30,10 @@ type V2PipelineTemplatesControllerApiService service
 /* V2PipelineTemplatesControllerApiService Create a pipeline template.
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param pipelineTemplate pipelineTemplate
+ @param optional (nil or map[string]interface{}) with one or more of:
+     @param "version" (string) version
  @return */
-func (a *V2PipelineTemplatesControllerApiService) CreateUsingPOST1(ctx context.Context, pipelineTemplate interface{}) ( *http.Response, error) {
+func (a *V2PipelineTemplatesControllerApiService) CreateUsingPOST1(ctx context.Context, pipelineTemplate interface{}, localVarOptionals map[string]interface{}) ( *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Post")
 		localVarPostBody interface{}
@@ -40,13 +42,19 @@ func (a *V2PipelineTemplatesControllerApiService) CreateUsingPOST1(ctx context.C
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/pipelineTemplates"
+	localVarPath := a.client.cfg.BasePath + "/v2/pipelineTemplates/create"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if err := typeCheckParameter(localVarOptionals["version"], "string", "version"); err != nil {
+		return nil, err
+	}
 
+	if localVarTempParam, localVarOk := localVarOptionals["version"].(string); localVarOk {
+		localVarQueryParams.Add("version", parameterToString(localVarTempParam, ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{ "application/json",  }
 
@@ -90,6 +98,8 @@ func (a *V2PipelineTemplatesControllerApiService) CreateUsingPOST1(ctx context.C
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param id id
  @param optional (nil or map[string]interface{}) with one or more of:
+     @param "version" (string) version
+     @param "digest" (string) digest
      @param "application" (string) application
  @return map[string]interface{}*/
 func (a *V2PipelineTemplatesControllerApiService) DeleteUsingDELETE1(ctx context.Context, id string, localVarOptionals map[string]interface{}) (map[string]interface{},  *http.Response, error) {
@@ -109,10 +119,22 @@ func (a *V2PipelineTemplatesControllerApiService) DeleteUsingDELETE1(ctx context
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if err := typeCheckParameter(localVarOptionals["version"], "string", "version"); err != nil {
+		return successPayload, nil, err
+	}
+	if err := typeCheckParameter(localVarOptionals["digest"], "string", "digest"); err != nil {
+		return successPayload, nil, err
+	}
 	if err := typeCheckParameter(localVarOptionals["application"], "string", "application"); err != nil {
 		return successPayload, nil, err
 	}
 
+	if localVarTempParam, localVarOk := localVarOptionals["version"].(string); localVarOk {
+		localVarQueryParams.Add("version", parameterToString(localVarTempParam, ""))
+	}
+	if localVarTempParam, localVarOk := localVarOptionals["digest"].(string); localVarOk {
+		localVarQueryParams.Add("digest", parameterToString(localVarTempParam, ""))
+	}
 	if localVarTempParam, localVarOk := localVarOptionals["application"].(string); localVarOk {
 		localVarQueryParams.Add("application", parameterToString(localVarTempParam, ""))
 	}
@@ -161,8 +183,11 @@ func (a *V2PipelineTemplatesControllerApiService) DeleteUsingDELETE1(ctx context
 /* V2PipelineTemplatesControllerApiService Get a pipeline template.
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param id id
+ @param optional (nil or map[string]interface{}) with one or more of:
+     @param "version" (string) version
+     @param "digest" (string) digest
  @return map[string]interface{}*/
-func (a *V2PipelineTemplatesControllerApiService) GetUsingGET1(ctx context.Context, id string) (map[string]interface{},  *http.Response, error) {
+func (a *V2PipelineTemplatesControllerApiService) GetUsingGET2(ctx context.Context, id string, localVarOptionals map[string]interface{}) (map[string]interface{},  *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody interface{}
@@ -179,7 +204,19 @@ func (a *V2PipelineTemplatesControllerApiService) GetUsingGET1(ctx context.Conte
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if err := typeCheckParameter(localVarOptionals["version"], "string", "version"); err != nil {
+		return successPayload, nil, err
+	}
+	if err := typeCheckParameter(localVarOptionals["digest"], "string", "digest"); err != nil {
+		return successPayload, nil, err
+	}
 
+	if localVarTempParam, localVarOk := localVarOptionals["version"].(string); localVarOk {
+		localVarQueryParams.Add("version", parameterToString(localVarTempParam, ""))
+	}
+	if localVarTempParam, localVarOk := localVarOptionals["digest"].(string); localVarOk {
+		localVarQueryParams.Add("digest", parameterToString(localVarTempParam, ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{ "application/json",  }
 
@@ -423,6 +460,7 @@ func (a *V2PipelineTemplatesControllerApiService) PlanUsingPOST(ctx context.Cont
  @param id id
  @param pipelineTemplate pipelineTemplate
  @param optional (nil or map[string]interface{}) with one or more of:
+     @param "version" (string) version
      @param "skipPlanDependents" (bool) skipPlanDependents
  @return */
 func (a *V2PipelineTemplatesControllerApiService) UpdateUsingPOST1(ctx context.Context, id string, pipelineTemplate interface{}, localVarOptionals map[string]interface{}) ( *http.Response, error) {
@@ -434,17 +472,23 @@ func (a *V2PipelineTemplatesControllerApiService) UpdateUsingPOST1(ctx context.C
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/pipelineTemplates/{id}"
+	localVarPath := a.client.cfg.BasePath + "/v2/pipelineTemplates/update/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", fmt.Sprintf("%v", id), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if err := typeCheckParameter(localVarOptionals["version"], "string", "version"); err != nil {
+		return nil, err
+	}
 	if err := typeCheckParameter(localVarOptionals["skipPlanDependents"], "bool", "skipPlanDependents"); err != nil {
 		return nil, err
 	}
 
+	if localVarTempParam, localVarOk := localVarOptionals["version"].(string); localVarOk {
+		localVarQueryParams.Add("version", parameterToString(localVarTempParam, ""))
+	}
 	if localVarTempParam, localVarOk := localVarOptionals["skipPlanDependents"].(bool); localVarOk {
 		localVarQueryParams.Add("skipPlanDependents", parameterToString(localVarTempParam, ""))
 	}

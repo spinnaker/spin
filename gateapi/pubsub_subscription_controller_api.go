@@ -29,7 +29,7 @@ type PubsubSubscriptionControllerApiService service
 /* PubsubSubscriptionControllerApiService Retrieve the list of pub/sub subscriptions configured in Echo.
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @return []Mapstringstring*/
-func (a *PubsubSubscriptionControllerApiService) AllUsingGET3(ctx context.Context) ([]Mapstringstring,  *http.Response, error) {
+func (a *PubsubSubscriptionControllerApiService) AllUsingGET4(ctx context.Context) ([]Mapstringstring,  *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody interface{}
