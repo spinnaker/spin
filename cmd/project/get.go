@@ -1,4 +1,4 @@
-// Copyright (c) 2018, Google, Inc.
+// Copyright (c) 2019, Kevin Reynolds.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ type GetOptions struct {
 }
 
 var (
-	getProjectShort   = "Get the specified project"
-	getProjectLong    = "Get the specified project"
-	getProjectExample = "usage: spin project get [options] project-name"
+	getProjectShort   = "Get the pipelines for the specified project"
+	getProjectLong    = "Get the pipelines for the specified project"
+	getProjectExample = "usage: spin project get-pipelines [options] project-name"
 )
 
 func NewGetCmd(prjOptions projectOptions) *cobra.Command {
@@ -41,8 +41,7 @@ func NewGetCmd(prjOptions projectOptions) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:     "get",
-		Aliases: []string{"get"},
+		Use:     "get-pipelines",
 		Short:   getProjectShort,
 		Long:    getProjectLong,
 		Example: getProjectExample,
@@ -50,9 +49,6 @@ func NewGetCmd(prjOptions projectOptions) *cobra.Command {
 			return getProject(cmd, options, args)
 		},
 	}
-
-	// Note that false here means defaults to false, and flips to true if the flag is present.
-	cmd.PersistentFlags().BoolVarP(&options.expand, "expand", "x", false, "expand app payload to include clusters")
 
 	return cmd
 }
@@ -81,14 +77,6 @@ func getProject(cmd *cobra.Command, options GetOptions, args []string) error {
 		return err
 	}
 	util.UI.JsonOutput(project, util.UI.OutputFormat)
-
-	// if options.expand {
-	// 	// NOTE: expand returns the actual attributes as well as the app's cluster details, nested in
-	// 	// their own fields. This means that the expanded output can't be submitted as input to `save`.
-	// } else {
-	// 	// NOTE: app GET wraps the actual app attributes in an 'attributes' field.
-	// 	util.UI.JsonOutput(project["attributes"], util.UI.OutputFormat)
-	// }
 
 	return nil
 }
