@@ -318,7 +318,7 @@ func (a *ApplicationControllerApiService) GetApplicationHistoryUsingGET(ctx cont
  @param optional (nil or map[string]interface{}) with one or more of:
      @param "expand" (bool) expand
  @return map[string]interface{}*/
-func (a *ApplicationControllerApiService) GetApplicationUsingGET(ctx context.Context, application string, localVarOptionals map[string]interface{}) (map[string]interface{},  *http.Response, error) {
+func (a *ApplicationControllerApiService) GetApplicationUsingGET(ctx context.Context, application string, localVarOptionals map[string]interface{}, token string) (map[string]interface{},  *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody interface{}
@@ -349,6 +349,10 @@ func (a *ApplicationControllerApiService) GetApplicationUsingGET(ctx context.Con
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
 	if localVarHttpContentType != "" {
 		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+    if token != nil || token != "" {
+	    localVarHeaderParams["X-Api-Service-Key"] = token
 	}
 
 	// to determine the Accept header
