@@ -138,9 +138,15 @@ func NewGateClient(flags *pflag.FlagSet) (*GatewayClient, error) {
 		return nil, err
 	}
 
+	m = make(map[string]string)
+
+	if flags.GetString("token") != "" {
+		m["X-Api-Service-Key"] = flags.GetString("token")
+    }
+
 	cfg := &gate.Configuration{
 		BasePath:      gateClient.GateEndpoint(),
-		DefaultHeader: make(map[string]string),
+		DefaultHeader: m,
 		UserAgent:     fmt.Sprintf("%s/%s", version.UserAgent, version.String()),
 		HTTPClient:    httpClient,
 	}
