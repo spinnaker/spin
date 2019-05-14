@@ -297,7 +297,7 @@ func (a *TaskControllerApiService) GetTaskDetailsUsingGET1(ctx context.Context, 
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param id id
  @return map[string]interface{}*/
-func (a *TaskControllerApiService) GetTaskUsingGET1(ctx context.Context, id string) (map[string]interface{},  *http.Response, error) {
+func (a *TaskControllerApiService) GetTaskUsingGET1(ctx context.Context, id string, token string) (map[string]interface{},  *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody interface{}
@@ -322,6 +322,10 @@ func (a *TaskControllerApiService) GetTaskUsingGET1(ctx context.Context, id stri
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
 	if localVarHttpContentType != "" {
 		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	if token != nil || token != "" {
+	    localVarHeaderParams["X-Api-Service-Key"] = token
 	}
 
 	// to determine the Accept header
