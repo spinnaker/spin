@@ -24,7 +24,7 @@ import (
 
 	"github.com/mitchellh/cli"
 	"github.com/mitchellh/colorstring"
-	"github.com/spinnaker/spin/cmd/output"
+	"github.com/MarkFreebairn/spin/cmd/output"
 	"k8s.io/client-go/util/jsonpath"
 )
 

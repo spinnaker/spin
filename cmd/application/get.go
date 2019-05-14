@@ -16,11 +16,11 @@ package application
 
 import (
 	"fmt"
-	"github.com/spinnaker/spin/util"
+	"github.com/MarkFreebairn/spin/util"
 	"net/http"
 
 	"github.com/spf13/cobra"
-	"github.com/spinnaker/spin/cmd/gateclient"
+	"github.com/MarkFreebairn/spin/cmd/gateclient"
 )
 
 type GetOptions struct {

@@ -33,10 +33,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/spinnaker/spin/config"
-	iap "github.com/spinnaker/spin/config/auth/iap"
-	"github.com/spinnaker/spin/util"
-	"github.com/spinnaker/spin/version"
+	"github.com/MarkFreebairn/spin/config"
+	iap "github.com/MarkFreebairn/spin/config/auth/iap"
+	"github.com/MarkFreebairn/spin/util"
+	"github.com/MarkFreebairn/spin/version"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/pflag"
@@ -45,7 +45,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 
-	gate "github.com/spinnaker/spin/gateapi"
+	gate "github.com/MarkFreebairn/spin/gateapi"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
@@ -138,10 +138,15 @@ func NewGateClient(flags *pflag.FlagSet) (*GatewayClient, error) {
 		return nil, err
 	}
 
-	m = make(map[string]string)
+	m := make(map[string]string)
 
-	if flags.GetString("token") != "" {
-		m["X-Api-Service-Key"] = flags.GetString("token")
+	token, err := flags.GetString("token")
+	if err != nil {
+		return nil, err
+	}
+
+	if token != "" {
+		m["X-Api-Service-Key"] = token
     }
 
 	cfg := &gate.Configuration{

@@ -22,7 +22,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/spinnaker/spin/util"
+	"github.com/MarkFreebairn/spin/util"
 
 	"github.com/spf13/cobra"
 )
