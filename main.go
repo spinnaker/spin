@@ -18,8 +18,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/spinnaker/spin/cmd"
-	"github.com/spinnaker/spin/util"
+	"github.com/MarkFreebairn/spin/cmd"
+	"github.com/MarkFreebairn/spin/util"
 )
 
 func main() {
