@@ -297,7 +297,7 @@ func (a *TaskControllerApiService) GetTaskDetailsUsingGET1(ctx context.Context, 
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param id id
  @return map[string]interface{}*/
-func (a *TaskControllerApiService) GetTaskUsingGET1(ctx context.Context, id string, token string) (map[string]interface{},  *http.Response, error) {
+func (a *TaskControllerApiService) GetTaskUsingGET1(ctx context.Context, id string) (map[string]interface{},  *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody interface{}
@@ -324,9 +324,9 @@ func (a *TaskControllerApiService) GetTaskUsingGET1(ctx context.Context, id stri
 		localVarHeaderParams["Content-Type"] = localVarHttpContentType
 	}
 
-	if token != nil || token != "" {
-	    localVarHeaderParams["X-Api-Service-Key"] = token
-	}
+	// if token != nil || token != "" {
+	//     localVarHeaderParams["X-Api-Service-Key"] = token
+	// }
 
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
@@ -365,7 +365,7 @@ func (a *TaskControllerApiService) GetTaskUsingGET1(ctx context.Context, id stri
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param map_ map
  @return map[string]interface{}*/
-func (a *TaskControllerApiService) TaskUsingPOST1(ctx context.Context, map_ interface{}, token string) (map[string]interface{},  *http.Response, error) {
+func (a *TaskControllerApiService) TaskUsingPOST1(ctx context.Context, map_ interface{}) (map[string]interface{},  *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Post")
 		localVarPostBody interface{}
@@ -391,9 +391,9 @@ func (a *TaskControllerApiService) TaskUsingPOST1(ctx context.Context, map_ inte
 		localVarHeaderParams["Content-Type"] = localVarHttpContentType
 	}
 
-	if token != nil || token != "" {
-	    localVarHeaderParams["X-Api-Service-Key"] = token
-	}
+	// if token != nil || token != "" {
+	//     localVarHeaderParams["X-Api-Service-Key"] = token
+	// }
 
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
