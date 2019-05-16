@@ -15,7 +15,7 @@
 package config
 
 import (
-	"github.com/MarkFreebairn/spin/config/auth"
+	"github.com/spinnaker/spin/config/auth"
 )
 
 // Config is the CLI configuration kept in '~/.spin/config'.

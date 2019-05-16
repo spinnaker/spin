@@ -17,7 +17,7 @@ package execution
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/MarkFreebairn/spin/util"
+	"github.com/spinnaker/spin/util"
 	"net/http"
 	"net/http/httptest"
 	"os"

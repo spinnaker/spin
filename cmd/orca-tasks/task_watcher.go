@@ -16,7 +16,7 @@ package orca_tasks
 
 import (
 	"fmt"
-	"github.com/MarkFreebairn/spin/cmd/gateclient"
+	"github.com/spinnaker/spin/cmd/gateclient"
 	"strings"
 	"time"
 )

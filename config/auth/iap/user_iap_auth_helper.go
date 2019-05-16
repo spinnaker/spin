@@ -22,7 +22,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/MarkFreebairn/spin/util/execcmd"
+	"github.com/spinnaker/spin/util/execcmd"
 	"golang.org/x/oauth2"
 )
 

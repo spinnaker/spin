@@ -4,10 +4,10 @@ import (
 	"io"
 
 	"github.com/spf13/cobra"
-	"github.com/MarkFreebairn/spin/cmd/application"
-	"github.com/MarkFreebairn/spin/cmd/pipeline"
-	"github.com/MarkFreebairn/spin/cmd/pipeline-template"
-	"github.com/MarkFreebairn/spin/version"
+	"github.com/spinnaker/spin/cmd/application"
+	"github.com/spinnaker/spin/cmd/pipeline"
+	"github.com/spinnaker/spin/cmd/pipeline-template"
+	"github.com/spinnaker/spin/version"
 )
 
 type RootOptions struct {
