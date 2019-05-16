@@ -51,7 +51,7 @@ func TestApplicationDelete_fail(t *testing.T) {
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
-	args := []string{"application", "delete", NAME, "--gate-endpoint=" + ts.URL}
+	args := []string{"application", "delete", NAME, "--gate-endpoint=" + ts.URL, "--additonal_headers=hello=hi"}
 	rootCmd.SetArgs(args)
 	err := rootCmd.Execute()
 	if err == nil {
