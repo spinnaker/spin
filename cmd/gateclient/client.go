@@ -140,14 +140,18 @@ func NewGateClient(flags *pflag.FlagSet) (*GatewayClient, error) {
 
 	m := make(map[string]string)
 
-	token, err := flags.GetString("token")
+	additionalHeaders, err := flags.GetString("additional_headers")
 	if err != nil {
 		return nil, err
 	}
 
-	if token != "" {
-		m["X-Api-Service-Key"] = token
-    }
+	if additionalHeaders != "" {
+		headers := strings.Split(additionalHeaders, ",")
+		for _, element := range headers {
+			header := strings.Split(element, "=")
+			m[strings.TrimSpace(header[0])] = strings.TrimSpace(header[1])
+		}
+	}
 
 	cfg := &gate.Configuration{
 		BasePath:      gateClient.GateEndpoint(),
