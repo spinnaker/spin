@@ -324,10 +324,6 @@ func (a *TaskControllerApiService) GetTaskUsingGET1(ctx context.Context, id stri
 		localVarHeaderParams["Content-Type"] = localVarHttpContentType
 	}
 
-	// if token != nil || token != "" {
-	//     localVarHeaderParams["X-Api-Service-Key"] = token
-	// }
-
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
@@ -390,10 +386,6 @@ func (a *TaskControllerApiService) TaskUsingPOST1(ctx context.Context, map_ inte
 	if localVarHttpContentType != "" {
 		localVarHeaderParams["Content-Type"] = localVarHttpContentType
 	}
-
-	// if token != nil || token != "" {
-	//     localVarHeaderParams["X-Api-Service-Key"] = token
-	// }
 
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{

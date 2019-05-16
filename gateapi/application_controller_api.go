@@ -351,10 +351,6 @@ func (a *ApplicationControllerApiService) GetApplicationUsingGET(ctx context.Con
 		localVarHeaderParams["Content-Type"] = localVarHttpContentType
 	}
 
-	// if token != nil || token != "" {
-	//     localVarHeaderParams["X-Api-Service-Key"] = token
-	// }
-
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
