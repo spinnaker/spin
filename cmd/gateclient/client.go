@@ -138,18 +138,21 @@ func NewGateClient(flags *pflag.FlagSet) (*GatewayClient, error) {
 		return nil, err
 	}
 
+	
 	m := make(map[string]string)
 
-	additionalHeaders, err := flags.GetString("additional_headers")
-	if err != nil {
-		return nil, err
-	}
+	if isFlagPassed("default-headers") {
+		defaultHeaders, err := flags.GetString("default-headers")
+		if err != nil {
+			return nil, err
+		}
 
-	if additionalHeaders != "" {
-		headers := strings.Split(additionalHeaders, ",")
-		for _, element := range headers {
-			header := strings.Split(element, "=")
-			m[strings.TrimSpace(header[0])] = strings.TrimSpace(header[1])
+		if defaultHeaders != "" {
+			headers := strings.Split(defaultHeaders, ",")
+			for _, element := range headers {
+				header := strings.Split(element, "=")
+				m[strings.TrimSpace(header[0])] = strings.TrimSpace(header[1])
+			}
 		}
 	}
 
@@ -516,4 +519,14 @@ func dialGate(gateClient *GatewayClient) error {
 	io.Copy(ioutil.Discard, res.Body)
 	res.Body.Close()
 	return nil
+}
+
+func isFlagPassed(name string) bool {
+    found := false
+    pflag.Visit(func(f *pflag.Flag) {
+        if f.Name == name {
+            found = true
+        }
+    })
+    return found
 }
