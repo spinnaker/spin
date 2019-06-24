@@ -75,7 +75,6 @@ fi
 
 gcloud auth activate-service-account --key-file ${KEY_FILE}
 gcloud components install gsutil -q
-gcloud auth configure-docker -q
 
 if [ -z "$VERSION" ]; then
   echo -e "No version to release specified with --version, exiting"
@@ -101,18 +100,6 @@ for elem in darwin,amd64 linux,amd64 windows,amd64; do
   echo "Copying $file to $path"
 
   gsutil cp $file $path
-
-  if [ "$elem" = "linux,amd64" ]; then
-    echo "Building Docker image gcr.io/spinnaker-marketplace/spin:${VERSION}"
-
-    docker build -t gcr.io/spinnaker-marketplace/spin:${VERSION} -f Dockerfile.slim .
-    docker push gcr.io/spinnaker-marketplace/spin:${VERSION}
-
-    # Also publish as :latest
-    docker tag gcr.io/spinnaker-marketplace/spin:${VERSION} gcr.io/spinnaker-marketplace/spin:latest
-    docker push gcr.io/spinnaker-marketplace/spin:latest
-  fi
-
   rm $file
 done
 
