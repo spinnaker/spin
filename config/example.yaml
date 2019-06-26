@@ -38,8 +38,22 @@ auth:
 
   iap:
     # check detailed config in https://cloud.google.com/iap/docs/authentication-howto#authenticating_from_a_desktop_app
+    # The following three entries are mandatory.
     oauthClientId: "xxxx-xxxx.apps.googleusercontent.com"
     oauthClientSecret: "oauth client secret"
     iapClientId: "yyyy-yyyy.apps.googleusercontent.com"
+    # Optional field containing an offline refresh token.
+    # Filling this in enables spin to refresh the access token
+    # for a user.
+    # This would the token recieved from the `Signing in to the application` step
+    # of https://cloud.google.com/iap/docs/authentication-howto#authenticating_from_a_desktop_app
+    iapClientRefresh: "1/blah-blah-blah"
+    # Optional field containing an access token.
+    # If it's filled in spin will not try to refresh or interactively
+    # fetch a token for the user.
+    # This would be the `id_token`l recieved from the `Accessing the application` stage of
+    # https://cloud.google.com/iap/docs/authentication-howto#authenticating_from_a_desktop_app
     iapIdToken: "example-token-blah-blah"
+    # Optional field containing a serviceAccount json key.
+    # If filled in the serviceAccount id will be used to authenticate spin.
     serviceAccountKeyPath: "$HOME/.spin/key.json"
