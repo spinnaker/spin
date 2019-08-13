@@ -129,6 +129,7 @@ func buildUsingTemplate(id string, options UseOptions) map[string]interface{} {
 	pipeline["schema"] = "v2"
 	pipeline["application"] = options.application
 	pipeline["name"] = options.name
+	pipeline["description"] = options.description
 
 	// Properties not supported by spin, add empty default values which can be populated manually if desired
 	pipeline["exclude"] = make([]string, 0)
@@ -136,7 +137,6 @@ func buildUsingTemplate(id string, options UseOptions) map[string]interface{} {
 	pipeline["parameters"] = make([]string, 0)
 	pipeline["notifications"] = make([]string, 0)
 	pipeline["stages"] = make([]string, 0)
-	pipeline["description"] = ""
 
 	return pipeline
 }
