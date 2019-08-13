@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/cmd/gateclient"
@@ -26,8 +27,11 @@ import (
 
 type UseOptions struct {
 	*pipelineTemplateOptions
-	id  string
-	tag string
+	id          string
+	tag         string
+	application string
+	name        string
+	description string
 }
 
 var (
@@ -49,8 +53,10 @@ func NewUseCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&options.id, "id", "", "id of the pipeline template")
-	cmd.PersistentFlags().StringVar(&options.tag, "tag", "",
-		"(optional) specific tag to query")
+	cmd.PersistentFlags().StringVar(&options.application, "application", "", "application to get the new pipeline")
+	cmd.PersistentFlags().StringVar(&options.name, "name", "", "name of the new pipeline")
+	cmd.PersistentFlags().StringVar(&options.tag, "tag", "", "(optional) specific tag to query")
+	cmd.PersistentFlags().StringVar(&options.tag, "description", "", "(optional) description of the pipeline")
 
 	return cmd
 }
@@ -61,15 +67,27 @@ func usePipelineTemplate(cmd *cobra.Command, options UseOptions, args []string) 
 		return err
 	}
 
-	id := options.id
+	id := strings.TrimSpace(options.id)
 	if id == "" {
 		id, err = util.ReadArgsOrStdin(args)
 		if err != nil {
 			return err
 		}
+		id = strings.TrimSpace(id)
 		if id == "" {
 			return errors.New("no pipeline template id supplied, exiting")
 		}
+	}
+
+	// Check required params
+	options.application = strings.TrimSpace(options.application)
+	if options.application == "" {
+		return errors.New("no application name supplied, exiting")
+	}
+
+	options.name = strings.TrimSpace(options.name)
+	if options.name == "" {
+		return errors.New("no pipeline name supplied, exiting")
 	}
 
 	queryParams := map[string]interface{}{}
@@ -77,7 +95,8 @@ func usePipelineTemplate(cmd *cobra.Command, options UseOptions, args []string) 
 		queryParams["tag"] = options.tag
 	}
 
-	successPayload, resp, err := gateClient.V2PipelineTemplatesControllerApi.GetUsingGET2(gateClient.Context,
+	// Get pipeline template to ensure it exists
+	_, resp, err := gateClient.V2PipelineTemplatesControllerApi.GetUsingGET2(gateClient.Context,
 		id, queryParams)
 
 	if err != nil {
@@ -85,11 +104,39 @@ func usePipelineTemplate(cmd *cobra.Command, options UseOptions, args []string) 
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("Encountered an error getting pipeline template with id %s, status code: %d\n",
+		return fmt.Errorf("encountered an error getting pipeline template with id %s, status code: %d",
 			id,
 			resp.StatusCode)
 	}
 
-	util.UI.JsonOutput(successPayload, util.UI.OutputFormat)
+	pipeline := buildUsingTemplate(id, options)
+
+	util.UI.JsonOutput(pipeline, util.UI.OutputFormat)
 	return nil
+}
+
+func buildUsingTemplate(id string, options UseOptions) map[string]interface{} {
+	pipeline := make(map[string]interface{})
+	templateProperty := make(map[string]interface{})
+
+	// Configure pipeline.template
+	templateProperty["artifactAccount"] = "front50ArtifactCredentials"
+	templateProperty["type"] = fmt.Sprintf("spinnaker://%s", id)
+	templateProperty["reference"] = "front50ArtifactCredentials"
+
+	// Configure pipeline
+	pipeline["template"] = templateProperty
+	pipeline["schema"] = "v2"
+	pipeline["application"] = options.application
+	pipeline["name"] = options.name
+
+	// Properties not supported by spin, add empty default values which can be populated manually if desired
+	pipeline["exclude"] = make([]string, 0)
+	pipeline["triggers"] = make([]string, 0)
+	pipeline["parameters"] = make([]string, 0)
+	pipeline["notifications"] = make([]string, 0)
+	pipeline["stages"] = make([]string, 0)
+	pipeline["description"] = ""
+
+	return pipeline
 }
