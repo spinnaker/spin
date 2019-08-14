@@ -27,11 +27,12 @@ import (
 
 type UseOptions struct {
 	*pipelineTemplateOptions
-	id          string
-	tag         string
-	application string
-	name        string
-	description string
+	id                  string
+	tag                 string
+	application         string
+	name                string
+	description         string
+	disableServerChecks bool
 }
 
 var (
@@ -56,27 +57,16 @@ func NewUseCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVar(&options.application, "application", "", "application to get the new pipeline")
 	cmd.PersistentFlags().StringVar(&options.name, "name", "", "name of the new pipeline")
 	cmd.PersistentFlags().StringVar(&options.tag, "tag", "", "(optional) specific tag to query")
-	cmd.PersistentFlags().StringVar(&options.tag, "description", "", "(optional) description of the pipeline")
+	cmd.PersistentFlags().StringVar(&options.description, "description", "", "(optional) description of the pipeline")
+	cmd.PersistentFlags().BoolVar(&options.disableServerChecks, "disable-server-checks", false, "(optional) disables checking if the app and template exist")
 
 	return cmd
 }
 
 func usePipelineTemplate(cmd *cobra.Command, options UseOptions, args []string) error {
-	gateClient, err := gateclient.NewGateClient(cmd.InheritedFlags())
-	if err != nil {
-		return err
-	}
-
-	id := strings.TrimSpace(options.id)
-	if id == "" {
-		id, err = util.ReadArgsOrStdin(args)
-		if err != nil {
-			return err
-		}
-		id = strings.TrimSpace(id)
-		if id == "" {
-			return errors.New("no pipeline template id supplied, exiting")
-		}
+	id, errID := getTemplateID(options, args)
+	if errID != nil {
+		return errID
 	}
 
 	// Check required params
@@ -90,29 +80,41 @@ func usePipelineTemplate(cmd *cobra.Command, options UseOptions, args []string) 
 		return errors.New("no pipeline name supplied, exiting")
 	}
 
-	queryParams := map[string]interface{}{}
-	if options.tag != "" {
-		queryParams["tag"] = options.tag
-	}
+	// Check if PT and app exist
+	gateClient, err := gateclient.NewGateClient(cmd.InheritedFlags())
+	if !options.disableServerChecks {
+		if err != nil {
+			return err
+		}
 
-	// Get pipeline template to ensure it exists
-	_, resp, err := gateClient.V2PipelineTemplatesControllerApi.GetUsingGET2(gateClient.Context,
-		id, queryParams)
-
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("encountered an error getting pipeline template with id %s, status code: %d",
-			id,
-			resp.StatusCode)
+		errExists := checkExists(gateClient, id, options)
+		if errExists != nil {
+			return errExists
+		}
 	}
 
 	pipeline := buildUsingTemplate(id, options)
-
-	util.UI.JsonOutput(pipeline, util.UI.OutputFormat)
+	util.UI.JsonOutput(pipeline, nil)
 	return nil
+}
+
+func getTemplateID(options UseOptions, args []string) (string, error) {
+	// Check options if they passed in like --id
+	optionsID := strings.TrimSpace(options.id)
+	if optionsID != "" {
+		return optionsID, nil
+	}
+	// Otherwise get from arguments
+	argsID, err := util.ReadArgsOrStdin(args)
+	if err != nil {
+		return "", err
+	}
+	argsID = strings.TrimSpace(argsID)
+	if argsID == "" {
+		return "", errors.New("no pipeline template id supplied, exiting")
+	}
+
+	return argsID, nil
 }
 
 func buildUsingTemplate(id string, options UseOptions) map[string]interface{} {
@@ -139,4 +141,38 @@ func buildUsingTemplate(id string, options UseOptions) map[string]interface{} {
 	pipeline["stages"] = make([]string, 0)
 
 	return pipeline
+}
+
+func checkExists(gateClient *gateclient.GatewayClient, id string, options UseOptions) error {
+	_, respApp, errApp := gateClient.ApplicationControllerApi.GetApplicationUsingGET(gateClient.Context,
+		options.application, nil)
+	if errApp != nil {
+		return errApp
+	}
+
+	if respApp.StatusCode != http.StatusOK {
+		return fmt.Errorf("encountered an error getting application with name %s, status code: %d",
+			options.application,
+			respApp.StatusCode)
+	}
+
+	// Check template exists
+	queryParams := map[string]interface{}{}
+	if options.tag != "" {
+		queryParams["tag"] = options.tag
+	}
+	_, respPT, errPT := gateClient.V2PipelineTemplatesControllerApi.GetUsingGET2(gateClient.Context,
+		id, queryParams)
+
+	if errPT != nil {
+		return errPT
+	}
+
+	if respPT.StatusCode != http.StatusOK {
+		return fmt.Errorf("encountered an error getting pipeline template with id %s, status code: %d",
+			id,
+			respPT.StatusCode)
+	}
+
+	return nil
 }
