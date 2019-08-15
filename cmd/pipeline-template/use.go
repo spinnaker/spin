@@ -20,7 +20,6 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/spinnaker/spin/cmd/gateclient"
 	"github.com/spinnaker/spin/util"
 )
 
@@ -82,13 +81,9 @@ func usePipelineTemplate(cmd *cobra.Command, options UseOptions, args []string) 
 		return errors.New("no pipeline name supplied, exiting")
 	}
 
+	// Build pipeline using template, output
 	pipeline := buildUsingTemplate(id, options)
-
-	_, err := gateclient.NewGateClient(cmd.InheritedFlags())
-	if err != nil {
-		return err
-	}
-
+	util.InitUI(false, false, "")
 	util.UI.JsonOutput(pipeline, util.UI.OutputFormat)
 
 	return nil
