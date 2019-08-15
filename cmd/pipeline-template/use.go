@@ -36,8 +36,8 @@ type UseOptions struct {
 }
 
 var (
-	usePipelineTemplateShort = "Generates a pipeline JSON configuration using the specified pipeline template"
-	usePipelineTemplateLong  = "Generates a pipeline JSON configuration using the specified pipeline template"
+	usePipelineTemplateShort = "Creates a pipeline configuration using a managed pipeline template"
+	usePipelineTemplateLong  = "Creates a pipeline configuration using a managed pipeline template"
 )
 
 func NewUseCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Command {
@@ -54,13 +54,13 @@ func NewUseCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&options.id, "id", "", "id of the pipeline template")
-	cmd.PersistentFlags().StringVar(&options.application, "application", "", "application to get the new pipeline")
-	cmd.PersistentFlags().StringVar(&options.name, "name", "", "name of the new pipeline")
-	cmd.PersistentFlags().StringVar(&options.tag, "tag", "", "(optional) specific tag to query")
-	cmd.PersistentFlags().StringVar(&options.description, "description", "", "(optional) description of the pipeline")
+	cmd.PersistentFlags().StringVarP(&options.application, "application", "a", "", "application to get the new pipeline")
+	cmd.PersistentFlags().StringVarP(&options.name, "name", "n", "", "name of the new pipeline")
+	cmd.PersistentFlags().StringVarP(&options.tag, "tag", "t", "", "(optional) specific tag to query")
+	cmd.PersistentFlags().StringVarP(&options.description, "description", "d", "", "(optional) description of the pipeline")
 	cmd.PersistentFlags().StringVar(&options.templateType, "type", "front50/pipelineTemplate", "(optional) template type")
 	cmd.PersistentFlags().StringVar(&options.artifactAccount, "artifact-acount", "front50ArtifactCredentials", "(optional) artifact account")
-	cmd.PersistentFlags().StringToStringVar(&options.variables, "variables", nil, "template variables/values required by the template.  Format: key=val,key1=val1")
+	cmd.PersistentFlags().StringToStringVarP(&options.variables, "variables", "v", nil, "template variables/values required by the template.  Format: key=val,key1=val1")
 
 	return cmd
 }

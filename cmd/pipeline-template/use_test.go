@@ -44,6 +44,25 @@ func TestPipelineTemplateUse_basic(t *testing.T) {
 	}
 }
 
+func TestPipelineTemplateUse_basicShort(t *testing.T) {
+	args := []string{"pipeline-template", "use", "test-template-id", "-a", testAppName,
+		"-n", testPipelineName,
+		"-d", testDescription,
+		fmt.Sprintf("-v=%s", testVariables)}
+
+	currentCmd := NewUseCmd(pipelineTemplateOptions{})
+	rootCmd := getRootCmdForTest()
+	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd.AddCommand(currentCmd)
+	rootCmd.AddCommand(pipelineTemplateCmd)
+
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+}
+
 func TestPipelineTemplateUse_missingFlags(t *testing.T) {
 	args := []string{"pipeline-template", "use"} // Missing id, application, name
 	currentCmd := NewUseCmd(pipelineTemplateOptions{})
