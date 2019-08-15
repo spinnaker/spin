@@ -17,7 +17,6 @@ package pipeline_template
 import (
 	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -27,12 +26,14 @@ import (
 
 type UseOptions struct {
 	*pipelineTemplateOptions
-	id                  string
-	tag                 string
-	application         string
-	name                string
-	description         string
-	disableServerChecks bool
+	id              string
+	tag             string
+	application     string
+	name            string
+	description     string
+	variables       map[string]string
+	templateType    string
+	artifactAccount string
 }
 
 var (
@@ -58,7 +59,9 @@ func NewUseCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVar(&options.name, "name", "", "name of the new pipeline")
 	cmd.PersistentFlags().StringVar(&options.tag, "tag", "", "(optional) specific tag to query")
 	cmd.PersistentFlags().StringVar(&options.description, "description", "", "(optional) description of the pipeline")
-	cmd.PersistentFlags().BoolVar(&options.disableServerChecks, "disable-server-checks", false, "(optional) disables checking if the app and template exist")
+	cmd.PersistentFlags().StringVar(&options.templateType, "type", "front50/pipelineTemplate", "(optional) template type")
+	cmd.PersistentFlags().StringVar(&options.artifactAccount, "artifact-acount", "front50ArtifactCredentials", "(optional) artifact account")
+	cmd.PersistentFlags().StringToStringVar(&options.variables, "variables", nil, "template variables/values required by the template.  Format: key=val,key1=val1")
 
 	return cmd
 }
@@ -74,27 +77,20 @@ func usePipelineTemplate(cmd *cobra.Command, options UseOptions, args []string) 
 	if options.application == "" {
 		return errors.New("no application name supplied, exiting")
 	}
-
 	options.name = strings.TrimSpace(options.name)
 	if options.name == "" {
 		return errors.New("no pipeline name supplied, exiting")
 	}
 
-	// Check if PT and app exist
-	gateClient, err := gateclient.NewGateClient(cmd.InheritedFlags())
-	if !options.disableServerChecks {
-		if err != nil {
-			return err
-		}
+	pipeline := buildUsingTemplate(id, options)
 
-		errExists := checkExists(gateClient, id, options)
-		if errExists != nil {
-			return errExists
-		}
+	_, err := gateclient.NewGateClient(cmd.InheritedFlags())
+	if err != nil {
+		return err
 	}
 
-	pipeline := buildUsingTemplate(id, options)
-	util.UI.JsonOutput(pipeline, nil)
+	util.UI.JsonOutput(pipeline, util.UI.OutputFormat)
+
 	return nil
 }
 
@@ -122,9 +118,9 @@ func buildUsingTemplate(id string, options UseOptions) map[string]interface{} {
 	templateProperty := make(map[string]interface{})
 
 	// Configure pipeline.template
-	templateProperty["artifactAccount"] = "front50ArtifactCredentials"
-	templateProperty["type"] = fmt.Sprintf("spinnaker://%s", id)
-	templateProperty["reference"] = "front50ArtifactCredentials"
+	templateProperty["artifactAccount"] = options.artifactAccount
+	templateProperty["type"] = options.templateType
+	templateProperty["reference"] = getTemplateNameWithProtocol(id)
 
 	// Configure pipeline
 	pipeline["template"] = templateProperty
@@ -132,6 +128,7 @@ func buildUsingTemplate(id string, options UseOptions) map[string]interface{} {
 	pipeline["application"] = options.application
 	pipeline["name"] = options.name
 	pipeline["description"] = options.description
+	pipeline["variables"] = options.variables
 
 	// Properties not supported by spin, add empty default values which can be populated manually if desired
 	pipeline["exclude"] = make([]string, 0)
@@ -143,36 +140,12 @@ func buildUsingTemplate(id string, options UseOptions) map[string]interface{} {
 	return pipeline
 }
 
-func checkExists(gateClient *gateclient.GatewayClient, id string, options UseOptions) error {
-	_, respApp, errApp := gateClient.ApplicationControllerApi.GetApplicationUsingGET(gateClient.Context,
-		options.application, nil)
-	if errApp != nil {
-		return errApp
+func getTemplateNameWithProtocol(id string) string {
+	// If no protocol given, add default spinnaker://
+	if !strings.Contains(id, "://") {
+		id = fmt.Sprintf("spinnaker://%s", id)
 	}
 
-	if respApp.StatusCode != http.StatusOK {
-		return fmt.Errorf("encountered an error getting application with name %s, status code: %d",
-			options.application,
-			respApp.StatusCode)
-	}
-
-	// Check template exists
-	queryParams := map[string]interface{}{}
-	if options.tag != "" {
-		queryParams["tag"] = options.tag
-	}
-	_, respPT, errPT := gateClient.V2PipelineTemplatesControllerApi.GetUsingGET2(gateClient.Context,
-		id, queryParams)
-
-	if errPT != nil {
-		return errPT
-	}
-
-	if respPT.StatusCode != http.StatusOK {
-		return fmt.Errorf("encountered an error getting pipeline template with id %s, status code: %d",
-			id,
-			respPT.StatusCode)
-	}
-
-	return nil
+	// Otherwise they have set the protocol, return it back as is
+	return id
 }
