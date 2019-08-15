@@ -115,7 +115,7 @@ func buildUsingTemplate(id string, options UseOptions) map[string]interface{} {
 	// Configure pipeline.template
 	templateProperty["artifactAccount"] = options.artifactAccount
 	templateProperty["type"] = options.templateType
-	templateProperty["reference"] = getTemplateNameWithProtocol(id)
+	templateProperty["reference"] = getFullTemplateID(id, options.tag)
 
 	// Configure pipeline
 	pipeline["template"] = templateProperty
@@ -135,12 +135,15 @@ func buildUsingTemplate(id string, options UseOptions) map[string]interface{} {
 	return pipeline
 }
 
-func getTemplateNameWithProtocol(id string) string {
+func getFullTemplateID(id string, tag string) string {
 	// If no protocol given, add default spinnaker://
 	if !strings.Contains(id, "://") {
 		id = fmt.Sprintf("spinnaker://%s", id)
 	}
-
+	// Append the tag if they set one
+	if tag != "" {
+		id = fmt.Sprintf("%s:%s", id, tag)
+	}
 	// Otherwise they have set the protocol, return it back as is
 	return id
 }
