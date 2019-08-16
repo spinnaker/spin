@@ -15,8 +15,10 @@
 package pipeline_template
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -33,6 +35,7 @@ type UseOptions struct {
 	variables       map[string]string
 	templateType    string
 	artifactAccount string
+	variablesFile   string
 }
 
 var (
@@ -61,6 +64,7 @@ func NewUseCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVar(&options.templateType, "type", "front50/pipelineTemplate", "(optional) template type")
 	cmd.PersistentFlags().StringVar(&options.artifactAccount, "artifact-acount", "front50ArtifactCredentials", "(optional) artifact account")
 	cmd.PersistentFlags().StringToStringVarP(&options.variables, "variables", "v", nil, "template variables/values required by the template.  Format: key=val,key1=val1")
+	cmd.PersistentFlags().StringVar(&options.variablesFile, "file", "", "file with template variables")
 
 	return cmd
 }
@@ -82,7 +86,10 @@ func usePipelineTemplate(cmd *cobra.Command, options UseOptions, args []string) 
 	}
 
 	// Build pipeline using template, output
-	pipeline := buildUsingTemplate(id, options)
+	pipeline, err := buildUsingTemplate(id, options)
+	if err != nil {
+		return err
+	}
 	util.InitUI(false, false, "")
 	util.UI.JsonOutput(pipeline, util.UI.OutputFormat)
 
@@ -108,9 +115,15 @@ func getTemplateID(options UseOptions, args []string) (string, error) {
 	return argsID, nil
 }
 
-func buildUsingTemplate(id string, options UseOptions) map[string]interface{} {
+func buildUsingTemplate(id string, options UseOptions) (map[string]interface{}, error) {
 	pipeline := make(map[string]interface{})
 	templateProperty := make(map[string]interface{})
+
+	// get variables from cmd and files
+	variables, err := getVariables(options)
+	if err != nil {
+		return nil, err
+	}
 
 	// Configure pipeline.template
 	templateProperty["artifactAccount"] = options.artifactAccount
@@ -123,7 +136,7 @@ func buildUsingTemplate(id string, options UseOptions) map[string]interface{} {
 	pipeline["application"] = options.application
 	pipeline["name"] = options.name
 	pipeline["description"] = options.description
-	pipeline["variables"] = options.variables
+	pipeline["variables"] = variables
 
 	// Properties not supported by spin, add empty default values which can be populated manually if desired
 	pipeline["exclude"] = make([]string, 0)
@@ -132,7 +145,32 @@ func buildUsingTemplate(id string, options UseOptions) map[string]interface{} {
 	pipeline["notifications"] = make([]string, 0)
 	pipeline["stages"] = make([]string, 0)
 
-	return pipeline
+	return pipeline, nil
+}
+
+func getVariables(options UseOptions) (map[string]string, error) {
+	// Create map for variables
+	var variables map[string]string
+
+	if options.variablesFile == "" {
+		variables = make(map[string]string)
+	} else {
+		fileVars, err := parseKeyValsFromFile(options.variablesFile, false)
+		if err != nil {
+			return nil, err
+		}
+		variables = fileVars
+	}
+
+	// Merge maps, with vars from command line overriding file vars
+	if len(options.variables) > 0 {
+		for k, v := range options.variables {
+			variables[k] = v
+		}
+	}
+
+	// return all variables from file and command line
+	return variables, nil
 }
 
 func getFullTemplateID(id string, tag string) string {
@@ -146,4 +184,43 @@ func getFullTemplateID(id string, tag string) string {
 	}
 	// Otherwise they have set the protocol, return it back as is
 	return id
+}
+
+func parseKeyValsFromFile(filePath string, tolerateEmptyInput bool) (map[string]string, error) {
+	var fromFile *os.File
+	var err error
+	var jsonContent map[string]string
+
+	if filePath == "" {
+		err = nil
+		if !tolerateEmptyInput {
+			err = errors.New("No file path given")
+		}
+		return nil, err
+	}
+
+	fromFile, err = os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	fi, err := fromFile.Stat()
+	if err != nil {
+		return nil, err
+	}
+
+	if fi.Size() <= 0 {
+		err = nil
+		if !tolerateEmptyInput {
+			err = errors.New("No json input to parse")
+		}
+		return nil, err
+	}
+
+	err = json.NewDecoder(fromFile).Decode(&jsonContent)
+	if err != nil {
+		newErr := errors.New("Error decoding json file.  Is it a key/value (string) pair?")
+		return nil, fmt.Errorf("%v %v", newErr, err)
+	}
+	return jsonContent, nil
 }
