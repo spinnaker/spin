@@ -35,7 +35,7 @@ type UseOptions struct {
 	variables       map[string]string
 	templateType    string
 	artifactAccount string
-	variablesFile   string
+	variablesFiles  []string
 }
 
 var (
@@ -63,8 +63,8 @@ func NewUseCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&options.description, "description", "d", "", "(optional) description of the pipeline")
 	cmd.PersistentFlags().StringVar(&options.templateType, "type", "front50/pipelineTemplate", "(optional) template type")
 	cmd.PersistentFlags().StringVar(&options.artifactAccount, "artifact-acount", "front50ArtifactCredentials", "(optional) artifact account")
-	cmd.PersistentFlags().StringToStringVarP(&options.variables, "variables", "v", nil, "template variables/values required by the template.  Format: key=val,key1=val1")
-	cmd.PersistentFlags().StringVar(&options.variablesFile, "file", "", "json/yaml file with template variables and values")
+	cmd.PersistentFlags().StringToStringVar(&options.variables, "set", nil, "template variables/values required by the template.  Format: key=val,key1=val1")
+	cmd.PersistentFlags().StringArrayVar(&options.variablesFiles, "values", nil, "json/yaml files with template variables and values")
 
 	return cmd
 }
@@ -152,10 +152,10 @@ func getVariables(options UseOptions) (map[string]string, error) {
 	// Create map for variables
 	var variables map[string]string
 
-	if options.variablesFile == "" {
+	if len(options.variablesFiles) == 0 {
 		variables = make(map[string]string)
 	} else {
-		fileVars, err := parseKeyValsFromFile(options.variablesFile, false)
+		fileVars, err := parseKeyValsFromFile(options.variablesFiles, false)
 		if err != nil {
 			return nil, err
 		}
@@ -186,42 +186,44 @@ func getFullTemplateID(id string, tag string) string {
 	return id
 }
 
-func parseKeyValsFromFile(filePath string, tolerateEmptyInput bool) (map[string]string, error) {
+func parseKeyValsFromFile(filePaths []string, tolerateEmptyInput bool) (map[string]string, error) {
 	var fromFile *os.File
 	var err error
 	var variables map[string]string
 
-	if filePath == "" {
-		err = nil
-		if !tolerateEmptyInput {
-			err = errors.New("No file path given")
+	for _, filePath := range filePaths {
+		if filePath == "" {
+			err = nil
+			if !tolerateEmptyInput {
+				err = errors.New("No file path given")
+			}
+			return nil, err
 		}
-		return nil, err
-	}
 
-	fromFile, err = os.Open(filePath)
-	if err != nil {
-		return nil, err
-	}
-
-	fi, err := fromFile.Stat()
-	if err != nil {
-		return nil, err
-	}
-
-	if fi.Size() <= 0 {
-		err = nil
-		if !tolerateEmptyInput {
-			err = errors.New("No json or yaml input to parse")
+		fromFile, err = os.Open(filePath)
+		if err != nil {
+			return nil, err
 		}
-		return nil, err
-	}
 
-	// yaml decoder works with json or yaml files
-	err = yaml.NewDecoder(fromFile).Decode(&variables)
-	if err != nil {
-		newErr := errors.New("Error decoding file.  Is it a key/value (string) pair?")
-		return nil, fmt.Errorf("%v %v", newErr, err)
+		fi, err := fromFile.Stat()
+		if err != nil {
+			return nil, err
+		}
+
+		if fi.Size() <= 0 {
+			err = nil
+			if !tolerateEmptyInput {
+				err = errors.New("No json or yaml input to parse")
+			}
+			return nil, err
+		}
+
+		// yaml decoder works with json or yaml files
+		err = yaml.NewDecoder(fromFile).Decode(&variables)
+		if err != nil {
+			newErr := errors.New("Error decoding file.  Is it a key/value (string) pair?")
+			return nil, fmt.Errorf("%v %v", newErr, err)
+		}
 	}
 
 	return variables, nil
