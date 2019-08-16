@@ -178,6 +178,7 @@ Class | Method | HTTP request | Description
  - [HashMapstringobject](docs/HashMapstringobject.md)
  - [HttpEntity](docs/HttpEntity.md)
  - [Mapstringstring](docs/Mapstringstring.md)
+ - [PipelineExecution](docs/PipelineExecution.md)
  - [PipelineTemplateDependent](docs/PipelineTemplateDependent.md)
  - [ReorderPipelinesCommand](docs/ReorderPipelinesCommand.md)
  - [ResponseEntity](docs/ResponseEntity.md)

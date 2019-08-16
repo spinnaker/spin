@@ -5323,7 +5323,7 @@ paths:
         200:
           description: "OK"
           schema:
-            $ref: "#/definitions/HttpEntity"
+            $ref: "#/definitions/PipelineExecution"
         201:
           description: "Created"
         401:
@@ -6230,4 +6230,9 @@ definitions:
       application:
         type: "string"
       pipelineConfigId:
+        type: "string"
+  PipelineExecution:
+    type: "object"
+    properties:
+      ref:
         type: "string"

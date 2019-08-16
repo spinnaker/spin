@@ -821,14 +821,14 @@ func (a *PipelineControllerApiService) GetPipelineUsingGET(ctx context.Context, 
  @param pipelineNameOrId pipelineNameOrId
  @param optional (nil or map[string]interface{}) with one or more of:
      @param "trigger" (interface{}) trigger
- @return HttpEntity*/
-func (a *PipelineControllerApiService) InvokePipelineConfigUsingPOST1(ctx context.Context, application string, pipelineNameOrId string, localVarOptionals map[string]interface{}) (HttpEntity,  *http.Response, error) {
+ @return PipelineExecution*/
+func (a *PipelineControllerApiService) InvokePipelineConfigUsingPOST1(ctx context.Context, application string, pipelineNameOrId string, localVarOptionals map[string]interface{}) (PipelineExecution,  *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Post")
 		localVarPostBody interface{}
 		localVarFileName string
 		localVarFileBytes []byte
-	 	successPayload  HttpEntity
+	 	successPayload  PipelineExecution
 	)
 
 	// create path and map variables

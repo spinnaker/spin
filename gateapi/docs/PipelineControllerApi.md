@@ -359,7 +359,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **InvokePipelineConfigUsingPOST1**
-> HttpEntity InvokePipelineConfigUsingPOST1(ctx, application, pipelineNameOrId, optional)
+> PipelineExecution InvokePipelineConfigUsingPOST1(ctx, application, pipelineNameOrId, optional)
 Trigger a pipeline execution
 
 ### Required Parameters
@@ -382,7 +382,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**HttpEntity**](HttpEntity.md)
+[**PipelineExecution**](PipelineExecution.md)
 
 ### Authorization
 
