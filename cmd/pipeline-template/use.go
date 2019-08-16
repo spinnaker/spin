@@ -15,7 +15,6 @@
 package pipeline_template
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -23,6 +22,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/util"
+	"gopkg.in/yaml.v2"
 )
 
 type UseOptions struct {
@@ -189,7 +189,7 @@ func getFullTemplateID(id string, tag string) string {
 func parseKeyValsFromFile(filePath string, tolerateEmptyInput bool) (map[string]string, error) {
 	var fromFile *os.File
 	var err error
-	var jsonContent map[string]string
+	var variables map[string]string
 
 	if filePath == "" {
 		err = nil
@@ -212,15 +212,17 @@ func parseKeyValsFromFile(filePath string, tolerateEmptyInput bool) (map[string]
 	if fi.Size() <= 0 {
 		err = nil
 		if !tolerateEmptyInput {
-			err = errors.New("No json input to parse")
+			err = errors.New("No json or yaml input to parse")
 		}
 		return nil, err
 	}
 
-	err = json.NewDecoder(fromFile).Decode(&jsonContent)
+	// yaml decoder works with json or yaml files
+	err = yaml.NewDecoder(fromFile).Decode(&variables)
 	if err != nil {
-		newErr := errors.New("Error decoding json file.  Is it a key/value (string) pair?")
+		newErr := errors.New("Error decoding file.  Is it a key/value (string) pair?")
 		return nil, fmt.Errorf("%v %v", newErr, err)
 	}
-	return jsonContent, nil
+
+	return variables, nil
 }
