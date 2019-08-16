@@ -64,7 +64,7 @@ func NewUseCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVar(&options.templateType, "type", "front50/pipelineTemplate", "(optional) template type")
 	cmd.PersistentFlags().StringVar(&options.artifactAccount, "artifact-acount", "front50ArtifactCredentials", "(optional) artifact account")
 	cmd.PersistentFlags().StringToStringVarP(&options.variables, "variables", "v", nil, "template variables/values required by the template.  Format: key=val,key1=val1")
-	cmd.PersistentFlags().StringVar(&options.variablesFile, "file", "", "file with template variables")
+	cmd.PersistentFlags().StringVar(&options.variablesFile, "file", "", "json/yaml file with template variables and values")
 
 	return cmd
 }
