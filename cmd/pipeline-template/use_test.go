@@ -16,20 +16,22 @@ package pipeline_template
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 )
 
 var testAppName = "test-application"
 var testPipelineName = "test-pipeline"
 var testDescription = "test-description"
-var testVariables = "one=1,two=2,three=3"
+var testVariables = "one=1,two=2,three=3,four=4"
 
 func TestPipelineTemplateUse_basic(t *testing.T) {
 	args := []string{"pipeline-template", "use", "test-template-id", "--application", testAppName,
 		"--name", testPipelineName,
 		"--description", testDescription,
-		fmt.Sprintf("--variables=%s", testVariables)}
+		fmt.Sprintf("--set=%s", testVariables)}
 
 	currentCmd := NewUseCmd(pipelineTemplateOptions{})
 	rootCmd := getRootCmdForTest()
@@ -48,7 +50,7 @@ func TestPipelineTemplateUse_basicShort(t *testing.T) {
 	args := []string{"pipeline-template", "use", "test-template-id", "-a", testAppName,
 		"-n", testPipelineName,
 		"-d", testDescription,
-		fmt.Sprintf("-v=%s", testVariables)}
+		fmt.Sprintf("--set=%s", testVariables)}
 
 	currentCmd := NewUseCmd(pipelineTemplateOptions{})
 	rootCmd := getRootCmdForTest()
@@ -76,4 +78,55 @@ func TestPipelineTemplateUse_missingFlags(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected failure but command succeeded")
 	}
+}
+
+func TestPipelineTemplateUse_templateVariables(t *testing.T) {
+	tempDir, tempFiles := createTestValuesFiles()
+	defer os.RemoveAll(tempDir) // Remove all files in the test directory for use_test.go
+
+	if tempFiles == nil || tempDir == "" {
+		t.Fatal("Could not create temp pipeline template file.")
+	}
+
+	args := []string{"pipeline-template", "use", "test-template-id", "-a", testAppName,
+		"-n", testPipelineName,
+		"-d", testDescription,
+		"--set", testVariables,
+		"--values", strings.Join(tempFiles, ","),
+		fmt.Sprintf("--set=%s", testVariables)}
+
+	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
+	rootCmd := getRootCmdForTest()
+	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd.AddCommand(currentCmd)
+	rootCmd.AddCommand(pipelineTemplateCmd)
+
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+}
+
+func createTestValuesFiles() (string, []string) {
+	// Create temp dir for the multiple values files to sit in
+	tempDir, err := ioutil.TempDir("", "use-template-tests")
+	if err != nil {
+		fmt.Println("Could not create temp directory")
+		return "", nil
+	}
+	// First file content is json, second is a basic yaml file.  Yaml file should overwrite json file (where they have matching variables)
+	fileContents := []string{"{\"one\":\"1\",\"two\":\"2\",\"overwrite\": false}", "overwrite: true"}
+	fileNames := make([]string, len(fileContents))
+	for i, valuesFile := range fileContents {
+		tempFile, _ := ioutil.TempFile(tempDir /* /tmp dir. */, "template-use-values")
+		bytes, err := tempFile.Write([]byte(valuesFile))
+		if err != nil || bytes == 0 {
+			fmt.Println("Could not write temp file.")
+			return "", nil
+		}
+		fileNames[i] = tempFile.Name()
+	}
+
+	return tempDir, fileNames
 }
