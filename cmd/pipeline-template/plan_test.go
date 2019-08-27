@@ -15,6 +15,7 @@
 package pipeline_template
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -124,6 +125,13 @@ func TestPipelineTemplatePlan_flags(t *testing.T) {
 // and Accepts POST calls.
 func gateServerPlanSuccess() *httptest.Server {
 	mux := http.NewServeMux()
+	mux.Handle("/version", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		payload := map[string]string{
+			"version": "Unknown",
+		}
+		b, _ := json.Marshal(&payload)
+		fmt.Fprintln(w, string(b))
+	}))
 	mux.Handle("/v2/pipelineTemplates/plan", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			fmt.Fprintln(w, strings.TrimSpace(testPipelineTemplatePlanResp))

@@ -15,6 +15,7 @@
 package application
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -81,14 +82,30 @@ func TestApplicationList_fail(t *testing.T) {
 // to direct requests to. Responds with a 200 and a well-formed application list.
 func testGateApplicationListSuccess() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(applicationListJson))
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(applicationListJson))
+		}
 	}))
 }
 
 // testGateApplicationListMalformed returns a malformed list of application configs.
 func testGateApplicationListMalformed() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(malformedApplicationListJson))
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(malformedApplicationListJson))
+		}
 	}))
 }
 

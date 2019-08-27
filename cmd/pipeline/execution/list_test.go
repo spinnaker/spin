@@ -15,6 +15,7 @@
 package execution
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -82,7 +83,15 @@ func TestExecutionList_fail(t *testing.T) {
 // to direct requests to. Responds with a 200 and a well-formed execution list.
 func testGateExecutionListSuccess() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(executionListJson))
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(executionListJson))
+		}
 	}))
 }
 

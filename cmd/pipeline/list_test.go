@@ -15,6 +15,7 @@
 package pipeline
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -100,14 +101,30 @@ func TestPipelineList_fail(t *testing.T) {
 // to direct requests to. Responds with a 200 and a well-formed pipeline list.
 func testGatePipelineListSuccess() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(pipelineListJson))
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(pipelineListJson))
+		}
 	}))
 }
 
 // testGatePipelineListMalformed returns a malformed list of pipeline configs.
 func testGatePipelineListMalformed() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineListJson))
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(malformedPipelineListJson))
+		}
 	}))
 }
 

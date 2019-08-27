@@ -15,6 +15,7 @@
 package pipeline
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -134,21 +135,45 @@ func TestPipelineGet_notfound(t *testing.T) {
 // to direct requests to. Responds with a 200 and a well-formed pipeline get response.
 func testGatePipelineGetSuccess() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(pipelineGetJson))
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(pipelineGetJson))
+		}
 	}))
 }
 
 // testGatePipelineGetMalformed returns a malformed get response of pipeline configs.
 func testGatePipelineGetMalformed() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineGetJson))
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(malformedPipelineGetJson))
+		}
 	}))
 }
 
 // testGatePipelineGetMissing returns a 404 Not Found for an errant pipeline name|application pair.
 func testGatePipelineGetMissing() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.NotFound(w, r)
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			http.NotFound(w, r)
+		}
 	}))
 }
 

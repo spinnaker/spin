@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -81,6 +82,13 @@ func TestApplicationDelete_flags(t *testing.T) {
 // to direct requests to. Responds with successful responses to pipeline execute API calls.
 func testGateApplicationDeleteSuccess() *httptest.Server {
 	mux := http.NewServeMux()
+	mux.Handle("/version", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		payload := map[string]string{
+			"version": "Unknown",
+		}
+		b, _ := json.Marshal(&payload)
+		fmt.Fprintln(w, string(b))
+	}))
 	mux.Handle("/applications/" + APP, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		payload := map[string]string{} // We don't use the payload, we are just checking if the target app exists.
 		b, _ := json.Marshal(&payload)
@@ -107,7 +115,15 @@ func testGateApplicationDeleteSuccess() *httptest.Server {
 // to direct requests to. Responds with a 500 InternalServerError.
 func GateAppDeleteFail() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO(jacobkiefer): Mock more robust errors once implemented upstream.
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			// TODO(jacobkiefer): Mock more robust errors once implemented upstream.
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
 	}))
 }

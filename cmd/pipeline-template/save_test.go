@@ -15,6 +15,7 @@
 package pipeline_template
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -254,6 +255,13 @@ func tempPipelineTemplateFile(pipelineContent string) *os.File {
 // and Accepts POST calls.
 func gateServerUpdateSuccess() *httptest.Server {
 	mux := http.NewServeMux()
+	mux.Handle("/version", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		payload := map[string]string{
+			"version": "Unknown",
+		}
+		b, _ := json.Marshal(&payload)
+		fmt.Fprintln(w, string(b))
+	}))
 	mux.Handle("/v2/pipelineTemplates/update/testSpelTemplate", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			w.WriteHeader(http.StatusAccepted)
@@ -273,6 +281,13 @@ func gateServerUpdateSuccess() *httptest.Server {
 // and Accepts POST calls.
 func gateServerCreateSuccess() *httptest.Server {
 	mux := http.NewServeMux()
+	mux.Handle("/version", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		payload := map[string]string{
+			"version": "Unknown",
+		}
+		b, _ := json.Marshal(&payload)
+		fmt.Fprintln(w, string(b))
+	}))
 	mux.Handle("/v2/pipelineTemplates/create", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			w.WriteHeader(http.StatusAccepted)

@@ -15,6 +15,7 @@
 package pipeline_template
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -99,7 +100,15 @@ func TestPipelineTemplateList_fail(t *testing.T) {
 // to direct requests to. Responds with a 200 and a well-formed pipelineTemplate list.
 func testGatePipelineTemplateListSuccess() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(pipelineTemplateListJson))
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(pipelineTemplateListJson))
+		}
 	}))
 }
 
@@ -107,14 +116,30 @@ func testGatePipelineTemplateListSuccess() *httptest.Server {
 // to direct requests to. Responds with a 200 and a well-formed pipelineTemplate list.
 func testGateScopedPipelineTemplateListSuccess() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(scopedPipelineTemplateListJson))
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(scopedPipelineTemplateListJson))
+		}
 	}))
 }
 
 // testGatePipelineTemplateListMalformed returns a malformed list of pipelineTemplate configs.
 func testGatePipelineTemplateListMalformed() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineTemplateListJson))
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(malformedPipelineTemplateListJson))
+		}
 	}))
 }
 

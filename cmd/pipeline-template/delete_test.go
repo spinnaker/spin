@@ -120,6 +120,13 @@ func TestPipelineTemplateDelete_missingid(t *testing.T) {
 // and Accepts POST calls.
 func gateServerDeleteSuccess() *httptest.Server {
 	mux := http.NewServeMux()
+	mux.Handle("/version", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		payload := map[string]string{
+			"version": "Unknown",
+		}
+		b, _ := json.Marshal(&payload)
+		fmt.Fprintln(w, string(b))
+	}))
 	mux.Handle("/v2/pipelineTemplates/myTemplate", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodDelete {
 			resp := gate.ResponseEntity{StatusCode: "201 Accepted", StatusCodeValue: 201}

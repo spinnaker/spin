@@ -241,6 +241,13 @@ func GateServerFail() *httptest.Server {
 // to direct requests to. Responds with successful responses to pipeline execute API calls.
 func testGateApplicationSaveSuccess() *httptest.Server {
 	mux := http.NewServeMux()
+	mux.Handle("/version", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		payload := map[string]string{
+			"version": "Unknown",
+		}
+		b, _ := json.Marshal(&payload)
+		fmt.Fprintln(w, string(b))
+	}))
 	mux.Handle("/tasks", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		payload := map[string]string{
 			"ref": "/tasks/id",

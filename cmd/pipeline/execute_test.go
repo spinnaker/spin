@@ -146,6 +146,13 @@ func TestPipelineExecute_missingapp(t *testing.T) {
 // to direct requests to. Responds with successful responses to pipeline execute API calls.
 func testGatePipelineExecuteSuccess() *httptest.Server {
 	mux := http.NewServeMux()
+	mux.Handle("/version", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		payload := map[string]string{
+			"version": "Unknown",
+		}
+		b, _ := json.Marshal(&payload)
+		fmt.Fprintln(w, string(b))
+	}))
 	mux.Handle("/pipelines/app/one", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		resp := gate.ResponseEntity{StatusCode: "201 Accepted", StatusCodeValue: 201}
 		b, _ := json.Marshal(&resp)

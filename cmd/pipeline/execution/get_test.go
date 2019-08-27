@@ -15,6 +15,7 @@
 package execution
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/util"
@@ -102,7 +103,15 @@ func TestExecutionGet_failure(t *testing.T) {
 // to direct requests to. Responds with a 200 and a well-formed pipeline get response.
 func testGateExecutionGetSuccess() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(executionGetJson))
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(executionGetJson))
+		}
 	}))
 }
 
@@ -110,8 +119,16 @@ func testGateExecutionGetSuccess() *httptest.Server {
 // to direct requests to. Responds with a 500 InternalServerError.
 func GateServerFail() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO(jacobkiefer): Mock more robust errors once implemented upstream.
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			// TODO(jacobkiefer): Mock more robust errors once implemented upstream.
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
 	}))
 }
 

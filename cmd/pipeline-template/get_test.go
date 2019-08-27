@@ -14,15 +14,16 @@
 package pipeline_template
 
 import (
-"fmt"
-"net/http"
-"net/http/httptest"
-"os"
-"strings"
-"testing"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"strings"
+	"testing"
 
-"github.com/spf13/cobra"
-"github.com/spinnaker/spin/util"
+	"github.com/spf13/cobra"
+	"github.com/spinnaker/spin/util"
 )
 
 func getRootCmdForTest() *cobra.Command {
@@ -172,21 +173,45 @@ func TestPipelineGet_notfound(t *testing.T) {
 // to direct requests to. Responds with a 200 and a well-formed pipeline get response.
 func testGatePipelineTemplateGetSuccess() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(pipelineTemplateGetJson))
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(pipelineTemplateGetJson))
+		}
 	}))
 }
 
 // testGatePipelineGetMalformed returns a malformed get response of pipeline configs.
 func testGatePipelineTemplateGetMalformed() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineTemplateGetJson))
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(malformedPipelineTemplateGetJson))
+		}
 	}))
 }
 
 // testGatePipelineGetMissing returns a 404 Not Found for an errant pipeline name|application pair.
 func testGatePipelineTemplateGetMissing() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.NotFound(w, r)
+		if strings.Contains(r.URL.String(), "/version") {
+			payload := map[string]string{
+				"version": "Unknown",
+			}
+			b, _ := json.Marshal(&payload)
+			fmt.Fprintln(w, string(b))
+		} else {
+			http.NotFound(w, r)
+		}
 	}))
 }
 
