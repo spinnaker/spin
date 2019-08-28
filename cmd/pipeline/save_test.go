@@ -15,14 +15,14 @@
 package pipeline
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"strings"
 	"testing"
+
+	"github.com/spinnaker/spin/util"
 )
 
 func TestPipelineSave_basic(t *testing.T) {
@@ -206,34 +206,22 @@ func tempPipelineFile(pipelineContent string) *os.File {
 // GateServerSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 200 OK.
 func GateServerSuccess() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.Contains(r.URL.String(), "/version") {
-			payload := map[string]string{
-				"version": "Unknown",
-			}
-			b, _ := json.Marshal(&payload)
-			fmt.Fprintln(w, string(b))
-		} else {
-			fmt.Fprintln(w, "") // Just write an empty 200 success on save.
-		}
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "") // Just write an empty 200 success on save.
 	}))
+	return httptest.NewServer(mux)
 }
 
 // GateServerFail spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 500 InternalServerError.
 func GateServerFail() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.Contains(r.URL.String(), "/version") {
-			payload := map[string]string{
-				"version": "Unknown",
-			}
-			b, _ := json.Marshal(&payload)
-			fmt.Fprintln(w, string(b))
-		} else {
-			// TODO(jacobkiefer): Mock more robust errors once implemented upstream.
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		}
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// TODO(jacobkiefer): Mock more robust errors once implemented upstream.
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}))
+	return httptest.NewServer(mux)
 }
 
 const missingNameJsonStr = `

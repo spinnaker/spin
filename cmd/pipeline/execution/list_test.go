@@ -15,13 +15,14 @@
 package execution
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/spinnaker/spin/util"
 )
 
 func TestExecutionList_basic(t *testing.T) {
@@ -82,17 +83,11 @@ func TestExecutionList_fail(t *testing.T) {
 // testGateExecutionListSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 200 and a well-formed execution list.
 func testGateExecutionListSuccess() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.Contains(r.URL.String(), "/version") {
-			payload := map[string]string{
-				"version": "Unknown",
-			}
-			b, _ := json.Marshal(&payload)
-			fmt.Fprintln(w, string(b))
-		} else {
-			fmt.Fprintln(w, strings.TrimSpace(executionListJson))
-		}
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/executions/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, strings.TrimSpace(executionListJson))
 	}))
+	return httptest.NewServer(mux)
 }
 
 const executionListJson = `

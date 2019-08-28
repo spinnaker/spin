@@ -15,13 +15,14 @@
 package pipeline_template
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/spinnaker/spin/util"
 )
 
 func TestPipelineTemplatePlan_basic(t *testing.T) {
@@ -124,14 +125,7 @@ func TestPipelineTemplatePlan_flags(t *testing.T) {
 // to direct requests to. Responds with 404 NotFound to indicate a pipeline template doesn't exist,
 // and Accepts POST calls.
 func gateServerPlanSuccess() *httptest.Server {
-	mux := http.NewServeMux()
-	mux.Handle("/version", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		payload := map[string]string{
-			"version": "Unknown",
-		}
-		b, _ := json.Marshal(&payload)
-		fmt.Fprintln(w, string(b))
-	}))
+	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/v2/pipelineTemplates/plan", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			fmt.Fprintln(w, strings.TrimSpace(testPipelineTemplatePlanResp))

@@ -15,17 +15,18 @@
 package application
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/spinnaker/spin/util"
 )
 
 func TestApplicationList_basic(t *testing.T) {
-	ts := testGateApplicationListSuccess()
+	ts := testGateApplicationList(false)
 	defer ts.Close()
 
 	currentCmd := NewListCmd(applicationOptions{})
@@ -43,7 +44,7 @@ func TestApplicationList_basic(t *testing.T) {
 }
 
 func TestApplicationList_malformed(t *testing.T) {
-	ts := testGateApplicationListMalformed()
+	ts := testGateApplicationList(true)
 	defer ts.Close()
 
 	currentCmd := NewListCmd(applicationOptions{})
@@ -78,35 +79,20 @@ func TestApplicationList_fail(t *testing.T) {
 	}
 }
 
-// testGateApplicationListSuccess spins up a local http server that we will configure the GateClient
-// to direct requests to. Responds with a 200 and a well-formed application list.
-func testGateApplicationListSuccess() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.Contains(r.URL.String(), "/version") {
-			payload := map[string]string{
-				"version": "Unknown",
-			}
-			b, _ := json.Marshal(&payload)
-			fmt.Fprintln(w, string(b))
+// testGateApplicationList spins up a local http server that we will configure the GateClient
+// to direct requests to. When 'returnMalformed' is false, responds with a 200 and a well-formed application list.
+// Returns a malformed list of application configs when 'returnMalformed' is true
+func testGateApplicationList(returnMalformed bool) *httptest.Server {
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/applications", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if returnMalformed {
+			fmt.Fprintln(w, strings.TrimSpace(malformedApplicationListJson))
 		} else {
 			fmt.Fprintln(w, strings.TrimSpace(applicationListJson))
 		}
 	}))
-}
 
-// testGateApplicationListMalformed returns a malformed list of application configs.
-func testGateApplicationListMalformed() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.Contains(r.URL.String(), "/version") {
-			payload := map[string]string{
-				"version": "Unknown",
-			}
-			b, _ := json.Marshal(&payload)
-			fmt.Fprintln(w, string(b))
-		} else {
-			fmt.Fprintln(w, strings.TrimSpace(malformedApplicationListJson))
-		}
-	}))
+	return httptest.NewServer(mux)
 }
 
 const malformedApplicationListJson = `

@@ -15,13 +15,14 @@
 package pipeline
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/spinnaker/spin/util"
 )
 
 func TestPipelineList_basic(t *testing.T) {
@@ -100,32 +101,20 @@ func TestPipelineList_fail(t *testing.T) {
 // testGatePipelineListSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 200 and a well-formed pipeline list.
 func testGatePipelineListSuccess() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.Contains(r.URL.String(), "/version") {
-			payload := map[string]string{
-				"version": "Unknown",
-			}
-			b, _ := json.Marshal(&payload)
-			fmt.Fprintln(w, string(b))
-		} else {
-			fmt.Fprintln(w, strings.TrimSpace(pipelineListJson))
-		}
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/applications/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, strings.TrimSpace(pipelineListJson))
 	}))
+	return httptest.NewServer(mux)
 }
 
 // testGatePipelineListMalformed returns a malformed list of pipeline configs.
 func testGatePipelineListMalformed() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.Contains(r.URL.String(), "/version") {
-			payload := map[string]string{
-				"version": "Unknown",
-			}
-			b, _ := json.Marshal(&payload)
-			fmt.Fprintln(w, string(b))
-		} else {
-			fmt.Fprintln(w, strings.TrimSpace(malformedPipelineListJson))
-		}
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/applications/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineListJson))
 	}))
+	return httptest.NewServer(mux)
 }
 
 const malformedPipelineListJson = `
