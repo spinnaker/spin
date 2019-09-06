@@ -117,7 +117,6 @@ func getTemplateID(options UseOptions, args []string) (string, error) {
 
 func buildUsingTemplate(id string, options UseOptions) (map[string]interface{}, error) {
 	pipeline := make(map[string]interface{})
-	templateProperty := make(map[string]interface{})
 
 	// get variables from cmd and files
 	variables, err := getVariables(options)
@@ -126,9 +125,11 @@ func buildUsingTemplate(id string, options UseOptions) (map[string]interface{}, 
 	}
 
 	// Configure pipeline.template
-	templateProperty["artifactAccount"] = options.artifactAccount
-	templateProperty["type"] = options.templateType
-	templateProperty["reference"] = getFullTemplateID(id, options.tag)
+	templateProperty := map[string]string{
+		"artifactAccount": options.artifactAccount,
+		"type":            options.templateType,
+		"reference":       getFullTemplateID(id, options.tag),
+	}
 
 	// Configure pipeline
 	pipeline["template"] = templateProperty
