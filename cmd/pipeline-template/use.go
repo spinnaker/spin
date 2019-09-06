@@ -38,7 +38,7 @@ type UseOptions struct {
 	variablesFiles  []string
 }
 
-var (
+const (
 	usePipelineTemplateShort = "Creates a pipeline configuration using a managed pipeline template"
 	usePipelineTemplateLong  = "Creates a pipeline configuration using a managed pipeline template"
 )
