@@ -47,9 +47,9 @@ import (
 	"encoding/base64"
 
 	gate "github.com/spinnaker/spin/gateapi"
+	"golang.org/x/crypto/ssh/terminal"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 const (
@@ -470,17 +470,18 @@ func (m *GatewayClient) login(accessToken string) error {
 func (m *GatewayClient) authenticateLdap() error {
 	auth := m.Config.Auth
 	if auth != nil && auth.Enabled && auth.Ldap != nil {
-		if !auth.Ldap.IsValid() {
-			return errors.New("Incorrect LDAP auth configuration. Must include username.")
-		}
-
-    if auth.Ldap.Password == "" {
+    if auth.Ldap.Username == "" {
       auth.Ldap.Username = prompt("Username:")
     }
 
     if auth.Ldap.Password == "" {
       auth.Ldap.Password = secure_prompt("Password:")
     }
+
+
+		if !auth.Ldap.IsValid() {
+			return errors.New("Incorrect LDAP auth configuration. Must include username and password.")
+		}
 
 		form := url.Values{}
 		form.Add("username", auth.Ldap.Username)
@@ -550,15 +551,15 @@ func generateCodeVerifier() (verifier string, code string, err error) {
 	return verifier, code, nil
 }
 
-func prompt(input_msg string) string {
+func prompt(inputMsg string) string {
 	reader := bufio.NewReader(os.Stdin)
-	util.UI.Output(input_msg)
+	util.UI.Output(inputMsg)
 	text, _ := reader.ReadString('\n')
 	return strings.TrimSpace(text)
 }
 
-func secure_prompt(input_msg string) string {
-	util.UI.Output(input_msg)
+func securePrompt(inputMsg string) string {
+	util.UI.Output(inputMsg)
   byteSecret, _ := terminal.ReadPassword(int(syscall.Stdin))
   secret := string(byteSecret)
 	return strings.TrimSpace(secret)

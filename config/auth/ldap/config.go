@@ -6,6 +6,5 @@ type LdapConfig struct {
 }
 
 func (l *LdapConfig) IsValid() bool {
-  //noop
-  return true
+	return l.Username != "" && l.Password != ""
 }
