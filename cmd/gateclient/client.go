@@ -475,7 +475,7 @@ func (m *GatewayClient) authenticateLdap() error {
     }
 
     if auth.Ldap.Password == "" {
-      auth.Ldap.Password = secure_prompt("Password:")
+      auth.Ldap.Password = securePrompt("Password:")
     }
 
 
