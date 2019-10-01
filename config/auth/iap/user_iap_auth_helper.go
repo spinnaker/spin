@@ -74,13 +74,14 @@ func userInteract(cfg IapConfig) (string, error) {
 		port:        port,
 		clientState: clientState,
 		doneChan:    make(chan error),
-		callback: func(token *oauth2.Token, config *oauth2.Config, s2 string) (s string, e error) {
+		callback: func(token *oauth2.Token, config *oauth2.Config, s2 string) (string, error) {
 			iapToken, err := RequestIapIDToken(token.AccessToken,
 				cfg.OAuthClientId,
 				cfg.OAuthClientSecret,
 				cfg.IapClientId)
 			if err != nil {
-				return "", nil
+				close(accessToken)
+				return "", err
 			}
 			accessToken <- iapToken
 			return "", nil
@@ -94,13 +95,13 @@ func userInteract(cfg IapConfig) (string, error) {
 
 	url := oauthURL(cfg.OAuthClientId, clientState, port)
 
-	resStr := fmt.Sprintf("Your browser have been opened to visit:\n%s\n\n", url)
+	resStr := fmt.Sprintf("Your browser has been opened to visit:\n%s\n\n", url)
 	if err = execcmd.OpenUrl(url); err != nil {
 		resStr = fmt.Sprintf("Follow this link in your browser:\n%s\n\n", url)
 	}
 	fmt.Println(resStr)
 
-	return <-accessToken, err
+	return <-accessToken, nil
 }
 
 func oauthURL(clientId string, clientState string, port int) string {

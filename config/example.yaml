@@ -48,10 +48,10 @@ auth:
     # This would the token recieved from the `Signing in to the application` step
     # of https://cloud.google.com/iap/docs/authentication-howto#authenticating_from_a_desktop_app
     iapClientRefresh: "1/blah-blah-blah"
-    # Optional field containing an access token.
-    # If it's filled in spin will not try to refresh or interactively
+    # Optional field containing an offline access token.
+    # If it's filled in spin will not try to refresh/interactively
     # fetch a token for the user.
-    # This would be the `id_token`l recieved from the `Accessing the application` stage of
+    # This would be the `id_token` recieved from the `Accessing the application` stage of
     # https://cloud.google.com/iap/docs/authentication-howto#authenticating_from_a_desktop_app
     iapIdToken: "example-token-blah-blah"
     # Optional field containing a serviceAccount json key.
