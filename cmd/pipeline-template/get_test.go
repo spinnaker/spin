@@ -14,15 +14,15 @@
 package pipeline_template
 
 import (
-"fmt"
-"net/http"
-"net/http/httptest"
-"os"
-"strings"
-"testing"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"strings"
+	"testing"
 
-"github.com/spf13/cobra"
-"github.com/spinnaker/spin/util"
+	"github.com/spf13/cobra"
+	"github.com/spinnaker/spin/util"
 )
 
 func getRootCmdForTest() *cobra.Command {
@@ -33,6 +33,7 @@ func getRootCmdForTest() *cobra.Command {
 	rootCmd.PersistentFlags().Bool("quiet", false, "Squelch non-essential output")
 	rootCmd.PersistentFlags().Bool("no-color", false, "Disable color")
 	rootCmd.PersistentFlags().String("output", "", "Configure output formatting")
+	rootCmd.PersistentFlags().String("default-headers", "", "Configure additional headers for gate client requests")
 	util.InitUI(false, false, "")
 	return rootCmd
 }
@@ -65,6 +66,24 @@ func TestPipelineGet_args(t *testing.T) {
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	args := []string{"pipeline-template", "get", "newSpelTemplate", "--gate-endpoint", ts.URL}
+	rootCmd.SetArgs(args)
+
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+}
+
+func TestPipelineGet_tag(t *testing.T) {
+	ts := testGatePipelineTemplateGetSuccess()
+	defer ts.Close()
+	currentCmd := NewGetCmd(pipelineTemplateOptions{})
+	rootCmd := getRootCmdForTest()
+	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd.AddCommand(currentCmd)
+	rootCmd.AddCommand(pipelineTemplateCmd)
+
+	args := []string{"pipeline-template", "get", "newSpelTemplate", "--tag", "stable", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
 
 	err := rootCmd.Execute()
@@ -152,23 +171,29 @@ func TestPipelineGet_notfound(t *testing.T) {
 // testGatePipelineGetSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 200 and a well-formed pipeline get response.
 func testGatePipelineTemplateGetSuccess() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/v2/pipelineTemplates/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, strings.TrimSpace(pipelineTemplateGetJson))
 	}))
+	return httptest.NewServer(mux)
 }
 
 // testGatePipelineGetMalformed returns a malformed get response of pipeline configs.
 func testGatePipelineTemplateGetMalformed() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/v2/pipelineTemplates/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineTemplateGetJson))
 	}))
+	return httptest.NewServer(mux)
 }
 
 // testGatePipelineGetMissing returns a 404 Not Found for an errant pipeline name|application pair.
 func testGatePipelineTemplateGetMissing() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/v2/pipelineTemplates/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 	}))
+	return httptest.NewServer(mux)
 }
 
 // GateServerFail spins up a local http server that we will configure the GateClient

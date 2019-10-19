@@ -33,6 +33,7 @@ func getRootCmdForTest() *cobra.Command {
 	rootCmd.PersistentFlags().Bool("quiet", false, "Squelch non-essential output")
 	rootCmd.PersistentFlags().Bool("no-color", false, "Disable color")
 	rootCmd.PersistentFlags().String("output", "", "Configure output formatting")
+	rootCmd.PersistentFlags().String("default-headers", "", "Configure additional headers for gate client requests")
 	util.InitUI(false, false, "")
 	return rootCmd
 }
@@ -100,18 +101,22 @@ func TestExecutionGet_failure(t *testing.T) {
 // testGateExecutionGetSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 200 and a well-formed pipeline get response.
 func testGateExecutionGetSuccess() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/executions/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, strings.TrimSpace(executionGetJson))
 	}))
+	return httptest.NewServer(mux)
 }
 
 // GateServerFail spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 500 InternalServerError.
 func GateServerFail() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/executions/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// TODO(jacobkiefer): Mock more robust errors once implemented upstream.
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}))
+	return httptest.NewServer(mux)
 }
 
 const executionGetJson = `

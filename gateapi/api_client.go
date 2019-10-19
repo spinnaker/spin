@@ -46,11 +46,11 @@ type APIClient struct {
 	AmazonInfrastructureControllerApi	*AmazonInfrastructureControllerApiService
 	ApplicationControllerApi	*ApplicationControllerApiService
 	ArtifactControllerApi	*ArtifactControllerApiService
-	AuditEventsMvcEndpointApi	*AuditEventsMvcEndpointApiService
 	AuthControllerApi	*AuthControllerApiService
 	BakeControllerApi	*BakeControllerApiService
 	BuildControllerApi	*BuildControllerApiService
 	ClusterControllerApi	*ClusterControllerApiService
+	ConcourseControllerApi	*ConcourseControllerApiService
 	CredentialsControllerApi	*CredentialsControllerApiService
 	EcsServerGroupEventsControllerApi	*EcsServerGroupEventsControllerApiService
 	ExecutionsControllerApi	*ExecutionsControllerApiService
@@ -65,6 +65,7 @@ type APIClient struct {
 	PipelineTemplatesControllerApi	*PipelineTemplatesControllerApiService
 	ProjectControllerApi	*ProjectControllerApiService
 	PubsubSubscriptionControllerApi	*PubsubSubscriptionControllerApiService
+	ReorderPipelinesControllerApi	*ReorderPipelinesControllerApiService
 	SearchControllerApi	*SearchControllerApiService
 	SecurityGroupControllerApi	*SecurityGroupControllerApiService
 	ServerGroupControllerApi	*ServerGroupControllerApiService
@@ -98,11 +99,11 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.AmazonInfrastructureControllerApi = (*AmazonInfrastructureControllerApiService)(&c.common)
 	c.ApplicationControllerApi = (*ApplicationControllerApiService)(&c.common)
 	c.ArtifactControllerApi = (*ArtifactControllerApiService)(&c.common)
-	c.AuditEventsMvcEndpointApi = (*AuditEventsMvcEndpointApiService)(&c.common)
 	c.AuthControllerApi = (*AuthControllerApiService)(&c.common)
 	c.BakeControllerApi = (*BakeControllerApiService)(&c.common)
 	c.BuildControllerApi = (*BuildControllerApiService)(&c.common)
 	c.ClusterControllerApi = (*ClusterControllerApiService)(&c.common)
+	c.ConcourseControllerApi = (*ConcourseControllerApiService)(&c.common)
 	c.CredentialsControllerApi = (*CredentialsControllerApiService)(&c.common)
 	c.EcsServerGroupEventsControllerApi = (*EcsServerGroupEventsControllerApiService)(&c.common)
 	c.ExecutionsControllerApi = (*ExecutionsControllerApiService)(&c.common)
@@ -117,6 +118,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.PipelineTemplatesControllerApi = (*PipelineTemplatesControllerApiService)(&c.common)
 	c.ProjectControllerApi = (*ProjectControllerApiService)(&c.common)
 	c.PubsubSubscriptionControllerApi = (*PubsubSubscriptionControllerApiService)(&c.common)
+	c.ReorderPipelinesControllerApi = (*ReorderPipelinesControllerApiService)(&c.common)
 	c.SearchControllerApi = (*SearchControllerApiService)(&c.common)
 	c.SecurityGroupControllerApi = (*SecurityGroupControllerApiService)(&c.common)
 	c.ServerGroupControllerApi = (*ServerGroupControllerApiService)(&c.common)

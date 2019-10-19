@@ -39,20 +39,23 @@ type ColorizeUi struct {
 	OutputFormat *output.OutputFormat
 }
 
-var UI ColorizeUi
+var UI *ColorizeUi
 var hasColor bool
 
 func InitUI(quiet, color bool, outputFormat string) {
-	UI = ColorizeUi{
+	hasColor = color
+	UI = &ColorizeUi{
 		Colorize:   Colorize(),
 		ErrorColor: "[red]",
 		WarnColor:  "[yellow]",
 		InfoColor:  "[blue]",
-		Ui:         &cli.BasicUi{Writer: os.Stdout},
-		Quiet:      quiet,
+		Ui: &cli.BasicUi{
+			Writer:      os.Stdout,
+			ErrorWriter: os.Stderr,
+		},
+		Quiet: quiet,
 	}
 	var err error
-	hasColor = color
 	UI.OutputFormat, err = output.ParseOutputFormat(outputFormat)
 	if err != nil {
 		panic(err)

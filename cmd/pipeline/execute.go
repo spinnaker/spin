@@ -18,7 +18,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/cmd/gateclient"
@@ -31,11 +30,12 @@ type ExecuteOptions struct {
 	application   string
 	name          string
 	parameterFile string
+	artifactsFile string
 }
 
 var (
-	executePipelineShort   = "Execute the provided pipeline"
-	executePipelineLong    = "Execute the provided pipeline"
+	executePipelineShort = "Execute the provided pipeline"
+	executePipelineLong  = "Execute the provided pipeline"
 )
 
 func NewExecuteCmd(pipelineOptions pipelineOptions) *cobra.Command {
@@ -55,6 +55,7 @@ func NewExecuteCmd(pipelineOptions pipelineOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&options.application, "application", "a", "", "Spinnaker application the pipeline lives in")
 	cmd.PersistentFlags().StringVarP(&options.name, "name", "n", "", "name of the pipeline to execute")
 	cmd.PersistentFlags().StringVarP(&options.parameterFile, "parameter-file", "f", "", "file to load pipeline parameter values from")
+	cmd.PersistentFlags().StringVarP(&options.artifactsFile, "artifacts-file", "t", "", "file to load pipeline artifacts from")
 
 	return cmd
 }
@@ -68,14 +69,29 @@ func executePipeline(cmd *cobra.Command, options ExecuteOptions) error {
 	if options.application == "" || options.name == "" {
 		return errors.New("one of required parameters 'application' or 'name' not set")
 	}
+
 	parameters := map[string]interface{}{}
-	parameters, err = util.ParseJsonFromFileOrStdin(options.parameterFile, true)
+	parameters, err = util.ParseJsonFromFile(options.parameterFile, true)
 	if err != nil {
 		return fmt.Errorf("Could not parse supplied pipeline parameters: %v.\n", err)
 	}
+
+	artifactsFile := map[string]interface{}{}
+	artifactsFile, err = util.ParseJsonFromFile(options.artifactsFile, true)
+	if err != nil {
+		return fmt.Errorf("Could not parse supplied artifacts: %v.\n", err)
+	}
+
 	trigger := map[string]interface{}{"type": "manual"}
 	if len(parameters) > 0 {
 		trigger["parameters"] = parameters
+	}
+
+	if _, ok := artifactsFile["artifacts"]; ok {
+		artifacts := artifactsFile["artifacts"].([]interface{})
+		if len(artifacts) > 0 {
+			trigger["artifacts"] = artifacts
+		}
 	}
 
 	_, resp, err := gateClient.PipelineControllerApi.InvokePipelineConfigUsingPOST1(gateClient.Context,
@@ -91,33 +107,7 @@ func executePipeline(cmd *cobra.Command, options ExecuteOptions) error {
 		return fmt.Errorf("Encountered an error executing pipeline, status code: %d\n", resp.StatusCode)
 	}
 
-	executions := make([]interface{}, 0)
-	attempts := 0
-	for len(executions) == 0 && attempts < 5 {
-		executions, resp, err = gateClient.ExecutionsControllerApi.SearchForPipelineExecutionsByTriggerUsingGET(
-			gateClient.Context,
-			options.application,
-			map[string]interface{}{
-				"pipelineName": options.name,
-				"statuses":     "RUNNING",
-			})
-		attempts += 1
-		time.Sleep(time.Duration(attempts*attempts) * time.Second)
-	}
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return fmt.Errorf("Encountered an error querying pipeline execution, status code: %d\n", resp.StatusCode)
-	}
-	if len(executions) == 0 {
-		return fmt.Errorf("Unable to start any executions, server response was: %v", resp)
-	}
+	util.UI.Info(util.Colorize().Color(fmt.Sprintf("[reset][bold][green]Pipeline execution started")))
 
-	if len(executions) > 1 {
-		return fmt.Errorf("Started more than one execution: %v", executions)
-	}
-
-	util.UI.JsonOutput(executions[0], util.UI.OutputFormat)
 	return nil
 }

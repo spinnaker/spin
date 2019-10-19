@@ -53,7 +53,7 @@ func (a *ArtifactControllerApiService) AllUsingGET(ctx context.Context, localVar
 	}
 
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{  }
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -100,12 +100,12 @@ func (a *ArtifactControllerApiService) AllUsingGET(ctx context.Context, localVar
 /* ArtifactControllerApiService Retrieve the list of artifact versions by account and artifact names
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param accountName accountName
- @param type_ type
  @param artifactName artifactName
+ @param type_ type
  @param optional (nil or map[string]interface{}) with one or more of:
      @param "xRateLimitApp" (string) X-RateLimit-App
  @return []string*/
-func (a *ArtifactControllerApiService) ArtifactVersionsUsingGET(ctx context.Context, accountName string, type_ string, artifactName string, localVarOptionals map[string]interface{}) ([]string,  *http.Response, error) {
+func (a *ArtifactControllerApiService) ArtifactVersionsUsingGET(ctx context.Context, accountName string, artifactName string, type_ string, localVarOptionals map[string]interface{}) ([]string,  *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody interface{}
@@ -126,10 +126,10 @@ func (a *ArtifactControllerApiService) ArtifactVersionsUsingGET(ctx context.Cont
 		return successPayload, nil, err
 	}
 
-	localVarQueryParams.Add("type", parameterToString(type_, ""))
 	localVarQueryParams.Add("artifactName", parameterToString(artifactName, ""))
+	localVarQueryParams.Add("type", parameterToString(type_, ""))
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{  }
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -149,6 +149,74 @@ func (a *ArtifactControllerApiService) ArtifactVersionsUsingGET(ctx context.Cont
 	}
 	if localVarTempParam, localVarOk := localVarOptionals["xRateLimitApp"].(string); localVarOk {
 		localVarHeaderParams["X-RateLimit-App"] = parameterToString(localVarTempParam, "")
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return successPayload, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return successPayload, localVarHttpResponse, err
+	}
+	defer localVarHttpResponse.Body.Close()
+	if localVarHttpResponse.StatusCode >= 300 {
+		bodyBytes, _ := ioutil.ReadAll(localVarHttpResponse.Body)
+		return successPayload, localVarHttpResponse, reportError("Status: %v, Body: %s", localVarHttpResponse.Status, bodyBytes)
+	}
+
+	if err = json.NewDecoder(localVarHttpResponse.Body).Decode(&successPayload); err != nil {
+		return successPayload, localVarHttpResponse, err
+	}
+
+
+	return successPayload, localVarHttpResponse, err
+}
+
+/* ArtifactControllerApiService Retrieve the specified artifact version for an artifact provider and package name
+ * @param ctx context.Context for authentication, logging, tracing, etc.
+ @param packageName packageName
+ @param provider provider
+ @param version version
+ @return interface{}*/
+func (a *ArtifactControllerApiService) GetArtifactUsingGET(ctx context.Context, packageName string, provider string, version string) (interface{},  *http.Response, error) {
+	var (
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody interface{}
+		localVarFileName string
+		localVarFileBytes []byte
+	 	successPayload  interface{}
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/artifacts/{provider}/{packageName}/{version}"
+	localVarPath = strings.Replace(localVarPath, "{"+"packageName"+"}", fmt.Sprintf("%v", packageName), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"provider"+"}", fmt.Sprintf("%v", provider), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"version"+"}", fmt.Sprintf("%v", version), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{  }
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{
+		"*/*",
+		}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {

@@ -23,6 +23,7 @@ import (
 	"testing"
 
 	gate "github.com/spinnaker/spin/gateapi"
+	"github.com/spinnaker/spin/util"
 )
 
 func TestPipelineTemplateDelete_basic(t *testing.T) {
@@ -30,6 +31,24 @@ func TestPipelineTemplateDelete_basic(t *testing.T) {
 	defer ts.Close()
 
 	args := []string{"pipeline-template", "delete", "myTemplate", "--gate-endpoint", ts.URL}
+	currentCmd := NewDeleteCmd(pipelineTemplateOptions{})
+	rootCmd := getRootCmdForTest()
+	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd.AddCommand(currentCmd)
+	rootCmd.AddCommand(pipelineTemplateCmd)
+
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+}
+
+func TestPipelineTemplateDelete_tag(t *testing.T) {
+	ts := gateServerDeleteSuccess()
+	defer ts.Close()
+
+	args := []string{"pipeline-template", "delete", "myTemplate", "--tag", "stable", "--gate-endpoint", ts.URL}
 	currentCmd := NewDeleteCmd(pipelineTemplateOptions{})
 	rootCmd := getRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
@@ -101,7 +120,7 @@ func TestPipelineTemplateDelete_missingid(t *testing.T) {
 // to direct requests to. Responds with OK to indicate a pipeline template exists,
 // and Accepts POST calls.
 func gateServerDeleteSuccess() *httptest.Server {
-	mux := http.NewServeMux()
+	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/v2/pipelineTemplates/myTemplate", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodDelete {
 			resp := gate.ResponseEntity{StatusCode: "201 Accepted", StatusCodeValue: 201}

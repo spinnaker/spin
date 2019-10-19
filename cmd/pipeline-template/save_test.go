@@ -21,6 +21,8 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/spinnaker/spin/util"
 )
 
 func TestPipelineTemplateSave_create(t *testing.T) {
@@ -47,6 +49,30 @@ func TestPipelineTemplateSave_create(t *testing.T) {
 	}
 }
 
+func TestPipelineTemplateSave_createtag(t *testing.T) {
+	ts := gateServerCreateSuccess()
+	defer ts.Close()
+
+	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
+	if tempFile == nil {
+		t.Fatal("Could not create temp pipeline template file.")
+	}
+	defer os.Remove(tempFile.Name())
+	args := []string{"pipeline-template", "save", "--file", tempFile.Name(), "--tag", "stable", "--gate-endpoint", ts.URL}
+
+	currentCmd := NewSaveCmd(pipelineTemplateOptions{})
+	rootCmd := getRootCmdForTest()
+	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd.AddCommand(currentCmd)
+	rootCmd.AddCommand(pipelineTemplateCmd)
+
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+}
+
 func TestPipelineTemplateSave_update(t *testing.T) {
 	ts := gateServerUpdateSuccess()
 	defer ts.Close()
@@ -57,6 +83,30 @@ func TestPipelineTemplateSave_update(t *testing.T) {
 	}
 	defer os.Remove(tempFile.Name())
 	args := []string{"pipeline-template", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
+
+	currentCmd := NewSaveCmd(pipelineTemplateOptions{})
+	rootCmd := getRootCmdForTest()
+	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd.AddCommand(currentCmd)
+	rootCmd.AddCommand(pipelineTemplateCmd)
+
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+}
+
+func TestPipelineTemplateSave_updatetag(t *testing.T) {
+	ts := gateServerUpdateSuccess()
+	defer ts.Close()
+
+	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
+	if tempFile == nil {
+		t.Fatal("Could not create temp pipeline template file.")
+	}
+	defer os.Remove(tempFile.Name())
+	args := []string{"pipeline-template", "save", "--file", tempFile.Name(), "--tag", "stable", "--gate-endpoint", ts.URL}
 
 	currentCmd := NewSaveCmd(pipelineTemplateOptions{})
 	rootCmd := getRootCmdForTest()
@@ -205,28 +255,36 @@ func tempPipelineTemplateFile(pipelineContent string) *os.File {
 // to direct requests to. Responds with OK to indicate a pipeline template exists,
 // and Accepts POST calls.
 func gateServerUpdateSuccess() *httptest.Server {
-	mux := http.NewServeMux()
-	mux.Handle("/v2/pipelineTemplates", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/v2/pipelineTemplates/update/testSpelTemplate", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			w.WriteHeader(http.StatusAccepted)
 		} else {
 			w.WriteHeader(http.StatusOK)
 		}
 	}))
+	// Return that we found an MPT to signal that we should update.
+	mux.Handle("/v2/pipelineTemplates/testSpelTemplate", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
 	return httptest.NewServer(mux)
 }
 
-// gateServerUpdateSuccess spins up a local http server that we will configure the GateClient
+// gateServerCreateSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with 404 NotFound to indicate a pipeline template doesn't exist,
 // and Accepts POST calls.
 func gateServerCreateSuccess() *httptest.Server {
-	mux := http.NewServeMux()
-	mux.Handle("/v2/pipelineTemplates", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/v2/pipelineTemplates/create", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			w.WriteHeader(http.StatusAccepted)
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}
+	}))
+	// Return that there are no existing MPTs.
+	mux.Handle("/v2/pipelineTemplates/testSpelTemplate", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
 	}))
 	return httptest.NewServer(mux)
 }

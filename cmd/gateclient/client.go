@@ -1,4 +1,5 @@
 // Copyright (c) 2018, Google, Inc.
+// Copyright (c) 2019, Noel Cower.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,10 +27,12 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	_ "net/http/pprof"
+	"net/url"
 	"os"
 	"os/user"
 	"path/filepath"
 	"strings"
+  "syscall"
 
 	"github.com/spinnaker/spin/config"
 	iap "github.com/spinnaker/spin/config/auth/iap"
@@ -44,7 +47,16 @@ import (
 	"encoding/base64"
 
 	gate "github.com/spinnaker/spin/gateapi"
+	"golang.org/x/crypto/ssh/terminal"
 	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
+)
+
+const (
+	// defaultConfigFileMode is the default file mode used for config files. This corresponds to
+	// the Unix file permissions u=rw,g=,o= so that config files with cached tokens, at least by
+	// default, are only readable by the user that owns the config file.
+	defaultConfigFileMode os.FileMode = 0600 // u=rw,g=,o=
 )
 
 // GatewayClient is the wrapper with authentication
@@ -107,6 +119,7 @@ func NewGateClient(flags *pflag.FlagSet) (*GatewayClient, error) {
 		util.UI.Error("Could not initialize http client, failing.")
 		return nil, err
 	}
+
 	gateClient.httpClient = httpClient
 
 	err = gateClient.authenticateOAuth2()
@@ -115,13 +128,50 @@ func NewGateClient(flags *pflag.FlagSet) (*GatewayClient, error) {
 		return nil, err
 	}
 
+	err = gateClient.authenticateGoogleServiceAccount()
+	if err != nil {
+		util.UI.Error(fmt.Sprintf("Google service account authentication failed: %v", err))
+		return nil, err
+	}
+
+	if err = gateClient.authenticateLdap(); err != nil {
+		util.UI.Error("LDAP Authentication Failed")
+		return nil, err
+	}
+
+	m := make(map[string]string)
+
+	defaultHeaders, err := flags.GetString("default-headers")
+	if err != nil {
+		return nil, err
+	}
+
+	if defaultHeaders != "" {
+		headers := strings.Split(defaultHeaders, ",")
+		for _, element := range headers {
+			header := strings.SplitN(element, "=", 2)
+			if len(header) != 2 {
+				return nil, fmt.Errorf("Bad default-header value, use key=value form: %s", element)
+			}
+			m[strings.TrimSpace(header[0])] = strings.TrimSpace(header[1])
+		}
+	}
+
 	cfg := &gate.Configuration{
 		BasePath:      gateClient.GateEndpoint(),
-		DefaultHeader: make(map[string]string),
+		DefaultHeader: m,
 		UserAgent:     fmt.Sprintf("%s/%s", version.UserAgent, version.String()),
 		HTTPClient:    httpClient,
 	}
 	gateClient.APIClient = gate.NewAPIClient(cfg)
+
+	// TODO: Verify version compatibility between Spin CLI and Gate.
+	_, _, err = gateClient.VersionControllerApi.GetVersionUsingGET(gateClient.Context)
+	if err != nil {
+		util.UI.Error("Could not reach Gate, please ensure it is running. Failing.")
+		return nil, err
+	}
+
 	return gateClient, nil
 }
 
@@ -149,11 +199,8 @@ func userConfig(flags *pflag.FlagSet, gateClient *GatewayClient) error {
 		}
 		gateClient.configLocation = filepath.Join(userHome, ".spin", "config")
 	}
-	yamlFile, err := ioutil.ReadFile(gateClient.configLocation)
-	if err != nil {
-		util.UI.Warn(fmt.Sprintf("Could not read configuration file from %s.", gateClient.configLocation))
-	}
 
+	yamlFile, err := ioutil.ReadFile(gateClient.configLocation)
 	if yamlFile != nil {
 		err = yaml.UnmarshalStrict([]byte(os.ExpandEnv(string(yamlFile))), &gateClient.Config)
 		if err != nil {
@@ -181,7 +228,7 @@ func createClient(flags *pflag.FlagSet) (*GatewayClient, error) {
 	}, nil
 }
 
-func configureOutput(flags *pflag.FlagSet) (error) {
+func configureOutput(flags *pflag.FlagSet) error {
 	quiet, err := flags.GetBool("quiet")
 	if err != nil {
 		return err
@@ -336,7 +383,7 @@ func (m *GatewayClient) authenticateOAuth2() error {
 
 			authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline, oauth2.ApprovalForce, challengeMethod, codeChallenge)
 			util.UI.Output(fmt.Sprintf("Navigate to %s and authenticate", authURL))
-			code := prompt()
+			code := prompt("Paste authorization code:")
 
 			newToken, err = config.Exchange(context.Background(), code, codeVerifier)
 			if err != nil {
@@ -346,9 +393,7 @@ func (m *GatewayClient) authenticateOAuth2() error {
 
 		util.UI.Info("Caching oauth2 token.")
 		OAuth2.CachedToken = newToken
-		buf, _ := yaml.Marshal(&m.Config)
-		info, _ := os.Stat(m.configLocation)
-		ioutil.WriteFile(m.configLocation, buf, info.Mode())
+		_ = m.writeYAMLConfig()
 
 		m.login(newToken.AccessToken)
 		m.Context = context.Background()
@@ -363,14 +408,132 @@ func (m *GatewayClient) authenticateIAP() (string, error) {
 	return token, err
 }
 
+func (m *GatewayClient) authenticateGoogleServiceAccount() (err error) {
+	auth := m.Config.Auth
+	if auth == nil {
+		return nil
+	}
+
+	gsa := auth.GoogleServiceAccount
+	if !gsa.IsEnabled() {
+		return nil
+	}
+
+	if gsa.CachedToken != nil && gsa.CachedToken.Valid() {
+		return m.login(gsa.CachedToken.AccessToken)
+	}
+	gsa.CachedToken = nil
+
+	var source oauth2.TokenSource
+	if gsa.File == "" {
+		source, err = google.DefaultTokenSource(context.Background(), "profile", "email")
+	} else {
+		serviceAccountJSON, ferr := ioutil.ReadFile(gsa.File)
+		if ferr != nil {
+			return ferr
+		}
+		source, err = google.JWTAccessTokenSourceFromJSON(serviceAccountJSON, "https://accounts.google.com/o/oauth2/v2/auth")
+	}
+	if err != nil {
+		return err
+	}
+
+	token, err := source.Token()
+	if err != nil {
+		return err
+	}
+
+	if err := m.login(token.AccessToken); err != nil {
+		return err
+	}
+
+	gsa.CachedToken = token
+	m.Context = context.Background()
+
+	// Cache token if login succeeded
+	gsa.CachedToken = token
+	_ = m.writeYAMLConfig()
+
+	return nil
+}
+
 func (m *GatewayClient) login(accessToken string) error {
-	loginReq, err := http.NewRequest("GET", m.GateEndpoint() + "/login", nil)
+	loginReq, err := http.NewRequest("GET", m.GateEndpoint()+"/login", nil)
 	if err != nil {
 		return err
 	}
 	loginReq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 	m.httpClient.Do(loginReq) // Login to establish session.
 	return nil
+}
+
+func (m *GatewayClient) authenticateLdap() error {
+	auth := m.Config.Auth
+	if auth != nil && auth.Enabled && auth.Ldap != nil {
+    if auth.Ldap.Username == "" {
+      auth.Ldap.Username = prompt("Username:")
+    }
+
+    if auth.Ldap.Password == "" {
+      auth.Ldap.Password = securePrompt("Password:")
+    }
+
+
+		if !auth.Ldap.IsValid() {
+			return errors.New("Incorrect LDAP auth configuration. Must include username and password.")
+		}
+
+		form := url.Values{}
+		form.Add("username", auth.Ldap.Username)
+		form.Add("password", auth.Ldap.Password)
+
+		loginReq, err := http.NewRequest("POST", m.GateEndpoint()+"/login", strings.NewReader(form.Encode()))
+		loginReq.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		if err != nil {
+			return err
+		}
+
+		_, err = m.httpClient.Do(loginReq) // Login to establish session.
+
+		if err != nil {
+			return errors.New("ldap authentication failed")
+		}
+
+		m.Context = context.Background()
+	}
+
+	return nil
+}
+
+// writeYAMLConfig writes an updated YAML configuration file to the reciever's config file location.
+// It returns an error, but the error may be ignored.
+func (m *GatewayClient) writeYAMLConfig() error {
+	// Write updated config file with u=rw,g=,o= permissions by default.
+	// The default permissions should only be used if the file no longer exists.
+	err := writeYAML(&m.Config, m.configLocation, defaultConfigFileMode)
+	if err != nil {
+		util.UI.Warn(fmt.Sprintf("Error caching oauth2 token: %v", err))
+	}
+	return err
+}
+
+func writeYAML(v interface{}, dest string, defaultMode os.FileMode) error {
+	// Write config with cached token
+	buf, err := yaml.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	mode := defaultMode
+	info, err := os.Stat(dest)
+	if err != nil && !os.IsNotExist(err) {
+		return nil
+	} else {
+		// Preserve existing file mode
+		mode = info.Mode()
+	}
+
+	return ioutil.WriteFile(dest, buf, mode)
 }
 
 // generateCodeVerifier generates an OAuth2 code verifier
@@ -388,9 +551,16 @@ func generateCodeVerifier() (verifier string, code string, err error) {
 	return verifier, code, nil
 }
 
-func prompt() string {
+func prompt(inputMsg string) string {
 	reader := bufio.NewReader(os.Stdin)
-	util.UI.Output("Paste authorization code:")
+	util.UI.Output(inputMsg)
 	text, _ := reader.ReadString('\n')
 	return strings.TrimSpace(text)
+}
+
+func securePrompt(inputMsg string) string {
+	util.UI.Output(inputMsg)
+  byteSecret, _ := terminal.ReadPassword(int(syscall.Stdin))
+  secret := string(byteSecret)
+	return strings.TrimSpace(secret)
 }

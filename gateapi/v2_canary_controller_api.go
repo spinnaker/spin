@@ -60,7 +60,7 @@ func (a *V2CanaryControllerApiService) GetCanaryResultUsingGET(ctx context.Conte
 		localVarQueryParams.Add("storageAccountName", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{  }
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -141,7 +141,7 @@ func (a *V2CanaryControllerApiService) GetCanaryResultsByApplicationUsingGET(ctx
 		localVarQueryParams.Add("storageAccountName", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{  }
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -213,7 +213,7 @@ func (a *V2CanaryControllerApiService) GetMetricSetPairListUsingGET(ctx context.
 		localVarQueryParams.Add("storageAccountName", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{  }
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -260,10 +260,10 @@ func (a *V2CanaryControllerApiService) GetMetricSetPairListUsingGET(ctx context.
  @param executionRequest executionRequest
  @param optional (nil or map[string]interface{}) with one or more of:
      @param "application" (string) application
-     @param "parentPipelineExecutionId" (string) parentPipelineExecutionId
-     @param "metricsAccountName" (string) metricsAccountName
-     @param "storageAccountName" (string) storageAccountName
      @param "configurationAccountName" (string) configurationAccountName
+     @param "metricsAccountName" (string) metricsAccountName
+     @param "parentPipelineExecutionId" (string) parentPipelineExecutionId
+     @param "storageAccountName" (string) storageAccountName
  @return interface{}*/
 func (a *V2CanaryControllerApiService) InitiateCanaryUsingPOST(ctx context.Context, canaryConfigId string, executionRequest interface{}, localVarOptionals map[string]interface{}) (interface{},  *http.Response, error) {
 	var (
@@ -285,33 +285,33 @@ func (a *V2CanaryControllerApiService) InitiateCanaryUsingPOST(ctx context.Conte
 	if err := typeCheckParameter(localVarOptionals["application"], "string", "application"); err != nil {
 		return successPayload, nil, err
 	}
-	if err := typeCheckParameter(localVarOptionals["parentPipelineExecutionId"], "string", "parentPipelineExecutionId"); err != nil {
+	if err := typeCheckParameter(localVarOptionals["configurationAccountName"], "string", "configurationAccountName"); err != nil {
 		return successPayload, nil, err
 	}
 	if err := typeCheckParameter(localVarOptionals["metricsAccountName"], "string", "metricsAccountName"); err != nil {
 		return successPayload, nil, err
 	}
-	if err := typeCheckParameter(localVarOptionals["storageAccountName"], "string", "storageAccountName"); err != nil {
+	if err := typeCheckParameter(localVarOptionals["parentPipelineExecutionId"], "string", "parentPipelineExecutionId"); err != nil {
 		return successPayload, nil, err
 	}
-	if err := typeCheckParameter(localVarOptionals["configurationAccountName"], "string", "configurationAccountName"); err != nil {
+	if err := typeCheckParameter(localVarOptionals["storageAccountName"], "string", "storageAccountName"); err != nil {
 		return successPayload, nil, err
 	}
 
 	if localVarTempParam, localVarOk := localVarOptionals["application"].(string); localVarOk {
 		localVarQueryParams.Add("application", parameterToString(localVarTempParam, ""))
 	}
-	if localVarTempParam, localVarOk := localVarOptionals["parentPipelineExecutionId"].(string); localVarOk {
-		localVarQueryParams.Add("parentPipelineExecutionId", parameterToString(localVarTempParam, ""))
+	if localVarTempParam, localVarOk := localVarOptionals["configurationAccountName"].(string); localVarOk {
+		localVarQueryParams.Add("configurationAccountName", parameterToString(localVarTempParam, ""))
 	}
 	if localVarTempParam, localVarOk := localVarOptionals["metricsAccountName"].(string); localVarOk {
 		localVarQueryParams.Add("metricsAccountName", parameterToString(localVarTempParam, ""))
 	}
+	if localVarTempParam, localVarOk := localVarOptionals["parentPipelineExecutionId"].(string); localVarOk {
+		localVarQueryParams.Add("parentPipelineExecutionId", parameterToString(localVarTempParam, ""))
+	}
 	if localVarTempParam, localVarOk := localVarOptionals["storageAccountName"].(string); localVarOk {
 		localVarQueryParams.Add("storageAccountName", parameterToString(localVarTempParam, ""))
-	}
-	if localVarTempParam, localVarOk := localVarOptionals["configurationAccountName"].(string); localVarOk {
-		localVarQueryParams.Add("configurationAccountName", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{ "application/json",  }
@@ -357,6 +357,100 @@ func (a *V2CanaryControllerApiService) InitiateCanaryUsingPOST(ctx context.Conte
 	return successPayload, localVarHttpResponse, err
 }
 
+/* V2CanaryControllerApiService Start a canary execution with the supplied canary config
+ * @param ctx context.Context for authentication, logging, tracing, etc.
+ @param adhocExecutionRequest adhocExecutionRequest
+ @param optional (nil or map[string]interface{}) with one or more of:
+     @param "application" (string) application
+     @param "metricsAccountName" (string) metricsAccountName
+     @param "parentPipelineExecutionId" (string) parentPipelineExecutionId
+     @param "storageAccountName" (string) storageAccountName
+ @return interface{}*/
+func (a *V2CanaryControllerApiService) InitiateCanaryWithConfigUsingPOST(ctx context.Context, adhocExecutionRequest interface{}, localVarOptionals map[string]interface{}) (interface{},  *http.Response, error) {
+	var (
+		localVarHttpMethod = strings.ToUpper("Post")
+		localVarPostBody interface{}
+		localVarFileName string
+		localVarFileBytes []byte
+	 	successPayload  interface{}
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/v2/canaries/canary"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if err := typeCheckParameter(localVarOptionals["application"], "string", "application"); err != nil {
+		return successPayload, nil, err
+	}
+	if err := typeCheckParameter(localVarOptionals["metricsAccountName"], "string", "metricsAccountName"); err != nil {
+		return successPayload, nil, err
+	}
+	if err := typeCheckParameter(localVarOptionals["parentPipelineExecutionId"], "string", "parentPipelineExecutionId"); err != nil {
+		return successPayload, nil, err
+	}
+	if err := typeCheckParameter(localVarOptionals["storageAccountName"], "string", "storageAccountName"); err != nil {
+		return successPayload, nil, err
+	}
+
+	if localVarTempParam, localVarOk := localVarOptionals["application"].(string); localVarOk {
+		localVarQueryParams.Add("application", parameterToString(localVarTempParam, ""))
+	}
+	if localVarTempParam, localVarOk := localVarOptionals["metricsAccountName"].(string); localVarOk {
+		localVarQueryParams.Add("metricsAccountName", parameterToString(localVarTempParam, ""))
+	}
+	if localVarTempParam, localVarOk := localVarOptionals["parentPipelineExecutionId"].(string); localVarOk {
+		localVarQueryParams.Add("parentPipelineExecutionId", parameterToString(localVarTempParam, ""))
+	}
+	if localVarTempParam, localVarOk := localVarOptionals["storageAccountName"].(string); localVarOk {
+		localVarQueryParams.Add("storageAccountName", parameterToString(localVarTempParam, ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{ "application/json",  }
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{
+		"*/*",
+		}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	localVarPostBody = &adhocExecutionRequest
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return successPayload, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return successPayload, localVarHttpResponse, err
+	}
+	defer localVarHttpResponse.Body.Close()
+	if localVarHttpResponse.StatusCode >= 300 {
+		bodyBytes, _ := ioutil.ReadAll(localVarHttpResponse.Body)
+		return successPayload, localVarHttpResponse, reportError("Status: %v, Body: %s", localVarHttpResponse.Status, bodyBytes)
+	}
+
+	if err = json.NewDecoder(localVarHttpResponse.Body).Decode(&successPayload); err != nil {
+		return successPayload, localVarHttpResponse, err
+	}
+
+
+	return successPayload, localVarHttpResponse, err
+}
+
 /* V2CanaryControllerApiService Retrieve a list of configured Kayenta accounts
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @return []interface{}*/
@@ -378,7 +472,7 @@ func (a *V2CanaryControllerApiService) ListCredentialsUsingGET(ctx context.Conte
 
 
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{  }
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -440,7 +534,7 @@ func (a *V2CanaryControllerApiService) ListJudgesUsingGET(ctx context.Context) (
 
 
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{  }
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -517,7 +611,7 @@ func (a *V2CanaryControllerApiService) ListMetricsServiceMetadataUsingGET(ctx co
 		localVarQueryParams.Add("metricsAccountName", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{  }
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)

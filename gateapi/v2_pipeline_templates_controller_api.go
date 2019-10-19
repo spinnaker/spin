@@ -27,11 +27,13 @@ var (
 type V2PipelineTemplatesControllerApiService service
 
 
-/* V2PipelineTemplatesControllerApiService Create a pipeline template.
+/* V2PipelineTemplatesControllerApiService (ALPHA) Create a pipeline template.
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param pipelineTemplate pipelineTemplate
+ @param optional (nil or map[string]interface{}) with one or more of:
+     @param "tag" (string) tag
  @return */
-func (a *V2PipelineTemplatesControllerApiService) CreateUsingPOST1(ctx context.Context, pipelineTemplate interface{}) ( *http.Response, error) {
+func (a *V2PipelineTemplatesControllerApiService) CreateUsingPOST1(ctx context.Context, pipelineTemplate interface{}, localVarOptionals map[string]interface{}) ( *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Post")
 		localVarPostBody interface{}
@@ -40,13 +42,19 @@ func (a *V2PipelineTemplatesControllerApiService) CreateUsingPOST1(ctx context.C
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/pipelineTemplates"
+	localVarPath := a.client.cfg.BasePath + "/v2/pipelineTemplates/create"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if err := typeCheckParameter(localVarOptionals["tag"], "string", "tag"); err != nil {
+		return nil, err
+	}
 
+	if localVarTempParam, localVarOk := localVarOptionals["tag"].(string); localVarOk {
+		localVarQueryParams.Add("tag", parameterToString(localVarTempParam, ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{ "application/json",  }
 
@@ -91,6 +99,8 @@ func (a *V2PipelineTemplatesControllerApiService) CreateUsingPOST1(ctx context.C
  @param id id
  @param optional (nil or map[string]interface{}) with one or more of:
      @param "application" (string) application
+     @param "digest" (string) digest
+     @param "tag" (string) tag
  @return map[string]interface{}*/
 func (a *V2PipelineTemplatesControllerApiService) DeleteUsingDELETE1(ctx context.Context, id string, localVarOptionals map[string]interface{}) (map[string]interface{},  *http.Response, error) {
 	var (
@@ -112,12 +122,24 @@ func (a *V2PipelineTemplatesControllerApiService) DeleteUsingDELETE1(ctx context
 	if err := typeCheckParameter(localVarOptionals["application"], "string", "application"); err != nil {
 		return successPayload, nil, err
 	}
+	if err := typeCheckParameter(localVarOptionals["digest"], "string", "digest"); err != nil {
+		return successPayload, nil, err
+	}
+	if err := typeCheckParameter(localVarOptionals["tag"], "string", "tag"); err != nil {
+		return successPayload, nil, err
+	}
 
 	if localVarTempParam, localVarOk := localVarOptionals["application"].(string); localVarOk {
 		localVarQueryParams.Add("application", parameterToString(localVarTempParam, ""))
 	}
+	if localVarTempParam, localVarOk := localVarOptionals["digest"].(string); localVarOk {
+		localVarQueryParams.Add("digest", parameterToString(localVarTempParam, ""))
+	}
+	if localVarTempParam, localVarOk := localVarOptionals["tag"].(string); localVarOk {
+		localVarQueryParams.Add("tag", parameterToString(localVarTempParam, ""))
+	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{  }
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -158,11 +180,14 @@ func (a *V2PipelineTemplatesControllerApiService) DeleteUsingDELETE1(ctx context
 	return successPayload, localVarHttpResponse, err
 }
 
-/* V2PipelineTemplatesControllerApiService Get a pipeline template.
+/* V2PipelineTemplatesControllerApiService (ALPHA) Get a pipeline template.
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param id id
+ @param optional (nil or map[string]interface{}) with one or more of:
+     @param "digest" (string) digest
+     @param "tag" (string) tag
  @return map[string]interface{}*/
-func (a *V2PipelineTemplatesControllerApiService) GetUsingGET2(ctx context.Context, id string) (map[string]interface{},  *http.Response, error) {
+func (a *V2PipelineTemplatesControllerApiService) GetUsingGET2(ctx context.Context, id string, localVarOptionals map[string]interface{}) (map[string]interface{},  *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody interface{}
@@ -179,9 +204,21 @@ func (a *V2PipelineTemplatesControllerApiService) GetUsingGET2(ctx context.Conte
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if err := typeCheckParameter(localVarOptionals["digest"], "string", "digest"); err != nil {
+		return successPayload, nil, err
+	}
+	if err := typeCheckParameter(localVarOptionals["tag"], "string", "tag"); err != nil {
+		return successPayload, nil, err
+	}
 
+	if localVarTempParam, localVarOk := localVarOptionals["digest"].(string); localVarOk {
+		localVarQueryParams.Add("digest", parameterToString(localVarTempParam, ""))
+	}
+	if localVarTempParam, localVarOk := localVarOptionals["tag"].(string); localVarOk {
+		localVarQueryParams.Add("tag", parameterToString(localVarTempParam, ""))
+	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{  }
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -222,7 +259,7 @@ func (a *V2PipelineTemplatesControllerApiService) GetUsingGET2(ctx context.Conte
 	return successPayload, localVarHttpResponse, err
 }
 
-/* V2PipelineTemplatesControllerApiService List all pipelines that implement a pipeline template
+/* V2PipelineTemplatesControllerApiService (ALPHA) List all pipelines that implement a pipeline template
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param id id
  @return []interface{}*/
@@ -245,7 +282,7 @@ func (a *V2PipelineTemplatesControllerApiService) ListPipelineTemplateDependents
 
 
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{  }
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -286,7 +323,7 @@ func (a *V2PipelineTemplatesControllerApiService) ListPipelineTemplateDependents
 	return successPayload, localVarHttpResponse, err
 }
 
-/* V2PipelineTemplatesControllerApiService List pipeline templates.
+/* V2PipelineTemplatesControllerApiService (ALPHA) List pipeline templates.
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param optional (nil or map[string]interface{}) with one or more of:
      @param "scopes" ([]string) scopes
@@ -312,7 +349,7 @@ func (a *V2PipelineTemplatesControllerApiService) ListUsingGET1(ctx context.Cont
 		localVarQueryParams.Add("scopes", parameterToString(localVarTempParam, "multi"))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{  }
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -353,7 +390,7 @@ func (a *V2PipelineTemplatesControllerApiService) ListUsingGET1(ctx context.Cont
 	return successPayload, localVarHttpResponse, err
 }
 
-/* V2PipelineTemplatesControllerApiService Plan a pipeline template configuration.
+/* V2PipelineTemplatesControllerApiService (ALPHA) Plan a pipeline template configuration.
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param pipeline pipeline
  @return map[string]interface{}*/
@@ -418,12 +455,13 @@ func (a *V2PipelineTemplatesControllerApiService) PlanUsingPOST(ctx context.Cont
 	return successPayload, localVarHttpResponse, err
 }
 
-/* V2PipelineTemplatesControllerApiService Update a pipeline template.
+/* V2PipelineTemplatesControllerApiService (ALPHA) Update a pipeline template.
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param id id
  @param pipelineTemplate pipelineTemplate
  @param optional (nil or map[string]interface{}) with one or more of:
      @param "skipPlanDependents" (bool) skipPlanDependents
+     @param "tag" (string) tag
  @return */
 func (a *V2PipelineTemplatesControllerApiService) UpdateUsingPOST1(ctx context.Context, id string, pipelineTemplate interface{}, localVarOptionals map[string]interface{}) ( *http.Response, error) {
 	var (
@@ -434,7 +472,7 @@ func (a *V2PipelineTemplatesControllerApiService) UpdateUsingPOST1(ctx context.C
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/pipelineTemplates/{id}"
+	localVarPath := a.client.cfg.BasePath + "/v2/pipelineTemplates/update/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", fmt.Sprintf("%v", id), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -444,9 +482,15 @@ func (a *V2PipelineTemplatesControllerApiService) UpdateUsingPOST1(ctx context.C
 	if err := typeCheckParameter(localVarOptionals["skipPlanDependents"], "bool", "skipPlanDependents"); err != nil {
 		return nil, err
 	}
+	if err := typeCheckParameter(localVarOptionals["tag"], "string", "tag"); err != nil {
+		return nil, err
+	}
 
 	if localVarTempParam, localVarOk := localVarOptionals["skipPlanDependents"].(bool); localVarOk {
 		localVarQueryParams.Add("skipPlanDependents", parameterToString(localVarTempParam, ""))
+	}
+	if localVarTempParam, localVarOk := localVarOptionals["tag"].(string); localVarOk {
+		localVarQueryParams.Add("tag", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{ "application/json",  }
