@@ -69,11 +69,11 @@ if [[ -z "$VERSION" ]]; then
 fi
 
 if [[ ! -z "$go_arch" ]]; then
-    export $GOARCH=$go_arch
+    export GOARCH=$go_arch
 fi
 
 if [[ ! -z "$go_os" ]]; then
-    export $GO_OS=$go_os
+    export GOOS=$go_os
 fi
 
 LD_FLAGS="-X github.com/spinnaker/spin/version.Version=${VERSION} \
