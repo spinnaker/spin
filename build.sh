@@ -56,7 +56,7 @@ usage: $0 --version <version>
 
     --release-phase <arg>        Release phase to decorate the version with.
 
-    --version <arg>              Version to build the `spin` binaries with.
+    --version <arg>              Version to build the 'spin' binaries with.
 EOF
 }
 
