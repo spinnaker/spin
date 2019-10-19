@@ -63,16 +63,16 @@ EOF
 
 process_args "$@"
 
-if [ -z "$VERSION" ]; then
+if [[ -z "$VERSION" ]]; then
     echo "No Version specified, using git hash at head."
     VERSION=$(git rev-parse HEAD)
 fi
 
-if [ ! -z "$go_arch"]; then
+if [[ ! -z "$go_arch" ]]; then
     export $GOARCH=$go_arch
 fi
 
-if [ ! -z "$go_os"]; then
+if [[ ! -z "$go_os" ]]; then
     export $GO_OS=$go_os
 fi
 
