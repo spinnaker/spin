@@ -46,12 +46,12 @@ usage: $0 --key_file <key file path> --version <version>
       [--gcs_bucket_path <path>]
 
 
-    --gcs_bucket_path <arg>      Path to the GCS bucket to write the `spin` binaries to.
+    --gcs_bucket_path <arg>      Path to the GCS bucket to write the 'spin' binaries to.
 
-    --key_file <arg>             Service account JSON key file to use to upload `spin`
+    --key_file <arg>             Service account JSON key file to use to upload 'spin'
                                        binaries.
 
-    --version <arg>              Version to tag the `spin` binaries with.
+    --version <arg>              Version to tag the 'spin' binaries with.
 EOF
 }
 
@@ -63,7 +63,7 @@ CURR_DIR=$(pwd)
 # Google cloud sdk installation from
 # https://cloud.google.com/sdk/docs/downloads-interactive.
 if ! command -v gcloud > /dev/null; then
-  curl https://sdk.cloud.google.com | bash -s -- --disable-prompts --install-dir=$CURR_DIR
+  curl https://sdk.cloud.google.com | bash -s -- --disable-prompts --install-dir="$CURR_DIR"
 fi
 
 export PATH=$PATH:$CURR_DIR/google-cloud-sdk/bin
@@ -73,7 +73,7 @@ if [[ -z "$KEY_FILE" ]]; then
   exit 1
 fi
 
-gcloud auth activate-service-account --key-file ${KEY_FILE}
+gcloud auth activate-service-account --key-file "${KEY_FILE}"
 gcloud components install gsutil -q
 
 if [[ -z "$VERSION" ]]; then
@@ -89,7 +89,7 @@ fi
 for elem in darwin,amd64 linux,amd64 windows,amd64; do
   IFS="," read os arch <<< "${elem}"
   echo "Building for $os $arch"
-  env CGO_ENABLED=0 GOOS=$os GOARCH=$arch go build .
+  env CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build .
 
   file="spin"
   if [[ "$os" = "windows" ]]; then
@@ -99,9 +99,9 @@ for elem in darwin,amd64 linux,amd64 windows,amd64; do
   path=${SPIN_GCS_BUCKET_PATH}/${VERSION}/${os}/${arch}/
   echo "Copying $file to $path"
 
-  gsutil cp $file $path
+  gsutil cp "$file" "$path"
   rm $file
 done
 
-echo $VERSION > latest
+echo "$VERSION" > latest
 gsutil cp latest ${SPIN_GCS_BUCKET_PATH}/
