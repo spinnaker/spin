@@ -11,7 +11,7 @@ VERSION=
 
 
 function process_args() {
-  while [[ $# > 0 ]]
+  while [[ $# -gt 0 ]]
   do
     local key="$1"
     shift
@@ -68,7 +68,7 @@ fi
 
 export PATH=$PATH:$CURR_DIR/google-cloud-sdk/bin
 
-if [ -z "$KEY_FILE" ]; then
+if [[ -z "$KEY_FILE" ]]; then
   echo "No key file specified with --key_file, exiting"
   exit 1
 fi
@@ -76,12 +76,12 @@ fi
 gcloud auth activate-service-account --key-file ${KEY_FILE}
 gcloud components install gsutil -q
 
-if [ -z "$VERSION" ]; then
+if [[ -z "$VERSION" ]]; then
   echo -e "No version to release specified with --version, exiting"
   exit 1
 fi
 
-if [ -z "$SPIN_GCS_BUCKET_PATH" ]; then
+if [[ -z "$SPIN_GCS_BUCKET_PATH" ]]; then
   echo "No GCS bucket specified using ${PROD_SPIN_GCS_BUCKET_PATH}, using gs://spinnaker-artifacts/spin"
   SPIN_GCS_BUCKET_PATH=$PROD_SPIN_GCS_BUCKET_PATH
 fi
@@ -92,7 +92,7 @@ for elem in darwin,amd64 linux,amd64 windows,amd64; do
   env CGO_ENABLED=0 GOOS=$os GOARCH=$arch go build .
 
   file="spin"
-  if [ "$os" = "windows"]; then
+  if [[ "$os" = "windows" ]]; then
     file="$file.exe"
   fi
 
