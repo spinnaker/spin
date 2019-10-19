@@ -10,7 +10,7 @@ go_arch=
 
 
 function process_args() {
-  while [[ $# > 0 ]]
+  while [[ $# -gt 0 ]]
   do
     local key="$1"
     shift
