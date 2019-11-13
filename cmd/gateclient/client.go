@@ -134,7 +134,7 @@ func NewGateClient(flags *pflag.FlagSet) (*GatewayClient, error) {
 		return nil, err
 	}
 
-	if err = gateClient.authenticateLdap(); err != nil {
+	if err = gateClient.authenticateLdap(flags); err != nil {
 		util.UI.Error("LDAP Authentication Failed")
 		return nil, err
 	}
@@ -467,17 +467,33 @@ func (m *GatewayClient) login(accessToken string) error {
 	return nil
 }
 
-func (m *GatewayClient) authenticateLdap() error {
+func (m *GatewayClient) authenticateLdap(flags *pflag.FlagSet) error {
 	auth := m.Config.Auth
 	if auth != nil && auth.Enabled && auth.Ldap != nil {
-    if auth.Ldap.Username == "" {
-      auth.Ldap.Username = prompt("Username:")
-    }
+		usernameCmd, err := flags.GetString("username")
+		if err != nil {
+			return err
+		}
+		passwordCmd, err := flags.GetString("password")
+		if err != nil {
+			return err
+		}
 
-    if auth.Ldap.Password == "" {
-      auth.Ldap.Password = securePrompt("Password:")
-    }
+		if usernameCmd != "" {
+			auth.Ldap.Username = usernameCmd
+		}
 
+		if passwordCmd != "" {
+			auth.Ldap.Password = passwordCmd
+		}
+
+		if auth.Ldap.Username == "" {
+		  auth.Ldap.Username = prompt("Username:")
+		}
+
+		if auth.Ldap.Password == "" {
+		  auth.Ldap.Password = securePrompt("Password:")
+		}
 
 		if !auth.Ldap.IsValid() {
 			return errors.New("Incorrect LDAP auth configuration. Must include username and password.")
