@@ -15,7 +15,7 @@ auth:
     cert: |
       -----BEGIN CERTIFICATE-----
       BLAHBLAHBLAHBLAHBLAHBLAH==
-      -----END RSA PRIVATE KEY-----
+      -----END CERTIFICATE-----
     # Pipe to start a multi-line string. This is necessary to import the b64 cert/key value.
     key: |
       -----BEGIN RSA PRIVATE KEY-----
