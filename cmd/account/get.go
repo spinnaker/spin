@@ -16,16 +16,14 @@ package account
 
 import (
 	"fmt"
-	"github.com/spinnaker/spin/util"
-	"net/http"
-
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/cmd/gateclient"
+	"github.com/spinnaker/spin/util"
+	"net/http"
 )
 
 type GetOptions struct {
 	*accountOptions
-	expand bool
 }
 
 var (
@@ -37,7 +35,6 @@ var (
 func NewGetCmd(accOptions accountOptions) *cobra.Command {
 	options := GetOptions{
 		accountOptions: &accOptions,
-		expand:         false,
 	}
 
 	cmd := &cobra.Command{
@@ -64,7 +61,7 @@ func getAccount(cmd *cobra.Command, options GetOptions, args []string) error {
 		return err
 	}
 
-	account, resp, err := gateClient.CredentialsControllerApi.GetAccountUsingGET(gateClient.Context, accountName, map[string]interface{}{"expand": options.expand})
+	account, resp, err := gateClient.CredentialsControllerApi.GetAccountUsingGET(gateClient.Context, accountName, map[string]interface{}{})
 	if resp != nil {
 		if resp.StatusCode == http.StatusNotFound {
 			return fmt.Errorf("Account '%s' not found\n", accountName)
