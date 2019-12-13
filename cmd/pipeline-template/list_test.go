@@ -127,227 +127,225 @@ func testGatePipelineTemplateListMalformed() *httptest.Server {
 }
 
 const malformedPipelineTemplateListJson = `
-  {
-   "id": "newSpelTemplate",
-   "lastModifiedBy": "anonymous",
-   "metadata": {
-    "description": "A generic application wait.",
-    "name": "Default Wait",
-    "owner": "example@example.com",
-    "scopes": [
-     "global"
-    ]
-   },
-   "pipeline": {
-    "description": "",
-    "keepWaitingPipelines": false,
-    "lastModifiedBy": "anonymous",
-    "limitConcurrent": true,
-    "notifications": [],
-    "parameterConfig": [],
-    "stages": [
-     {
-      "name": "My Wait Stage",
-      "refId": "wait1",
-      "requisiteStageRefIds": [],
-      "type": "wait",
-      "waitTime": "${ templateVariables.waitTime }"
-     }
-    ],
-    "triggers": [
-     {
-      "attributeConstraints": {},
-      "enabled": true,
-      "payloadConstraints": {},
-      "pubsubSystem": "google",
-      "source": "jake",
-      "subscription": "super-why",
-      "subscriptionName": "super-why",
-      "type": "pubsub"
-     }
-    ],
-    "updateTs": "1543509523663"
-   },
-   "protect": false,
-   "schema": "v2",
-   "updateTs": "1543860678988",
-   "variables": [
+{
+  "newSpelTemplate": [
     {
-     "defaultValue": 42,
-     "description": "The time a wait stage shall pauseth",
-     "name": "waitTime",
-     "type": "int"
+      "id": "newSpelTemplate",
+      "lastModifiedBy": "anonymous",
+      "metadata": {
+        "description": "A generic application wait.",
+        "name": "Default Wait",
+        "owner": "example@example.com",
+        "scopes": ["global"]
+      },
+      "pipeline": {
+        "description": "",
+        "keepWaitingPipelines": false,
+        "lastModifiedBy": "anonymous",
+        "limitConcurrent": true,
+        "notifications": [],
+        "parameterConfig": [],
+        "stages": [
+          {
+            "name": "My Wait Stage",
+            "refId": "wait1",
+            "requisiteStageRefIds": [],
+            "type": "wait",
+            "waitTime": "${ templateVariables.waitTime }"
+          }
+        ],
+        "triggers": [
+          {
+            "attributeConstraints": {},
+            "enabled": true,
+            "payloadConstraints": {},
+            "pubsubSystem": "google",
+            "source": "jake",
+            "subscription": "super-why",
+            "subscriptionName": "super-why",
+            "type": "pubsub"
+          }
+        ],
+        "updateTs": "1543509523663"
+      },
+      "protect": false,
+      "schema": "v2",
+      "updateTs": "1543860678988",
+      "variables": [
+        {
+          "defaultValue": 42,
+          "description": "The time a wait stage shall pauseth",
+          "name": "waitTime",
+          "type": "int"
+        }
+      ]
     }
-   ]
-  }
-]
+}
 `
 
 const pipelineTemplateListJson = `
-[
-  {
-   "id": "newSpelTemplate",
-   "lastModifiedBy": "anonymous",
-   "metadata": {
-    "description": "A generic application wait.",
-    "name": "Default Wait",
-    "owner": "example@example.com",
-    "scopes": [
-     "specific"
-    ]
-   },
-   "pipeline": {
-    "description": "",
-    "keepWaitingPipelines": false,
-    "lastModifiedBy": "anonymous",
-    "limitConcurrent": true,
-    "notifications": [],
-    "parameterConfig": [],
-    "stages": [
-     {
-      "name": "My Wait Stage",
-      "refId": "wait1",
-      "requisiteStageRefIds": [],
-      "type": "wait",
-      "waitTime": "${ templateVariables.waitTime }"
-     }
-    ],
-    "triggers": [
-     {
-      "attributeConstraints": {},
-      "enabled": true,
-      "payloadConstraints": {},
-      "pubsubSystem": "google",
-      "source": "jake",
-      "subscription": "super-why",
-      "subscriptionName": "super-why",
-      "type": "pubsub"
-     }
-    ],
-    "updateTs": "1543509523663"
-   },
-   "protect": false,
-   "schema": "v2",
-   "updateTs": "1543860678988",
-   "variables": [
+{
+  "newSpelTemplate": [
     {
-     "defaultValue": 42,
-     "description": "The time a wait stage shall pauseth",
-     "name": "waitTime",
-     "type": "int"
-    }
-   ]
-  },
-  {
-   "id": "newSpelTemplate",
-   "lastModifiedBy": "anonymous",
-   "metadata": {
-    "description": "A generic application wait.",
-    "name": "Default Wait",
-    "owner": "example@example.com",
-    "scopes": [
-     "global"
-    ]
-   },
-   "pipeline": {
-    "description": "",
-    "keepWaitingPipelines": false,
-    "lastModifiedBy": "anonymous",
-    "limitConcurrent": true,
-    "notifications": [],
-    "parameterConfig": [],
-    "stages": [
-     {
-      "name": "My Wait Stage",
-      "refId": "wait1",
-      "requisiteStageRefIds": [],
-      "type": "wait",
-      "waitTime": "${ templateVariables.waitTime }"
-     }
-    ],
-    "triggers": [
-     {
-      "attributeConstraints": {},
-      "enabled": true,
-      "payloadConstraints": {},
-      "pubsubSystem": "google",
-      "source": "jake",
-      "subscription": "super-why",
-      "subscriptionName": "super-why",
-      "type": "pubsub"
-     }
-    ],
-    "updateTs": "1543509523663"
-   },
-   "protect": false,
-   "schema": "v2",
-   "updateTs": "1543860678988",
-   "variables": [
+      "id": "newSpelTemplate",
+      "lastModifiedBy": "anonymous",
+      "metadata": {
+        "description": "A generic application wait.",
+        "name": "Default Wait",
+        "owner": "example@example.com",
+        "scopes": ["specific"]
+      },
+      "pipeline": {
+        "description": "",
+        "keepWaitingPipelines": false,
+        "lastModifiedBy": "anonymous",
+        "limitConcurrent": true,
+        "notifications": [],
+        "parameterConfig": [],
+        "stages": [
+          {
+            "name": "My Wait Stage",
+            "refId": "wait1",
+            "requisiteStageRefIds": [],
+            "type": "wait",
+            "waitTime": "${ templateVariables.waitTime }"
+          }
+        ],
+        "triggers": [
+          {
+            "attributeConstraints": {},
+            "enabled": true,
+            "payloadConstraints": {},
+            "pubsubSystem": "google",
+            "source": "jake",
+            "subscription": "super-why",
+            "subscriptionName": "super-why",
+            "type": "pubsub"
+          }
+        ],
+        "updateTs": "1543509523663"
+      },
+      "protect": false,
+      "schema": "v2",
+      "updateTs": "1543860678988",
+      "variables": [
+        {
+          "defaultValue": 42,
+          "description": "The time a wait stage shall pauseth",
+          "name": "waitTime",
+          "type": "int"
+        }
+      ]
+    },
     {
-     "defaultValue": 42,
-     "description": "The time a wait stage shall pauseth",
-     "name": "waitTime",
-     "type": "int"
+      "id": "newSpelTemplate",
+      "lastModifiedBy": "anonymous",
+      "metadata": {
+        "description": "A generic application wait.",
+        "name": "Default Wait",
+        "owner": "example@example.com",
+        "scopes": ["global"]
+      },
+      "pipeline": {
+        "description": "",
+        "keepWaitingPipelines": false,
+        "lastModifiedBy": "anonymous",
+        "limitConcurrent": true,
+        "notifications": [],
+        "parameterConfig": [],
+        "stages": [
+          {
+            "name": "My Wait Stage",
+            "refId": "wait1",
+            "requisiteStageRefIds": [],
+            "type": "wait",
+            "waitTime": "${ templateVariables.waitTime }"
+          }
+        ],
+        "triggers": [
+          {
+            "attributeConstraints": {},
+            "enabled": true,
+            "payloadConstraints": {},
+            "pubsubSystem": "google",
+            "source": "jake",
+            "subscription": "super-why",
+            "subscriptionName": "super-why",
+            "type": "pubsub"
+          }
+        ],
+        "updateTs": "1543509523663"
+      },
+      "protect": false,
+      "schema": "v2",
+      "updateTs": "1543860678988",
+      "variables": [
+        {
+          "defaultValue": 42,
+          "description": "The time a wait stage shall pauseth",
+          "name": "waitTime",
+          "type": "int"
+        }
+      ]
     }
-   ]
-  }
-]
+  ]
+}
 `
 
 const scopedPipelineTemplateListJson = `
-[
-  {
-   "id": "newSpelTemplate",
-   "lastModifiedBy": "anonymous",
-   "metadata": {
-    "description": "A generic application wait.",
-    "name": "Default Wait",
-    "owner": "example@example.com",
-    "scopes": [
-     "specific"
-    ]
-   },
-   "pipeline": {
-    "description": "",
-    "keepWaitingPipelines": false,
-    "lastModifiedBy": "anonymous",
-    "limitConcurrent": true,
-    "notifications": [],
-    "parameterConfig": [],
-    "stages": [
-     {
-      "name": "My Wait Stage",
-      "refId": "wait1",
-      "requisiteStageRefIds": [],
-      "type": "wait",
-      "waitTime": "${ templateVariables.waitTime }"
-     }
-    ],
-    "triggers": [
-     {
-      "attributeConstraints": {},
-      "enabled": true,
-      "payloadConstraints": {},
-      "pubsubSystem": "google",
-      "source": "jake",
-      "subscription": "super-why",
-      "subscriptionName": "super-why",
-      "type": "pubsub"
-     }
-    ],
-    "updateTs": "1543509523663"
-   },
-   "protect": false,
-   "schema": "v2",
-   "updateTs": "1543860678988",
-   "variables": [
+{
+  "newSpelTemplate": [
     {
-     "defaultValue": 42,
-     "description": "The time a wait stage shall pauseth",
-     "name": "waitTime",
-     "type": "int"
+      "id": "newSpelTemplate",
+      "lastModifiedBy": "anonymous",
+      "metadata": {
+        "description": "A generic application wait.",
+        "name": "Default Wait",
+        "owner": "example@example.com",
+        "scopes": ["specific"]
+      },
+      "pipeline": {
+        "description": "",
+        "keepWaitingPipelines": false,
+        "lastModifiedBy": "anonymous",
+        "limitConcurrent": true,
+        "notifications": [],
+        "parameterConfig": [],
+        "stages": [
+          {
+            "name": "My Wait Stage",
+            "refId": "wait1",
+            "requisiteStageRefIds": [],
+            "type": "wait",
+            "waitTime": "${ templateVariables.waitTime }"
+          }
+        ],
+        "triggers": [
+          {
+            "attributeConstraints": {},
+            "enabled": true,
+            "payloadConstraints": {},
+            "pubsubSystem": "google",
+            "source": "jake",
+            "subscription": "super-why",
+            "subscriptionName": "super-why",
+            "type": "pubsub"
+          }
+        ],
+        "updateTs": "1543509523663"
+      },
+      "protect": false,
+      "schema": "v2",
+      "updateTs": "1543860678988",
+      "variables": [
+        {
+          "defaultValue": 42,
+          "description": "The time a wait stage shall pauseth",
+          "name": "waitTime",
+          "type": "int"
+        }
+      ]
     }
-   ]
-  }
-]
+  ]
+}
 `

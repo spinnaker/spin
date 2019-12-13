@@ -327,14 +327,14 @@ func (a *V2PipelineTemplatesControllerApiService) ListPipelineTemplateDependents
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @param optional (nil or map[string]interface{}) with one or more of:
      @param "scopes" ([]string) scopes
- @return []interface{}*/
-func (a *V2PipelineTemplatesControllerApiService) ListUsingGET1(ctx context.Context, localVarOptionals map[string]interface{}) ([]interface{},  *http.Response, error) {
+ @return map[string]interface{}*/
+func (a *V2PipelineTemplatesControllerApiService) ListUsingGET1(ctx context.Context, localVarOptionals map[string]interface{}) (map[string]interface{},  *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody interface{}
 		localVarFileName string
 		localVarFileBytes []byte
-	 	successPayload  []interface{}
+	 	successPayload  map[string]interface{}
 	)
 
 	// create path and map variables
