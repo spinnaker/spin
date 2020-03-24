@@ -49,8 +49,8 @@ func NewSaveCmd(appOptions applicationOptions) *cobra.Command {
 			return saveApplication(cmd, options)
 		},
 	}
-	cmd.PersistentFlags().StringVarP(&options.applicationFile, "file", "", "", "path to the application file")
-	cmd.PersistentFlags().StringVarP(&options.applicationName, "application-name", "", "", "name of the application")
+	cmd.PersistentFlags().StringVarP(&options.applicationFile, "file", "f", "", "path to the application file")
+	cmd.PersistentFlags().StringVarP(&options.applicationName, "application-name", "a", "", "name of the application")
 	cmd.PersistentFlags().StringVarP(&options.ownerEmail, "owner-email", "", "", "email of the application owner")
 	options.cloudProviders = cmd.PersistentFlags().StringArrayP("cloud-providers", "", []string{}, "cloud providers configured for this application")
 
