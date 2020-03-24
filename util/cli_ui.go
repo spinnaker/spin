@@ -26,6 +26,7 @@ import (
 	"github.com/mitchellh/colorstring"
 	"github.com/spinnaker/spin/cmd/output"
 	"k8s.io/client-go/util/jsonpath"
+	"sigs.k8s.io/yaml"
 )
 
 type ColorizeUi struct {
@@ -87,25 +88,35 @@ func (u *ColorizeUi) Output(message string) {
 // Callers can optionally supply a jsonpath template to pull out nested data in input.
 // This leverages the kubernetes jsonpath libs (https://kubernetes.io/docs/reference/kubectl/jsonpath/).
 func (u *ColorizeUi) JsonOutput(input interface{}, outputFormat *output.OutputFormat) {
-	if outputFormat == nil {
-		prettyStr, _ := json.MarshalIndent(input, "", " ")
-		u.Output(u.colorize(string(prettyStr), u.OutputColor))
-		return
-	}
+	if outputFormat != nil {
+		template := outputFormat.JsonPath
+		if template != "" {
+			jsonValue, err := u.parseJsonPath(input, template)
+			if err != nil {
+				u.Error(fmt.Sprintf("Failed to parse jsonpath: %v", err))
+			}
 
-	template := outputFormat.JsonPath
-	if template == "" {
-		prettyStr, _ := json.MarshalIndent(input, "", " ")
-		u.Output(u.colorize(string(prettyStr), u.OutputColor))
-	} else {
-		jsonValue, err := u.parseJsonPath(input, template)
-		if err != nil {
-			u.Error(fmt.Sprintf("%v", err))
+			// unquote since go quotes the string if the bytes is a string.
+			u.Output(u.colorize(u.unquote(jsonValue.String()), u.OutputColor))
+			return
 		}
 
-		// unquote since go quotes the string if the bytes is a string.
-		u.Output(u.colorize(u.unquote(jsonValue.String()), u.OutputColor))
+		if outputFormat.Yaml {
+			prettyStr, err := yaml.Marshal(input)
+			if err != nil {
+				u.Error(fmt.Sprintf("Failed to marshal to yaml: %v", err))
+			}
+			u.Output(string(prettyStr))
+			return
+		}
 	}
+
+	// default to json
+	prettyStr, err := json.MarshalIndent(input, "", " ")
+	if err != nil {
+		u.Error(fmt.Sprintf("Failed to marshal to json: %v", err))
+	}
+	u.Output(u.colorize(string(prettyStr), u.OutputColor))
 }
 
 func (u *ColorizeUi) unquote(input string) string {

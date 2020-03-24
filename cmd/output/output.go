@@ -24,12 +24,16 @@ import (
 type OutputFormat struct {
 	// JsonPath specifies a subpath of the output to extract data from
 	JsonPath string
+	Yaml     bool
 }
 
 func ParseOutputFormat(outputFormat string) (*OutputFormat, error) {
 	format := new(OutputFormat)
 	switch {
 	case outputFormat == "":
+		return format, nil
+	case outputFormat == "yaml":
+		format.Yaml = true
 		return format, nil
 	case strings.HasPrefix(outputFormat, "jsonpath="):
 		toks := strings.Split(outputFormat, "=")

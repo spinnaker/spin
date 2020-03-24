@@ -17,12 +17,13 @@ package pipeline_template
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/util"
-	"gopkg.in/yaml.v2"
+	"sigs.k8s.io/yaml"
 )
 
 type UseOptions struct {
@@ -219,11 +220,14 @@ func parseKeyValsFromFile(filePaths []string, tolerateEmptyInput bool) (map[stri
 			return nil, err
 		}
 
-		// yaml decoder works with json or yaml files
-		err = yaml.NewDecoder(fromFile).Decode(&variables)
+		byteValue, err := ioutil.ReadAll(fromFile)
 		if err != nil {
-			newErr := errors.New("Error decoding file.  Is it a key/value (string) pair?")
-			return nil, fmt.Errorf("%v %v", newErr, err)
+			return nil, fmt.Errorf("Failed to read file: %v", err)
+		}
+
+		err = yaml.UnmarshalStrict(byteValue, &variables)
+		if err != nil {
+			return nil, fmt.Errorf("Failed to unmarshal: %v", err)
 		}
 	}
 

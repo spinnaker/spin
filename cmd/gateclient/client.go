@@ -41,7 +41,7 @@ import (
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/pflag"
-	"gopkg.in/yaml.v2"
+	"sigs.k8s.io/yaml"
 
 	"crypto/sha256"
 	"encoding/base64"
