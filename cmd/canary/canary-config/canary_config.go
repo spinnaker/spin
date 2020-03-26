@@ -15,8 +15,9 @@
 package canary_config
 
 import (
-	"github.com/spf13/cobra"
 	"io"
+
+	"github.com/spf13/cobra"
 )
 
 type canaryConfigOptions struct{}

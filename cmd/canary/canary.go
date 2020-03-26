@@ -1,9 +1,10 @@
 package canary
 
 import (
+	"io"
+
 	"github.com/spf13/cobra"
 	canary_config "github.com/spinnaker/spin/cmd/canary/canary-config"
-	"io"
 )
 
 type canaryOptions struct{}

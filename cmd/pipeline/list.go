@@ -31,8 +31,8 @@ type ListOptions struct {
 }
 
 var (
-	listPipelineShort   = "List the pipelines for the provided application"
-	listPipelineLong    = "List the pipelines for the provided application"
+	listPipelineShort = "List the pipelines for the provided application"
+	listPipelineLong  = "List the pipelines for the provided application"
 )
 
 func NewListCmd(pipelineOptions pipelineOptions) *cobra.Command {

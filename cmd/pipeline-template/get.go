@@ -17,15 +17,16 @@ package pipeline_template
 import (
 	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/cmd/gateclient"
 	"github.com/spinnaker/spin/util"
-	"net/http"
 )
 
 type GetOptions struct {
 	*pipelineTemplateOptions
-	id string
+	id  string
 	tag string
 }
 

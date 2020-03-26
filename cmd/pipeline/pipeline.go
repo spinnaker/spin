@@ -1,9 +1,10 @@
 package pipeline
 
 import (
+	"io"
+
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/cmd/pipeline/execution"
-	"io"
 )
 
 type pipelineOptions struct{}

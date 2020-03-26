@@ -32,8 +32,8 @@ type GetOptions struct {
 }
 
 var (
-	getPipelineShort   = "Get the pipeline with the provided name from the provided application"
-	getPipelineLong    = "Get the specified pipeline"
+	getPipelineShort = "Get the pipeline with the provided name from the provided application"
+	getPipelineLong  = "Get the specified pipeline"
 )
 
 func NewGetCmd(pipelineOptions pipelineOptions) *cobra.Command {
@@ -41,9 +41,9 @@ func NewGetCmd(pipelineOptions pipelineOptions) *cobra.Command {
 		pipelineOptions: &pipelineOptions,
 	}
 	cmd := &cobra.Command{
-		Use:     "get",
-		Short:   getPipelineShort,
-		Long:    getPipelineLong,
+		Use:   "get",
+		Short: getPipelineShort,
+		Long:  getPipelineLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return getPipeline(cmd, options)
 		},

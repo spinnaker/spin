@@ -16,10 +16,11 @@ package pipeline_template
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/cmd/gateclient"
 	"github.com/spinnaker/spin/util"
-	"net/http"
 )
 
 type DeleteOptions struct {
@@ -28,8 +29,8 @@ type DeleteOptions struct {
 }
 
 var (
-	deletePipelineTemplateShort   = "Delete the provided pipeline template"
-	deletePipelineTemplateLong    = "Delete the provided pipeline template"
+	deletePipelineTemplateShort = "Delete the provided pipeline template"
+	deletePipelineTemplateLong  = "Delete the provided pipeline template"
 )
 
 func NewDeleteCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Command {

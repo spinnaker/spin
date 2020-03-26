@@ -16,22 +16,23 @@ package pipeline_template
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/cmd/gateclient"
 	"github.com/spinnaker/spin/util"
-	"net/http"
 )
 
 type SaveOptions struct {
 	*pipelineTemplateOptions
 	output       string
 	templateFile string
-	tag string
+	tag          string
 }
 
 var (
-	saveTemplateShort   = "Save the provided pipeline template"
-	saveTemplateLong    = "Save the provided pipeline template"
+	saveTemplateShort = "Save the provided pipeline template"
+	saveTemplateLong  = "Save the provided pipeline template"
 )
 
 func NewSaveCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Command {
@@ -97,14 +98,14 @@ func savePipelineTemplate(cmd *cobra.Command, options SaveOptions) error {
 		saveResp, saveErr = gateClient.V2PipelineTemplatesControllerApi.CreateUsingPOST1(gateClient.Context, templateJson, queryParams)
 	} else {
 		if queryErr != nil {
-      return queryErr
+			return queryErr
 		}
 		return fmt.Errorf("Encountered an unexpected status code %d querying pipeline template with id %s\n",
 			resp.StatusCode, templateId)
 	}
 
 	if saveErr != nil {
-    return saveErr
+		return saveErr
 	}
 
 	if saveResp.StatusCode != http.StatusAccepted {

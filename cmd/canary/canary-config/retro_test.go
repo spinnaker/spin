@@ -15,12 +15,13 @@
 package canary_config
 
 import (
-	"github.com/spinnaker/spin/util"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/spinnaker/spin/util"
 )
 
 func TestCanaryConfigRetro_file(t *testing.T) {

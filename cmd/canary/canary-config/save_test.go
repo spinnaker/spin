@@ -16,12 +16,13 @@ package canary_config
 
 import (
 	"fmt"
-	"github.com/spinnaker/spin/util"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/spinnaker/spin/util"
 )
 
 func TestCanaryConfigSave_create(t *testing.T) {
@@ -192,7 +193,7 @@ func gateServerUpdateSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	// Return that there are no existing CCs on GET and a successful id on PUT.
 	mux.Handle("/v2/canaryConfig/exampleCanaryConfigId", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if (r.Method == http.MethodPut) {
+		if r.Method == http.MethodPut {
 			w.Write([]byte(responseJson))
 		} else {
 			w.WriteHeader(http.StatusOK)

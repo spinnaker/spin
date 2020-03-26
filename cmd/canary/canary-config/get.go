@@ -17,15 +17,16 @@ package canary_config
 import (
 	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/cmd/gateclient"
 	"github.com/spinnaker/spin/util"
-	"net/http"
 )
 
 type GetOptions struct {
 	*canaryConfigOptions
-	id  string
+	id string
 }
 
 const (

@@ -16,12 +16,13 @@ package account
 
 import (
 	"fmt"
-	"github.com/spinnaker/spin/util"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/spinnaker/spin/util"
 )
 
 func TestAccountList_basic(t *testing.T) {

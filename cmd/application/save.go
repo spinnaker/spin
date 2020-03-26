@@ -17,11 +17,12 @@ package application
 import (
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/cmd/gateclient"
-	"github.com/spinnaker/spin/cmd/orca-tasks"
+	orca_tasks "github.com/spinnaker/spin/cmd/orca-tasks"
 	"github.com/spinnaker/spin/util"
-	"strings"
 )
 
 type SaveOptions struct {
@@ -33,8 +34,8 @@ type SaveOptions struct {
 }
 
 var (
-	saveApplicationShort   = "Save the provided application"
-	saveApplicationLong    = "Save the specified application"
+	saveApplicationShort = "Save the provided application"
+	saveApplicationLong  = "Save the specified application"
 )
 
 func NewSaveCmd(appOptions applicationOptions) *cobra.Command {
@@ -42,9 +43,9 @@ func NewSaveCmd(appOptions applicationOptions) *cobra.Command {
 		applicationOptions: &appOptions,
 	}
 	cmd := &cobra.Command{
-		Use:     "save",
-		Short:   saveApplicationShort,
-		Long:    saveApplicationLong,
+		Use:   "save",
+		Short: saveApplicationShort,
+		Long:  saveApplicationLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return saveApplication(cmd, options)
 		},

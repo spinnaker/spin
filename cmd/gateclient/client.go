@@ -32,7 +32,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"strings"
-  "syscall"
+	"syscall"
 
 	"github.com/spinnaker/spin/config"
 	iap "github.com/spinnaker/spin/config/auth/iap"
@@ -470,14 +470,13 @@ func (m *GatewayClient) login(accessToken string) error {
 func (m *GatewayClient) authenticateLdap() error {
 	auth := m.Config.Auth
 	if auth != nil && auth.Enabled && auth.Ldap != nil {
-    if auth.Ldap.Username == "" {
-      auth.Ldap.Username = prompt("Username:")
-    }
+		if auth.Ldap.Username == "" {
+			auth.Ldap.Username = prompt("Username:")
+		}
 
-    if auth.Ldap.Password == "" {
-      auth.Ldap.Password = securePrompt("Password:")
-    }
-
+		if auth.Ldap.Password == "" {
+			auth.Ldap.Password = securePrompt("Password:")
+		}
 
 		if !auth.Ldap.IsValid() {
 			return errors.New("Incorrect LDAP auth configuration. Must include username and password.")
@@ -560,7 +559,7 @@ func prompt(inputMsg string) string {
 
 func securePrompt(inputMsg string) string {
 	util.UI.Output(inputMsg)
-  byteSecret, _ := terminal.ReadPassword(int(syscall.Stdin))
-  secret := string(byteSecret)
+	byteSecret, _ := terminal.ReadPassword(int(syscall.Stdin))
+	secret := string(byteSecret)
 	return strings.TrimSpace(secret)
 }

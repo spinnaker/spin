@@ -16,8 +16,9 @@ package project
 
 import (
 	"fmt"
-	"github.com/spinnaker/spin/util"
 	"net/http"
+
+	"github.com/spinnaker/spin/util"
 
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/cmd/gateclient"
@@ -37,7 +38,7 @@ var (
 func NewGetCmd(prjOptions projectOptions) *cobra.Command {
 	options := GetOptions{
 		projectOptions: &prjOptions,
-		expand: false,
+		expand:         false,
 	}
 
 	cmd := &cobra.Command{
@@ -45,7 +46,7 @@ func NewGetCmd(prjOptions projectOptions) *cobra.Command {
 		Short:   getProjectShort,
 		Long:    getProjectLong,
 		Example: getProjectExample,
-		RunE:    func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			return getProject(cmd, options, args)
 		},
 	}
@@ -67,7 +68,7 @@ func getProject(cmd *cobra.Command, options GetOptions, args []string) error {
 	project, resp, err := gateClient.ProjectControllerApi.AllPipelinesForProjectUsingGET(gateClient.Context, projectName, map[string]interface{}{"expand": options.expand})
 	if resp != nil {
 		if resp.StatusCode == http.StatusNotFound {
-			return fmt.Errorf("Project '%s' not found\n",projectName)
+			return fmt.Errorf("Project '%s' not found\n", projectName)
 		} else if resp.StatusCode != http.StatusOK {
 			return fmt.Errorf("Encountered an error getting project, status code: %d\n", resp.StatusCode)
 		}

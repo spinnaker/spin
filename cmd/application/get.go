@@ -16,8 +16,9 @@ package application
 
 import (
 	"fmt"
-	"github.com/spinnaker/spin/util"
 	"net/http"
+
+	"github.com/spinnaker/spin/util"
 
 	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/cmd/gateclient"
@@ -37,7 +38,7 @@ var (
 func NewGetCmd(appOptions applicationOptions) *cobra.Command {
 	options := GetOptions{
 		applicationOptions: &appOptions,
-		expand: false,
+		expand:             false,
 	}
 
 	cmd := &cobra.Command{
@@ -46,7 +47,7 @@ func NewGetCmd(appOptions applicationOptions) *cobra.Command {
 		Short:   getApplicationShort,
 		Long:    getApplicationLong,
 		Example: getApplicationExample,
-		RunE:    func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			return getApplication(cmd, options, args)
 		},
 	}

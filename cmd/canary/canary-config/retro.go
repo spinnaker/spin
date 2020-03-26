@@ -17,12 +17,13 @@ package canary_config
 import (
 	"errors"
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/spinnaker/spin/cmd/gateclient"
-	"github.com/spinnaker/spin/util"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/spf13/cobra"
+	"github.com/spinnaker/spin/cmd/gateclient"
+	"github.com/spinnaker/spin/util"
 )
 
 type RetroOptions struct {

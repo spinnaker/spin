@@ -32,8 +32,8 @@ type DeleteOptions struct {
 }
 
 var (
-	deletePipelineShort   = "Delete the provided pipeline"
-	deletePipelineLong    = "Delete the provided pipeline"
+	deletePipelineShort = "Delete the provided pipeline"
+	deletePipelineLong  = "Delete the provided pipeline"
 )
 
 func NewDeleteCmd(pipelineOptions pipelineOptions) *cobra.Command {
