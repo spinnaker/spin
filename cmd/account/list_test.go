@@ -29,14 +29,14 @@ func TestAccountList_basic(t *testing.T) {
 	defer ts.Close()
 
 	currentCmd := NewListCmd(accountOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	accCmd := NewAccountCmd(os.Stdout)
 	accCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(accCmd)
 
 	args := []string{"account", "list", "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -47,14 +47,14 @@ func TestAccountList_malformed(t *testing.T) {
 	defer ts.Close()
 
 	currentCmd := NewListCmd(accountOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	accCmd := NewAccountCmd(os.Stdout)
 	accCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(accCmd)
 
 	args := []string{"account", "list", "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -65,14 +65,14 @@ func TestAccountList_fail(t *testing.T) {
 	defer ts.Close()
 
 	currentCmd := NewListCmd(accountOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	accCmd := NewAccountCmd(os.Stdout)
 	accCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(accCmd)
 
 	args := []string{"account", "list", "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

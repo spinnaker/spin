@@ -31,13 +31,13 @@ func TestPipelineList_basic(t *testing.T) {
 
 	args := []string{"pipeline", "list", "--application", "app", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -50,13 +50,13 @@ func TestPipelineList_flags(t *testing.T) {
 
 	args := []string{"pipeline", "list", "--gate-endpoint", ts.URL} // Missing application.
 	currentCmd := NewListCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -68,13 +68,13 @@ func TestPipelineList_malformed(t *testing.T) {
 
 	args := []string{"pipeline", "list", "--application", "app", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -86,13 +86,13 @@ func TestPipelineList_fail(t *testing.T) {
 
 	args := []string{"pipeline", "list", "--application", "app", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

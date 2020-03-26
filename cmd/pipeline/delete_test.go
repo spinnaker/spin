@@ -17,6 +17,8 @@ package pipeline
 import (
 	"os"
 	"testing"
+
+	"github.com/spinnaker/spin/util"
 )
 
 // TODO(jacobkiefer): This test overlaps heavily with pipeline_save_test.go,
@@ -27,13 +29,13 @@ func TestPipelineDelete_basic(t *testing.T) {
 
 	args := []string{"pipeline", "delete", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
 	currentCmd := NewDeleteCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -45,13 +47,13 @@ func TestPipelineDelete_fail(t *testing.T) {
 
 	args := []string{"pipeline", "delete", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
 	currentCmd := NewDeleteCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -63,13 +65,13 @@ func TestPipelineDelete_flags(t *testing.T) {
 
 	args := []string{"pipeline", "delete", "--gate-endpoint", ts.URL} // Missing pipeline app and name.
 	currentCmd := NewDeleteCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -81,13 +83,13 @@ func TestPipelineDelete_missingname(t *testing.T) {
 
 	args := []string{"pipeline", "delete", "--application", "app", "--gate-endpoint", ts.URL}
 	currentCmd := NewDeleteCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command errantly succeeded. %s", err)
 	}
@@ -99,13 +101,13 @@ func TestPipelineDelete_missingapp(t *testing.T) {
 
 	args := []string{"pipeline", "delete", "--name", "one", "--gate-endpoint", ts.URL}
 	currentCmd := NewDeleteCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command errantly succeeded. %s", err)
 	}

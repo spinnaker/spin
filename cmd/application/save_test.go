@@ -35,7 +35,7 @@ func TestApplicationSave_basic(t *testing.T) {
 	ts := testGateApplicationSaveSuccess()
 	defer ts.Close()
 	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
@@ -48,7 +48,7 @@ func TestApplicationSave_basic(t *testing.T) {
 		"--cloud-providers", "gce,kubernetes",
 	}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -65,13 +65,13 @@ func TestApplicationSave_fail(t *testing.T) {
 		"--gate-endpoint=" + ts.URL,
 	}
 	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -86,13 +86,13 @@ func TestApplicationSave_flags(t *testing.T) {
 		"--gate-endpoint=" + ts.URL,
 	}
 	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -109,13 +109,13 @@ func TestApplicationSave_missingname(t *testing.T) {
 		"--gate-endpoint=" + ts.URL,
 	}
 	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -132,13 +132,13 @@ func TestApplicationSave_missingemail(t *testing.T) {
 		"--gate-endpoint", ts.URL,
 	}
 	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -155,13 +155,13 @@ func TestApplicationSave_missingproviders(t *testing.T) {
 		"--gate-endpoint", ts.URL,
 	}
 	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -184,13 +184,13 @@ func TestApplicationSave_filebasic(t *testing.T) {
 	}
 
 	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -218,13 +218,13 @@ func TestApplicationSave_stdinbasic(t *testing.T) {
 	}
 
 	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

@@ -37,13 +37,13 @@ func TestPipelineTemplatePlan_basic(t *testing.T) {
 	args := []string{"pipeline-template", "plan", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 
 	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -67,13 +67,13 @@ func TestPipelineTemplatePlan_stdin(t *testing.T) {
 
 	args := []string{"pipeline-template", "plan", "--gate-endpoint", ts.URL}
 	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -91,13 +91,13 @@ func TestPipelineTemplatePlan_fail(t *testing.T) {
 
 	args := []string{"pipeline-template", "plan", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Expected failure but command succeeded")
 	}
@@ -109,13 +109,13 @@ func TestPipelineTemplatePlan_flags(t *testing.T) {
 
 	args := []string{"pipeline-template", "plan", "--gate-endpoint", ts.URL} // Missing pipeline config file and stdin.
 	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Expected failure but command succeeded")
 	}
@@ -223,11 +223,11 @@ const testPlanConfig = `
             "enabled": true,
             "pubsubSystem": "google",
             "subscription": "super-derp",
-            "subscription": "super-derp",
             "subscriptionName": "super-derp",
             "source": "jack",
             "attributeConstraints": {},
-            "payloadConstraints": {}
+            "payloadConstraints": {},
+						"invalid-key": "whatever"
         }
     ],
     "parameters": [],

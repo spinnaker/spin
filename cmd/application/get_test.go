@@ -23,39 +23,24 @@ import (
 	"testing"
 
 	"github.com/spinnaker/spin/util"
-
-	"github.com/spf13/cobra"
 )
 
 const (
 	APP = "app"
 )
 
-func getRootCmdForTest() *cobra.Command {
-	rootCmd := &cobra.Command{}
-	rootCmd.PersistentFlags().String("config", "", "config file (default is $HOME/.spin/config)")
-	rootCmd.PersistentFlags().String("gate-endpoint", "", "Gate (API server) endpoint. Default http://localhost:8084")
-	rootCmd.PersistentFlags().Bool("insecure", false, "Ignore Certificate Errors")
-	rootCmd.PersistentFlags().Bool("quiet", false, "Squelch non-essential output")
-	rootCmd.PersistentFlags().Bool("no-color", false, "Disable color")
-	rootCmd.PersistentFlags().String("output", "", "Configure output formatting")
-	rootCmd.PersistentFlags().String("default-headers", "", "Configure additional headers for gate client requests")
-	util.InitUI(false, false, "")
-	return rootCmd
-}
-
 func TestApplicationGet_basic(t *testing.T) {
 	ts := testGateApplicationGetSuccess()
 	defer ts.Close()
 	currentCmd := NewGetCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
 	args := []string{"application", "get", APP, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -65,13 +50,13 @@ func TestApplicationGet_flags(t *testing.T) {
 	ts := testGateApplicationGetSuccess()
 	defer ts.Close()
 	currentCmd := NewGetCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 	args := []string{"application", "get", "--gate-endpoint", ts.URL} // Missing positional arg.
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil { // Success is actually failure here, flags are malformed.
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -82,14 +67,14 @@ func TestApplicationGet_malformed(t *testing.T) {
 	defer ts.Close()
 
 	currentCmd := NewGetCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
 	args := []string{"application", "get", APP, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil { // Success is actually failure here, return payload is malformed.
 		t.Fatalf("Command failed with: %d", err)
 	}
@@ -100,14 +85,14 @@ func TestApplicationGet_fail(t *testing.T) {
 	defer ts.Close()
 
 	currentCmd := NewGetCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
 	args := []string{"application", "get", APP, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil { // Success is actually failure here, return payload is malformed.
 		t.Fatalf("Command failed with: %d", err)
 	}

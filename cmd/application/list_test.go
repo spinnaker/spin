@@ -30,14 +30,14 @@ func TestApplicationList_basic(t *testing.T) {
 	defer ts.Close()
 
 	currentCmd := NewListCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
 	args := []string{"application", "list", "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -48,14 +48,14 @@ func TestApplicationList_malformed(t *testing.T) {
 	defer ts.Close()
 
 	currentCmd := NewListCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
 	args := []string{"application", "list", "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -66,14 +66,14 @@ func TestApplicationList_fail(t *testing.T) {
 	defer ts.Close()
 
 	currentCmd := NewListCmd(applicationOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	appCmd := NewApplicationCmd(os.Stdout)
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
 	args := []string{"application", "list", "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

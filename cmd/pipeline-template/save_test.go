@@ -37,13 +37,13 @@ func TestPipelineTemplateSave_create(t *testing.T) {
 	args := []string{"pipeline-template", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 
 	currentCmd := NewSaveCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -61,13 +61,13 @@ func TestPipelineTemplateSave_createtag(t *testing.T) {
 	args := []string{"pipeline-template", "save", "--file", tempFile.Name(), "--tag", "stable", "--gate-endpoint", ts.URL}
 
 	currentCmd := NewSaveCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -85,13 +85,13 @@ func TestPipelineTemplateSave_update(t *testing.T) {
 	args := []string{"pipeline-template", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 
 	currentCmd := NewSaveCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -109,13 +109,13 @@ func TestPipelineTemplateSave_updatetag(t *testing.T) {
 	args := []string{"pipeline-template", "save", "--file", tempFile.Name(), "--tag", "stable", "--gate-endpoint", ts.URL}
 
 	currentCmd := NewSaveCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -139,13 +139,13 @@ func TestPipelineTemplateSave_stdin(t *testing.T) {
 
 	args := []string{"pipeline-template", "save", "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -163,13 +163,13 @@ func TestPipelineTemplateSave_fail(t *testing.T) {
 
 	args := []string{"pipeline-template", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -181,13 +181,13 @@ func TestPipelineTemplateSave_flags(t *testing.T) {
 
 	args := []string{"pipeline-template", "save", "--gate-endpoint", ts.URL} // Missing pipeline spec file and stdin.
 	currentCmd := NewSaveCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -205,13 +205,13 @@ func TestPipelineTemplateSave_missingid(t *testing.T) {
 
 	args := []string{"pipeline-template", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -229,13 +229,13 @@ func TestPipelineTemplateSave_missingschema(t *testing.T) {
 
 	args := []string{"pipeline-template", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

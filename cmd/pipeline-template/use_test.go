@@ -20,6 +20,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/spinnaker/spin/util"
 )
 
 var testAppName = "test-application"
@@ -34,13 +36,13 @@ func TestPipelineTemplateUse_basic(t *testing.T) {
 		fmt.Sprintf("--set=%s", testVariables)}
 
 	currentCmd := NewUseCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -53,13 +55,13 @@ func TestPipelineTemplateUse_basicShort(t *testing.T) {
 		fmt.Sprintf("--set=%s", testVariables)}
 
 	currentCmd := NewUseCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -68,13 +70,13 @@ func TestPipelineTemplateUse_basicShort(t *testing.T) {
 func TestPipelineTemplateUse_missingFlags(t *testing.T) {
 	args := []string{"pipeline-template", "use"} // Missing id, application, name
 	currentCmd := NewUseCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Expected failure but command succeeded")
 	}
@@ -96,13 +98,13 @@ func TestPipelineTemplateUse_templateVariables(t *testing.T) {
 		fmt.Sprintf("--set=%s", testVariables)}
 
 	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

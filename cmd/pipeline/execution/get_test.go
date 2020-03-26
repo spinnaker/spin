@@ -16,33 +16,20 @@ package execution
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/spinnaker/spin/util"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
-)
 
-func getRootCmdForTest() *cobra.Command {
-	rootCmd := &cobra.Command{}
-	rootCmd.PersistentFlags().String("config", "", "config file (default is $HOME/.spin/config)")
-	rootCmd.PersistentFlags().String("gate-endpoint", "", "Gate (API server) endpoint. Default http://localhost:8084")
-	rootCmd.PersistentFlags().Bool("insecure", false, "Ignore Certificate Errors")
-	rootCmd.PersistentFlags().Bool("quiet", false, "Squelch non-essential output")
-	rootCmd.PersistentFlags().Bool("no-color", false, "Disable color")
-	rootCmd.PersistentFlags().String("output", "", "Configure output formatting")
-	rootCmd.PersistentFlags().String("default-headers", "", "Configure additional headers for gate client requests")
-	util.InitUI(false, false, "")
-	return rootCmd
-}
+	"github.com/spinnaker/spin/util"
+)
 
 func TestExecutionGet_basic(t *testing.T) {
 	ts := testGateExecutionGetSuccess()
 	defer ts.Close()
 	currentCmd := NewGetCmd()
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 
 	executionCmd := NewExecutionCmd(os.Stdout)
 	executionCmd.AddCommand(currentCmd)
@@ -52,7 +39,7 @@ func TestExecutionGet_basic(t *testing.T) {
 	// Exclude 'pipeline' since we are testing only the 'execution' subcommand.
 	args := []string{"ex", "get", "someId", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -62,7 +49,7 @@ func TestExecutionGet_noinput(t *testing.T) {
 	ts := testGateExecutionGetSuccess()
 	defer ts.Close()
 	currentCmd := NewGetCmd()
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 
 	executionCmd := NewExecutionCmd(os.Stdout)
 	executionCmd.AddCommand(currentCmd)
@@ -72,7 +59,7 @@ func TestExecutionGet_noinput(t *testing.T) {
 	// Exclude 'pipeline' since we are testing only the 'execution' subcommand.
 	args := []string{"ex", "get", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -82,7 +69,7 @@ func TestExecutionGet_failure(t *testing.T) {
 	ts := GateServerFail()
 	defer ts.Close()
 	currentCmd := NewGetCmd()
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 
 	executionCmd := NewExecutionCmd(os.Stdout)
 	executionCmd.AddCommand(currentCmd)
@@ -92,7 +79,7 @@ func TestExecutionGet_failure(t *testing.T) {
 	// Exclude 'pipeline' since we are testing only the 'execution' subcommand.
 	args := []string{"ex", "get", "someId", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

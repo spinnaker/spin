@@ -21,28 +21,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/spf13/cobra"
 	"github.com/spinnaker/spin/util"
 )
-
-func getRootCmdForTest() *cobra.Command {
-	rootCmd := &cobra.Command{}
-	rootCmd.PersistentFlags().String("config", "", "config file (default is $HOME/.spin/config)")
-	rootCmd.PersistentFlags().String("gate-endpoint", "", "Gate (API server) endpoint. Default http://localhost:8084")
-	rootCmd.PersistentFlags().Bool("insecure", false, "Ignore Certificate Errors")
-	rootCmd.PersistentFlags().Bool("quiet", false, "Squelch non-essential output")
-	rootCmd.PersistentFlags().Bool("no-color", false, "Disable color")
-	rootCmd.PersistentFlags().String("output", "", "Configure output formatting")
-	rootCmd.PersistentFlags().String("default-headers", "", "Configure additional headers for gate client requests")
-	util.InitUI(false, false, "")
-	return rootCmd
-}
 
 func TestPipelineGet_basic(t *testing.T) {
 	ts := testGatePipelineTemplateGetSuccess()
 	defer ts.Close()
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
@@ -50,7 +36,7 @@ func TestPipelineGet_basic(t *testing.T) {
 	args := []string{"pipeline-template", "get", "--id", "newSpelTemplate", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
 
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -60,7 +46,7 @@ func TestPipelineGet_args(t *testing.T) {
 	ts := testGatePipelineTemplateGetSuccess()
 	defer ts.Close()
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
@@ -68,7 +54,7 @@ func TestPipelineGet_args(t *testing.T) {
 	args := []string{"pipeline-template", "get", "newSpelTemplate", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
 
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -78,7 +64,7 @@ func TestPipelineGet_tag(t *testing.T) {
 	ts := testGatePipelineTemplateGetSuccess()
 	defer ts.Close()
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
@@ -86,7 +72,7 @@ func TestPipelineGet_tag(t *testing.T) {
 	args := []string{"pipeline-template", "get", "newSpelTemplate", "--tag", "stable", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
 
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -97,7 +83,7 @@ func TestPipelineGet_flags(t *testing.T) {
 	defer ts.Close()
 
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
@@ -105,7 +91,7 @@ func TestPipelineGet_flags(t *testing.T) {
 	args := []string{"pipeline-template", "get", "--gate-endpoint", ts.URL} // missing id flag and no args
 	rootCmd.SetArgs(args)
 
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -116,7 +102,7 @@ func TestPipelineGet_malformed(t *testing.T) {
 	defer ts.Close()
 
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
@@ -124,7 +110,7 @@ func TestPipelineGet_malformed(t *testing.T) {
 	args := []string{"pipeline-template", "get", "--id", "newSpelTemplate", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
 
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -135,7 +121,7 @@ func TestPipelineGet_fail(t *testing.T) {
 	defer ts.Close()
 
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
@@ -143,7 +129,7 @@ func TestPipelineGet_fail(t *testing.T) {
 	args := []string{"pipeline-template", "get", "--id", "newSpelTemplate", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
 
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -154,7 +140,7 @@ func TestPipelineGet_notfound(t *testing.T) {
 	defer ts.Close()
 
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
@@ -162,7 +148,7 @@ func TestPipelineGet_notfound(t *testing.T) {
 	args := []string{"pipeline-template", "get", "--application", "app", "--name", "two", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
 
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

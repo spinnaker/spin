@@ -37,13 +37,13 @@ func TestPipelineSave_basic(t *testing.T) {
 	args := []string{"pipeline", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 
 	currentCmd := NewSaveCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -67,13 +67,13 @@ func TestPipelineSave_stdin(t *testing.T) {
 
 	args := []string{"pipeline", "save", "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -91,13 +91,13 @@ func TestPipelineSave_fail(t *testing.T) {
 
 	args := []string{"pipeline", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -115,13 +115,13 @@ func TestPipelineSave_accessdenied(t *testing.T) {
 
 	args := []string{"pipeline", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -132,13 +132,13 @@ func TestPipelineSave_flags(t *testing.T) {
 
 	args := []string{"pipeline", "save", "--gate-endpoint", ts.URL} // Missing pipeline spec file.
 	currentCmd := NewSaveCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -156,13 +156,13 @@ func TestPipelineSave_missingname(t *testing.T) {
 
 	args := []string{"pipeline", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -180,13 +180,13 @@ func TestPipelineSave_missingid(t *testing.T) {
 
 	args := []string{"pipeline", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -204,13 +204,13 @@ func TestPipelineSave_missingapp(t *testing.T) {
 
 	args := []string{"pipeline", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineCmd := NewPipelineCmd(os.Stdout)
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

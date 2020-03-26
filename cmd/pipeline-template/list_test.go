@@ -31,13 +31,13 @@ func TestPipelineTemplateList_basic(t *testing.T) {
 
 	args := []string{"pipeline-template", "list", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -49,13 +49,13 @@ func TestPipelineTemplateList_scope(t *testing.T) {
 
 	args := []string{"pipeline-template", "list", "--scopes", "specific", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -67,13 +67,13 @@ func TestPipelineTemplateList_malformed(t *testing.T) {
 
 	args := []string{"pipeline-template", "list", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -85,13 +85,13 @@ func TestPipelineTemplateList_fail(t *testing.T) {
 
 	args := []string{"pipeline-template", "list", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(pipelineTemplateOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

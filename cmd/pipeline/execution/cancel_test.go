@@ -22,13 +22,15 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/spinnaker/spin/util"
 )
 
 func TestExecutionCancel_basic(t *testing.T) {
 	ts := testGateExecutionCancelSuccess()
 	defer ts.Close()
 	currentCmd := NewCancelCmd()
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 
 	executionCmd := NewExecutionCmd(os.Stdout)
 	executionCmd.AddCommand(currentCmd)
@@ -38,7 +40,7 @@ func TestExecutionCancel_basic(t *testing.T) {
 	// Exclude 'pipeline' since we are testing only the 'execution' subcommand.
 	args := []string{"ex", "cancel", "someId", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -48,7 +50,7 @@ func TestExecutionCancel_noinput(t *testing.T) {
 	ts := testGateExecutionCancelSuccess()
 	defer ts.Close()
 	currentCmd := NewCancelCmd()
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 
 	executionCmd := NewExecutionCmd(os.Stdout)
 	executionCmd.AddCommand(currentCmd)
@@ -58,7 +60,7 @@ func TestExecutionCancel_noinput(t *testing.T) {
 	// Exclude 'pipeline' since we are testing only the 'execution' subcommand.
 	args := []string{"ex", "cancel", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %v", err)
 	}
@@ -68,7 +70,7 @@ func TestExecutionCancel_failure(t *testing.T) {
 	ts := GateServerFail()
 	defer ts.Close()
 	currentCmd := NewCancelCmd()
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 
 	executionCmd := NewExecutionCmd(os.Stdout)
 	executionCmd.AddCommand(currentCmd)
@@ -78,7 +80,7 @@ func TestExecutionCancel_failure(t *testing.T) {
 	// Exclude 'pipeline' since we are testing only the 'execution' subcommand.
 	args := []string{"ex", "cancel", "someId", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %v", err)
 	}

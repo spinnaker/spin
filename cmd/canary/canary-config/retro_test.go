@@ -44,13 +44,13 @@ func TestCanaryConfigRetro_file(t *testing.T) {
 		"--gate-endpoint", ts.URL}
 
 	currentCmd := NewRetroCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -82,13 +82,13 @@ func TestCanaryConfigRetro_stdin(t *testing.T) {
 		"--end", "2019-09-17T18:16:02.600Z",
 		"--gate-endpoint", ts.URL}
 	currentCmd := NewRetroCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -115,13 +115,13 @@ func TestCanaryConfigRetro_fail(t *testing.T) {
 		"--end", "2019-09-17T18:16:02.600Z",
 		"--gate-endpoint", ts.URL}
 	currentCmd := NewRetroCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -150,13 +150,13 @@ func TestCanaryConfigRetro_timeout(t *testing.T) {
 		"--end", "2019-09-17T18:16:02.600Z",
 		"--gate-endpoint", ts.URL}
 	currentCmd := NewRetroCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

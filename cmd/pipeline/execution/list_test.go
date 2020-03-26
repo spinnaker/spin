@@ -31,13 +31,13 @@ func TestExecutionList_basic(t *testing.T) {
 
 	args := []string{"execution", "list", "--pipeline-id", "myid", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(executionOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	executionCmd := NewExecutionCmd(os.Stdout)
 	executionCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(executionCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -50,13 +50,13 @@ func TestExecutionList_flags(t *testing.T) {
 
 	args := []string{"execution", "list", "--gate-endpoint", ts.URL} // Missing pipeline id.
 	currentCmd := NewListCmd(executionOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	executionCmd := NewExecutionCmd(os.Stdout)
 	executionCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(executionCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -68,13 +68,13 @@ func TestExecutionList_fail(t *testing.T) {
 
 	args := []string{"execution", "list", "--pipeline-id", "myid", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(executionOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	executionCmd := NewExecutionCmd(os.Stdout)
 	executionCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(executionCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

@@ -16,27 +16,14 @@ package canary_config
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/spinnaker/spin/util"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
-)
 
-func getRootCmdForTest() *cobra.Command {
-	rootCmd := &cobra.Command{}
-	rootCmd.PersistentFlags().String("config", "", "config file (default is $HOME/.spin/config)")
-	rootCmd.PersistentFlags().String("gate-endpoint", "", "Gate (API server) endpoint. Default http://localhost:8084")
-	rootCmd.PersistentFlags().Bool("insecure", false, "Ignore Certificate Errors")
-	rootCmd.PersistentFlags().Bool("quiet", false, "Squelch non-essential output")
-	rootCmd.PersistentFlags().Bool("no-color", false, "Disable color")
-	rootCmd.PersistentFlags().String("output", "", "Configure output formatting")
-	rootCmd.PersistentFlags().String("default-headers", "", "Configure additional headers for gate client requests")
-	util.InitUI(false, false, "")
-	return rootCmd
-}
+	"github.com/spinnaker/spin/util"
+)
 
 func TestCanaryConfigList_basic(t *testing.T) {
 	ts := testGateCanaryConfigListSuccess()
@@ -45,13 +32,13 @@ func TestCanaryConfigList_basic(t *testing.T) {
 	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
 	args := []string{"canary-config", "list", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -64,13 +51,13 @@ func TestCanaryConfigList_malformed(t *testing.T) {
 	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
 	args := []string{"canary-config", "list", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -83,13 +70,13 @@ func TestCanaryConfigList_fail(t *testing.T) {
 	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
 	args := []string{"canary-config", "list", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

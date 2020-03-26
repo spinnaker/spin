@@ -28,13 +28,13 @@ func TestCanaryConfigDelete_basic(t *testing.T) {
 
 	args := []string{"canary-config", "delete", "configId", "--gate-endpoint", ts.URL}
 	currentCmd := NewDeleteCmd()
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -46,13 +46,13 @@ func TestCanaryConfigDelete_fail(t *testing.T) {
 
 	args := []string{"canary-config", "delete", "configId", "--gate-endpoint", ts.URL}
 	currentCmd := NewDeleteCmd()
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -64,13 +64,13 @@ func TestCanaryConfigDelete_missingid(t *testing.T) {
 
 	args := []string{"canary-config", "delete", "--gate-endpoint", ts.URL} // Missing cc id.
 	currentCmd := NewDeleteCmd()
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command errantly succeeded. %s", err)
 	}

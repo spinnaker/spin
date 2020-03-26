@@ -37,13 +37,13 @@ func TestCanaryConfigSave_create(t *testing.T) {
 	args := []string{"canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 
 	currentCmd := NewSaveCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -62,13 +62,13 @@ func TestCanaryConfigSave_update(t *testing.T) {
 	args := []string{"canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 
 	currentCmd := NewSaveCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -93,13 +93,13 @@ func TestCanaryConfigSave_stdin(t *testing.T) {
 	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
 	args := []string{"canary-config", "save", "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -118,13 +118,13 @@ func TestCanaryConfigSave_fail(t *testing.T) {
 	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
 	args := []string{"canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -138,13 +138,13 @@ func TestCanaryConfigSave_flags(t *testing.T) {
 	// Missing canary config spec file and stdin.
 	args := []string{"canary-config", "save", "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -163,13 +163,13 @@ func TestCanaryConfigSave_missingid(t *testing.T) {
 	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
 	args := []string{"canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

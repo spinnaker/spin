@@ -31,13 +31,13 @@ func TestCanaryConfigGet_basic(t *testing.T) {
 	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
 	args := []string{"canary-config", "get", "--id", "3f3dbcc1", "--gate-endpoint", ts.URL}
 	currentCmd := NewGetCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -51,13 +51,13 @@ func TestCanaryConfigGet_args(t *testing.T) {
 	// Missing 'id' argument.
 	args := []string{"canary-config", "get", "--gate-endpoint", ts.URL}
 	currentCmd := NewGetCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -70,13 +70,13 @@ func TestCanaryConfigGet_malformed(t *testing.T) {
 	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
 	args := []string{"canary-config", "get", "--id", "3f3dbcc1", "--gate-endpoint", ts.URL}
 	currentCmd := NewGetCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -89,13 +89,13 @@ func TestCanaryConfigGet_fail(t *testing.T) {
 	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
 	args := []string{"canary-config", "get", "--id", "3f3dbcc1", "--gate-endpoint", ts.URL}
 	currentCmd := NewGetCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
 	rootCmd.SetArgs(args)
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -106,7 +106,7 @@ func TestPipelineGet_notfound(t *testing.T) {
 	defer ts.Close()
 
 	currentCmd := NewGetCmd(canaryConfigOptions{})
-	rootCmd := getRootCmdForTest()
+	rootCmd := util.NewRootCmdForTest()
 	pipelineTemplateCmd := NewCanaryConfigCmd(os.Stdout)
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
@@ -114,7 +114,7 @@ func TestPipelineGet_notfound(t *testing.T) {
 	args := []string{"canary-config", "get", "--id", "3f3dbcc1", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
 
-	err := rootCmd.Execute()
+	_, err := util.ExecCmdForTest(rootCmd)
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
