@@ -113,6 +113,6 @@ func listExecution(cmd *cobra.Command, options ListOptions) error {
 			resp.StatusCode)
 	}
 
-	util.UI.JsonOutput(successPayload, util.UI.OutputFormat)
+	util.UI.JsonOutput(successPayload)
 	return nil
 }

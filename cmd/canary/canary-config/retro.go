@@ -210,7 +210,7 @@ func retroCanaryConfig(cmd *cobra.Command, options RetroOptions) error {
 
 	util.UI.Info(util.Colorize().Color(fmt.Sprintf("Retrospective canary execution finished, judgement = %s", strings.ToUpper(judgement))))
 	if options.fullResult {
-		util.UI.JsonOutput(canaryResult, util.UI.OutputFormat)
+		util.UI.JsonOutput(canaryResult)
 	}
 	return nil
 }

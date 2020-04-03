@@ -67,6 +67,6 @@ func listAccount(cmd *cobra.Command, options ListOptions, args []string) error {
 		return fmt.Errorf("Encountered an error listing accounts, status code: %d\n", resp.StatusCode)
 	}
 
-	util.UI.JsonOutput(accountList, util.UI.OutputFormat)
+	util.UI.JsonOutput(accountList)
 	return nil
 }

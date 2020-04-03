@@ -90,6 +90,6 @@ func getPipelineTemplate(cmd *cobra.Command, options GetOptions, args []string) 
 			resp.StatusCode)
 	}
 
-	util.UI.JsonOutput(successPayload, util.UI.OutputFormat)
+	util.UI.JsonOutput(successPayload)
 	return nil
 }

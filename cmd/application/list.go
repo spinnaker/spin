@@ -59,6 +59,6 @@ func listApplication(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("Encountered an error saving application, status code: %d\n", resp.StatusCode)
 	}
 
-	util.UI.JsonOutput(appList, util.UI.OutputFormat)
+	util.UI.JsonOutput(appList)
 	return nil
 }

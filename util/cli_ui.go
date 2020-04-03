@@ -87,7 +87,8 @@ func (u *ColorizeUi) Output(message string) {
 // JsonOutput pretty prints the data specified in the input.
 // Callers can optionally supply a jsonpath template to pull out nested data in input.
 // This leverages the kubernetes jsonpath libs (https://kubernetes.io/docs/reference/kubectl/jsonpath/).
-func (u *ColorizeUi) JsonOutput(input interface{}, outputFormat *output.OutputFormat) {
+func (u *ColorizeUi) JsonOutput(input interface{}) {
+	outputFormat := UI.OutputFormat
 	if outputFormat != nil {
 		template := outputFormat.JsonPath
 		if template != "" {

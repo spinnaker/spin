@@ -92,7 +92,7 @@ func usePipelineTemplate(cmd *cobra.Command, options UseOptions, args []string) 
 		return err
 	}
 	util.InitUI(false, false, "")
-	util.UI.JsonOutput(pipeline, util.UI.OutputFormat)
+	util.UI.JsonOutput(pipeline)
 
 	return nil
 }

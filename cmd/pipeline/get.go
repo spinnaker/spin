@@ -80,6 +80,6 @@ func getPipeline(cmd *cobra.Command, options GetOptions) error {
 			resp.StatusCode)
 	}
 
-	util.UI.JsonOutput(successPayload, util.UI.OutputFormat)
+	util.UI.JsonOutput(successPayload)
 	return nil
 }

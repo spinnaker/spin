@@ -85,10 +85,10 @@ func getApplication(cmd *cobra.Command, options GetOptions, args []string) error
 	if options.expand {
 		// NOTE: expand returns the actual attributes as well as the app's cluster details, nested in
 		// their own fields. This means that the expanded output can't be submitted as input to `save`.
-		util.UI.JsonOutput(app, util.UI.OutputFormat)
+		util.UI.JsonOutput(app)
 	} else {
 		// NOTE: app GET wraps the actual app attributes in an 'attributes' field.
-		util.UI.JsonOutput(app["attributes"], util.UI.OutputFormat)
+		util.UI.JsonOutput(app["attributes"])
 	}
 
 	return nil

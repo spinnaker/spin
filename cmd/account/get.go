@@ -74,7 +74,7 @@ func getAccount(cmd *cobra.Command, options GetOptions, args []string) error {
 	if err != nil {
 		return err
 	}
-	util.UI.JsonOutput(account, util.UI.OutputFormat)
+	util.UI.JsonOutput(account)
 
 	return nil
 }

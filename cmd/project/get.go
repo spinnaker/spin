@@ -77,7 +77,7 @@ func getProject(cmd *cobra.Command, options GetOptions, args []string) error {
 	if err != nil {
 		return err
 	}
-	util.UI.JsonOutput(project, util.UI.OutputFormat)
+	util.UI.JsonOutput(project)
 
 	return nil
 }
