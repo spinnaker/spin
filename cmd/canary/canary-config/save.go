@@ -102,6 +102,6 @@ func saveCanaryConfig(cmd *cobra.Command, options SaveOptions) error {
 			templateJson, saveResp.StatusCode)
 	}
 
-	util.UI.Info(util.Colorize().Color(fmt.Sprintf("[reset][bold][green]Canary config save succeeded")))
+	util.UI.Success("Canary config save succeeded")
 	return nil
 }

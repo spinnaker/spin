@@ -107,7 +107,7 @@ func executePipeline(cmd *cobra.Command, options ExecuteOptions) error {
 		return fmt.Errorf("Encountered an error executing pipeline, status code: %d\n", resp.StatusCode)
 	}
 
-	util.UI.Info(util.Colorize().Color(fmt.Sprintf("[reset][bold][green]Pipeline execution started")))
+	util.UI.Success("Pipeline execution started")
 
 	return nil
 }

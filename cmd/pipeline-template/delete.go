@@ -80,6 +80,6 @@ func deletePipelineTemplate(cmd *cobra.Command, options DeleteOptions, args []st
 		return fmt.Errorf("Encountered an error deleting pipeline template, status code: %d\n", resp.StatusCode)
 	}
 
-	util.UI.Info(util.Colorize().Color(fmt.Sprintf("[reset][bold][green]Pipeline template %s deleted", id)))
+	util.UI.Success(fmt.Sprintf("Pipeline template %s deleted", id))
 	return nil
 }

@@ -113,6 +113,6 @@ func savePipeline(cmd *cobra.Command, options SaveOptions) error {
 		return fmt.Errorf("Encountered an error saving pipeline, status code: %d\n", saveResp.StatusCode)
 	}
 
-	util.UI.Info(util.Colorize().Color(fmt.Sprintf("[reset][bold][green]Pipeline save succeeded")))
+	util.UI.Success("Pipeline save succeeded")
 	return nil
 }

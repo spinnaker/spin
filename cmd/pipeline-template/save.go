@@ -114,6 +114,6 @@ func savePipelineTemplate(cmd *cobra.Command, options SaveOptions) error {
 			saveResp.StatusCode)
 	}
 
-	util.UI.Info(util.Colorize().Color(fmt.Sprintf("[reset][bold][green]Pipeline template save succeeded")))
+	util.UI.Success("Pipeline template save succeeded")
 	return nil
 }

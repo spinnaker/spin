@@ -117,6 +117,6 @@ func saveApplication(cmd *cobra.Command, options SaveOptions) error {
 		return err
 	}
 
-	util.UI.Info(util.Colorize().Color(fmt.Sprintf("[reset][bold][green]Application save succeeded")))
+	util.UI.Success("Application save succeeded")
 	return nil
 }

@@ -65,6 +65,6 @@ func cancelExecution(cmd *cobra.Command, args []string) error {
 			resp.StatusCode)
 	}
 
-	util.UI.Info(util.Colorize().Color(fmt.Sprintf("[reset][bold][green]Execution %s successfully canceled", executionId)))
+	util.UI.Success(fmt.Sprintf("Execution %s successfully canceled", executionId))
 	return nil
 }

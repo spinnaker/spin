@@ -35,21 +35,21 @@ type ColorizeUi struct {
 	InfoColor    string
 	ErrorColor   string
 	WarnColor    string
+	SuccessColor string
 	Ui           cli.Ui
 	Quiet        bool
 	OutputFormat *output.OutputFormat
 }
 
 var UI *ColorizeUi
-var hasColor bool
 
-func InitUI(quiet, color bool, outputFormat string) {
-	hasColor = color
+func InitUI(quiet, color bool, outputFormat *output.OutputFormat) {
 	UI = &ColorizeUi{
 		Colorize:   Colorize(),
 		ErrorColor: "[red]",
 		WarnColor:  "[yellow]",
 		InfoColor:  "[blue]",
+		SuccessColor:  "[bold][green]",
 		Ui: &cli.BasicUi{
 			Writer:      os.Stdout,
 			ErrorWriter: os.Stderr,
@@ -140,6 +140,12 @@ func (u *ColorizeUi) parseJsonPath(input interface{}, template string) (*bytes.B
 	}
 
 	return buf, nil
+}
+
+func (u *ColorizeUi) Success(message string) {
+	if !u.Quiet {
+		u.Ui.Info(u.colorize(message, u.SuccessColor))
+	}
 }
 
 func (u *ColorizeUi) Info(message string) {

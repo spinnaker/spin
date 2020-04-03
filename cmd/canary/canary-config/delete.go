@@ -69,7 +69,6 @@ func deleteCanaryConfig(cmd *cobra.Command, args []string) error {
 			"Encountered an error deleting canary config, status code: %d\n", resp.StatusCode)
 	}
 
-	util.UI.Info(
-		util.Colorize().Color(fmt.Sprintf("[reset][bold][green]Canary config %s deleted", id)))
+	util.UI.Success(fmt.Sprintf("Canary config %s deleted", id))
 	return nil
 }

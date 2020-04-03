@@ -75,6 +75,6 @@ func deletePipeline(cmd *cobra.Command, options DeleteOptions) error {
 		return fmt.Errorf("Encountered an error deleting pipeline, status code: %d\n", resp.StatusCode)
 	}
 
-	util.UI.Info(util.Colorize().Color(fmt.Sprintf("[reset][bold][green]Pipeline deleted")))
+	util.UI.Success("Pipeline deleted")
 	return nil
 }

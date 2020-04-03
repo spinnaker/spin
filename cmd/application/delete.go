@@ -94,6 +94,6 @@ func deleteApplication(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	util.UI.Output(util.Colorize().Color(fmt.Sprintf("[reset][bold][green]Application deleted")))
+	util.UI.Output("Application deleted")
 	return nil
 }

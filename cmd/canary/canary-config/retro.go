@@ -208,7 +208,7 @@ func retroCanaryConfig(cmd *cobra.Command, options RetroOptions) error {
 
 	judgement := canaryResult.(map[string]interface{})["result"].(map[string]interface{})["judgeResult"].(map[string]interface{})["score"].(map[string]interface{})["classification"].(string)
 
-	util.UI.Info(util.Colorize().Color(fmt.Sprintf("Retrospective canary execution finished, judgement = %s", strings.ToUpper(judgement))))
+	util.UI.Info(fmt.Sprintf("Retrospective canary execution finished, judgement = %s", strings.ToUpper(judgement)))
 	if options.fullResult {
 		util.UI.JsonOutput(canaryResult)
 	}
