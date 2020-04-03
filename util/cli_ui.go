@@ -55,11 +55,7 @@ func InitUI(quiet, color bool, outputFormat *output.OutputFormat) {
 			ErrorWriter: os.Stderr,
 		},
 		Quiet: quiet,
-	}
-	var err error
-	UI.OutputFormat, err = output.ParseOutputFormat(outputFormat)
-	if err != nil {
-		panic(err)
+		OutputFormat: outputFormat,
 	}
 }
 

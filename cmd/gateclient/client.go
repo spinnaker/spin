@@ -38,6 +38,7 @@ import (
 	iap "github.com/spinnaker/spin/config/auth/iap"
 	"github.com/spinnaker/spin/util"
 	"github.com/spinnaker/spin/version"
+	"github.com/spinnaker/spin/cmd/output"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/pflag"
@@ -241,7 +242,11 @@ func configureOutput(flags *pflag.FlagSet) error {
 	if err != nil {
 		return err
 	}
-	util.InitUI(quiet, nocolor, outputFormat)
+	outFmt, err := output.ParseOutputFormat(outputFormat)
+	if err != nil {
+		return err
+	}
+	util.InitUI(quiet, nocolor, outFmt)
 	return nil
 }
 

@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/spinnaker/spin/cmd/output"
 	"github.com/spf13/cobra"
 )
 
@@ -32,7 +33,7 @@ func NewRootCmdForTest() *cobra.Command {
 	rootCmd.PersistentFlags().Bool("no-color", false, "Disable color")
 	rootCmd.PersistentFlags().String("output", "", "Configure output formatting")
 	rootCmd.PersistentFlags().String("default-headers", "", "Configure additional headers for gate client requests")
-	InitUI(false, false, "")
+	InitUI(false, false, &output.OutputFormat{Json: true})
 	return rootCmd
 }
 
