@@ -16,9 +16,12 @@ package pipeline_template
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/spinnaker/spin/cmd"
 )
 
-type pipelineTemplateOptions struct{}
+type pipelineTemplateOptions struct {
+	*cmd.RootOptions
+}
 
 var (
 	pipelineTemplateShort   = ""
@@ -26,8 +29,10 @@ var (
 	pipelineTemplateExample = ""
 )
 
-func NewPipelineTemplateCmd() *cobra.Command {
-	options := pipelineTemplateOptions{}
+func NewPipelineTemplateCmd(rootOptions *cmd.RootOptions) *cobra.Command {
+	options := &pipelineTemplateOptions{
+		RootOptions: rootOptions,
+	}
 	cmd := &cobra.Command{
 		Use:     "pipeline-template",
 		Aliases: []string{"pipeline-templates", "pt"},

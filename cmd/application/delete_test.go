@@ -17,10 +17,12 @@ package application
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/spinnaker/spin/cmd"
 	"github.com/spinnaker/spin/util"
 )
 
@@ -28,15 +30,12 @@ func TestApplicationDelete_basic(t *testing.T) {
 	ts := testGateApplicationDeleteSuccess()
 	defer ts.Close()
 
-	currentCmd := NewDeleteCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
 
 	args := []string{"application", "delete", NAME, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -46,15 +45,12 @@ func TestApplicationDelete_fail(t *testing.T) {
 	ts := GateAppDeleteFail()
 	defer ts.Close()
 
-	currentCmd := NewDeleteCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
 
 	args := []string{"application", "delete", NAME, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -64,15 +60,12 @@ func TestApplicationDelete_flags(t *testing.T) {
 	ts := testGateApplicationDeleteSuccess()
 	defer ts.Close()
 
-	currentCmd := NewDeleteCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
 
 	args := []string{"application", "delete", NAME, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

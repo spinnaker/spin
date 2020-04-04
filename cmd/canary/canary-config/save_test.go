@@ -22,6 +22,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/spinnaker/spin/cmd"
+	"github.com/spinnaker/spin/cmd/canary"
 	"github.com/spinnaker/spin/util"
 )
 
@@ -34,17 +36,15 @@ func TestCanaryConfigSave_create(t *testing.T) {
 		t.Fatal("Could not create temp canary config file.")
 	}
 	defer os.Remove(tempFile.Name())
-	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
-	args := []string{"canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 
-	currentCmd := NewSaveCmd(canaryConfigOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd()
-	canaryConfigCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(canaryConfigCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	canaryCmd, canaryOpts := canary.NewCanaryCmd(rootOpts)
+	canaryCmd.AddCommand(NewCanaryConfigCmd(canaryOpts))
+	rootCmd.AddCommand(canaryCmd)
 
+	args := []string{"canary", "canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -59,17 +59,15 @@ func TestCanaryConfigSave_update(t *testing.T) {
 		t.Fatal("Could not create temp canary config file.")
 	}
 	defer os.Remove(tempFile.Name())
-	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
-	args := []string{"canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 
-	currentCmd := NewSaveCmd(canaryConfigOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd()
-	canaryConfigCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(canaryConfigCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	canaryCmd, canaryOpts := canary.NewCanaryCmd(rootOpts)
+	canaryCmd.AddCommand(NewCanaryConfigCmd(canaryOpts))
+	rootCmd.AddCommand(canaryCmd)
 
+	args := []string{"canary", "canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -91,16 +89,14 @@ func TestCanaryConfigSave_stdin(t *testing.T) {
 	defer func() { os.Stdin = oldStdin }()
 	os.Stdin = tempFile
 
-	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
-	args := []string{"canary-config", "save", "--gate-endpoint", ts.URL}
-	currentCmd := NewSaveCmd(canaryConfigOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd()
-	canaryConfigCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(canaryConfigCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	canaryCmd, canaryOpts := canary.NewCanaryCmd(rootOpts)
+	canaryCmd.AddCommand(NewCanaryConfigCmd(canaryOpts))
+	rootCmd.AddCommand(canaryCmd)
 
+	args := []string{"canary", "canary-config", "save", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -116,16 +112,14 @@ func TestCanaryConfigSave_fail(t *testing.T) {
 	}
 	defer os.Remove(tempFile.Name())
 
-	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
-	args := []string{"canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
-	currentCmd := NewSaveCmd(canaryConfigOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd()
-	canaryConfigCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(canaryConfigCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	canaryCmd, canaryOpts := canary.NewCanaryCmd(rootOpts)
+	canaryCmd.AddCommand(NewCanaryConfigCmd(canaryOpts))
+	rootCmd.AddCommand(canaryCmd)
 
+	args := []string{"canary", "canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -135,17 +129,15 @@ func TestCanaryConfigSave_flags(t *testing.T) {
 	ts := gateServerUpdateSuccess()
 	defer ts.Close()
 
-	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
-	// Missing canary config spec file and stdin.
-	args := []string{"canary-config", "save", "--gate-endpoint", ts.URL}
-	currentCmd := NewSaveCmd(canaryConfigOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd()
-	canaryConfigCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(canaryConfigCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	canaryCmd, canaryOpts := canary.NewCanaryCmd(rootOpts)
+	canaryCmd.AddCommand(NewCanaryConfigCmd(canaryOpts))
+	rootCmd.AddCommand(canaryCmd)
 
+	// Missing canary config spec file and stdin.
+	args := []string{"canary", "canary-config", "save", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -161,16 +153,14 @@ func TestCanaryConfigSave_missingid(t *testing.T) {
 	}
 	defer os.Remove(tempFile.Name())
 
-	// Exclude 'canary' since we are testing only the 'canary-config' subcommand.
-	args := []string{"canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
-	currentCmd := NewSaveCmd(canaryConfigOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd()
-	canaryConfigCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(canaryConfigCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	canaryCmd, canaryOpts := canary.NewCanaryCmd(rootOpts)
+	canaryCmd.AddCommand(NewCanaryConfigCmd(canaryOpts))
+	rootCmd.AddCommand(canaryCmd)
 
+	args := []string{"canary", "canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

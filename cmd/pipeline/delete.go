@@ -20,12 +20,10 @@ import (
 	"net/http"
 
 	"github.com/spf13/cobra"
-	"github.com/spinnaker/spin/cmd/gateclient"
-	"github.com/spinnaker/spin/util"
 )
 
-type DeleteOptions struct {
-	*pipelineOptions
+type deleteOptions struct {
+	*PipelineOptions
 	output      string
 	application string
 	name        string
@@ -36,9 +34,9 @@ var (
 	deletePipelineLong  = "Delete the provided pipeline"
 )
 
-func NewDeleteCmd(pipelineOptions pipelineOptions) *cobra.Command {
-	options := DeleteOptions{
-		pipelineOptions: &pipelineOptions,
+func NewDeleteCmd(pipelineOptions *PipelineOptions) *cobra.Command {
+	options := &deleteOptions{
+		PipelineOptions: pipelineOptions,
 	}
 	cmd := &cobra.Command{
 		Use:     "delete",
@@ -56,16 +54,11 @@ func NewDeleteCmd(pipelineOptions pipelineOptions) *cobra.Command {
 	return cmd
 }
 
-func deletePipeline(cmd *cobra.Command, options DeleteOptions) error {
-	gateClient, err := gateclient.NewGateClient(cmd.InheritedFlags())
-	if err != nil {
-		return err
-	}
-
+func deletePipeline(cmd *cobra.Command, options *deleteOptions) error {
 	if options.application == "" || options.name == "" {
 		return errors.New("one of required parameters 'application' or 'name' not set")
 	}
-	resp, err := gateClient.PipelineControllerApi.DeletePipelineUsingDELETE(gateClient.Context, options.application, options.name)
+	resp, err := options.GateClient.PipelineControllerApi.DeletePipelineUsingDELETE(options.GateClient.Context, options.application, options.name)
 
 	if err != nil {
 		return err
@@ -75,6 +68,6 @@ func deletePipeline(cmd *cobra.Command, options DeleteOptions) error {
 		return fmt.Errorf("Encountered an error deleting pipeline, status code: %d\n", resp.StatusCode)
 	}
 
-	util.UI.Success("Pipeline deleted")
+	options.Ui.Success("Pipeline deleted")
 	return nil
 }

@@ -21,10 +21,9 @@ import (
 	"github.com/spinnaker/spin/util"
 
 	"github.com/spf13/cobra"
-	"github.com/spinnaker/spin/cmd/gateclient"
 )
 
-type GetOptions struct {
+type getOptions struct {
 	*projectOptions
 	expand bool
 }
@@ -35,9 +34,9 @@ var (
 	getProjectExample = "usage: spin project get-pipelines [options] project-name"
 )
 
-func NewGetCmd(prjOptions projectOptions) *cobra.Command {
-	options := GetOptions{
-		projectOptions: &prjOptions,
+func NewGetCmd(prjOptions *projectOptions) *cobra.Command {
+	options := &getOptions{
+		projectOptions: prjOptions,
 		expand:         false,
 	}
 
@@ -54,18 +53,13 @@ func NewGetCmd(prjOptions projectOptions) *cobra.Command {
 	return cmd
 }
 
-func getProject(cmd *cobra.Command, options GetOptions, args []string) error {
-	gateClient, err := gateclient.NewGateClient(cmd.InheritedFlags())
-	if err != nil {
-		return err
-	}
-
+func getProject(cmd *cobra.Command, options *getOptions, args []string) error {
 	projectName, err := util.ReadArgsOrStdin(args)
 	if err != nil {
 		return err
 	}
 
-	project, resp, err := gateClient.ProjectControllerApi.AllPipelinesForProjectUsingGET(gateClient.Context, projectName, map[string]interface{}{"expand": options.expand})
+	project, resp, err := options.GateClient.ProjectControllerApi.AllPipelinesForProjectUsingGET(options.GateClient.Context, projectName, map[string]interface{}{"expand": options.expand})
 	if resp != nil {
 		if resp.StatusCode == http.StatusNotFound {
 			return fmt.Errorf("Project '%s' not found\n", projectName)
@@ -77,7 +71,7 @@ func getProject(cmd *cobra.Command, options GetOptions, args []string) error {
 	if err != nil {
 		return err
 	}
-	util.UI.JsonOutput(project)
+	options.Ui.JsonOutput(project)
 
 	return nil
 }

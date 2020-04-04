@@ -16,12 +16,13 @@ package application
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"github.com/spinnaker/spin/util"
+	"github.com/spinnaker/spin/cmd"
 )
 
 const (
@@ -31,15 +32,13 @@ const (
 func TestApplicationGet_basic(t *testing.T) {
 	ts := testGateApplicationGetSuccess()
 	defer ts.Close()
-	currentCmd := NewGetCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
+
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
 
 	args := []string{"application", "get", APP, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -48,14 +47,13 @@ func TestApplicationGet_basic(t *testing.T) {
 func TestApplicationGet_flags(t *testing.T) {
 	ts := testGateApplicationGetSuccess()
 	defer ts.Close()
-	currentCmd := NewGetCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
+
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
+
 	args := []string{"application", "get", "--gate-endpoint", ts.URL} // Missing positional arg.
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil { // Success is actually failure here, flags are malformed.
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -65,15 +63,12 @@ func TestApplicationGet_malformed(t *testing.T) {
 	ts := testGateApplicationGetMalformed()
 	defer ts.Close()
 
-	currentCmd := NewGetCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
 
 	args := []string{"application", "get", APP, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil { // Success is actually failure here, return payload is malformed.
 		t.Fatalf("Command failed with: %d", err)
 	}
@@ -83,15 +78,12 @@ func TestApplicationGet_fail(t *testing.T) {
 	ts := GateServerFail()
 	defer ts.Close()
 
-	currentCmd := NewGetCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
 
 	args := []string{"application", "get", APP, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil { // Success is actually failure here, return payload is malformed.
 		t.Fatalf("Command failed with: %d", err)
 	}

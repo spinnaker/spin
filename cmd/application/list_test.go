@@ -16,11 +16,13 @@ package application
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/spinnaker/spin/cmd"
 	"github.com/spinnaker/spin/util"
 )
 
@@ -28,15 +30,12 @@ func TestApplicationList_basic(t *testing.T) {
 	ts := testGateApplicationList(false)
 	defer ts.Close()
 
-	currentCmd := NewListCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
 
 	args := []string{"application", "list", "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -46,15 +45,12 @@ func TestApplicationList_malformed(t *testing.T) {
 	ts := testGateApplicationList(true)
 	defer ts.Close()
 
-	currentCmd := NewListCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
 
 	args := []string{"application", "list", "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -64,15 +60,12 @@ func TestApplicationList_fail(t *testing.T) {
 	ts := GateServerFail()
 	defer ts.Close()
 
-	currentCmd := NewListCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
 
 	args := []string{"application", "list", "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

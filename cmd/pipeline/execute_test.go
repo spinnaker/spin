@@ -17,12 +17,14 @@ package pipeline
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
 
+	"github.com/spinnaker/spin/cmd"
 	gate "github.com/spinnaker/spin/gateapi"
 	"github.com/spinnaker/spin/util"
 )
@@ -39,15 +41,13 @@ func TestPipelineExecute_basic(t *testing.T) {
 	}
 	defer os.Remove(tempFile.Name())
 
-	args := []string{"pipeline", "execute", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
-	currentCmd := NewExecuteCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "execute", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -63,15 +63,13 @@ func TestPipelineExecute_fail(t *testing.T) {
 	}
 	defer os.Remove(tempFile.Name())
 
-	args := []string{"pipeline", "execute", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
-	currentCmd := NewExecuteCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "execute", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -81,15 +79,13 @@ func TestPipelineExecute_flags(t *testing.T) {
 	ts := GateServerSuccess()
 	defer ts.Close()
 
-	args := []string{"pipeline", "execute", "--gate-endpoint", ts.URL} // Missing pipeline app and name.
-	currentCmd := NewExecuteCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "execute", "--gate-endpoint", ts.URL} // Missing pipeline app and name.
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -105,15 +101,13 @@ func TestPipelineExecute_missingname(t *testing.T) {
 	}
 	defer os.Remove(tempFile.Name())
 
-	args := []string{"pipeline", "execute", "--application", "app", "--gate-endpoint", ts.URL}
-	currentCmd := NewExecuteCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "execute", "--application", "app", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -129,15 +123,13 @@ func TestPipelineExecute_missingapp(t *testing.T) {
 	}
 	defer os.Remove(tempFile.Name())
 
-	args := []string{"pipeline", "execute", "--name", "one", "--gate-endpoint", ts.URL}
-	currentCmd := NewExecuteCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "execute", "--name", "one", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

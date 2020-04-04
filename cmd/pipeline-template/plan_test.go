@@ -16,12 +16,14 @@ package pipeline_template
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
 
+	"github.com/spinnaker/spin/cmd"
 	"github.com/spinnaker/spin/util"
 )
 
@@ -34,16 +36,13 @@ func TestPipelineTemplatePlan_basic(t *testing.T) {
 		t.Fatal("Could not create temp pipeline template file.")
 	}
 	defer os.Remove(tempFile.Name())
+
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewPipelineTemplateCmd(rootOpts))
+
 	args := []string{"pipeline-template", "plan", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
-
-	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd()
-	pipelineTemplateCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(pipelineTemplateCmd)
-
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -65,15 +64,12 @@ func TestPipelineTemplatePlan_stdin(t *testing.T) {
 	defer func() { os.Stdin = oldStdin }()
 	os.Stdin = tempFile
 
-	args := []string{"pipeline-template", "plan", "--gate-endpoint", ts.URL}
-	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd()
-	pipelineTemplateCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(pipelineTemplateCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewPipelineTemplateCmd(rootOpts))
 
+	args := []string{"pipeline-template", "plan", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -89,15 +85,12 @@ func TestPipelineTemplatePlan_fail(t *testing.T) {
 	}
 	defer os.Remove(tempFile.Name())
 
-	args := []string{"pipeline-template", "plan", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
-	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd()
-	pipelineTemplateCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(pipelineTemplateCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewPipelineTemplateCmd(rootOpts))
 
+	args := []string{"pipeline-template", "plan", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Expected failure but command succeeded")
 	}
@@ -107,15 +100,12 @@ func TestPipelineTemplatePlan_flags(t *testing.T) {
 	ts := gateServerPlanSuccess()
 	defer ts.Close()
 
-	args := []string{"pipeline-template", "plan", "--gate-endpoint", ts.URL} // Missing pipeline config file and stdin.
-	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd()
-	pipelineTemplateCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(pipelineTemplateCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewPipelineTemplateCmd(rootOpts))
 
+	args := []string{"pipeline-template", "plan", "--gate-endpoint", ts.URL} // Missing pipeline config file and stdin.
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Expected failure but command succeeded")
 	}

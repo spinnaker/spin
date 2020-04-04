@@ -19,11 +19,9 @@ import (
 	"net/http"
 
 	"github.com/spf13/cobra"
-	"github.com/spinnaker/spin/cmd/gateclient"
-	"github.com/spinnaker/spin/util"
 )
 
-type ListOptions struct {
+type listOptions struct {
 	*accountOptions
 	expand bool
 }
@@ -34,9 +32,9 @@ var (
 	listAccountExample = "usage: spin account list [options]"
 )
 
-func NewListCmd(accOptions accountOptions) *cobra.Command {
-	options := ListOptions{
-		accountOptions: &accOptions,
+func NewListCmd(accOptions *accountOptions) *cobra.Command {
+	options := &listOptions{
+		accountOptions: accOptions,
 		expand:         false,
 	}
 
@@ -53,12 +51,8 @@ func NewListCmd(accOptions accountOptions) *cobra.Command {
 	return cmd
 }
 
-func listAccount(cmd *cobra.Command, options ListOptions, args []string) error {
-	gateClient, err := gateclient.NewGateClient(cmd.InheritedFlags())
-	if err != nil {
-		return err
-	}
-	accountList, resp, err := gateClient.CredentialsControllerApi.GetAccountsUsingGET(gateClient.Context, map[string]interface{}{"expand": options.expand})
+func listAccount(cmd *cobra.Command, options *listOptions, args []string) error {
+	accountList, resp, err := options.GateClient.CredentialsControllerApi.GetAccountsUsingGET(options.GateClient.Context, map[string]interface{}{"expand": options.expand})
 	if err != nil {
 		return err
 	}
@@ -67,6 +61,6 @@ func listAccount(cmd *cobra.Command, options ListOptions, args []string) error {
 		return fmt.Errorf("Encountered an error listing accounts, status code: %d\n", resp.StatusCode)
 	}
 
-	util.UI.JsonOutput(accountList)
+	options.Ui.JsonOutput(accountList)
 	return nil
 }

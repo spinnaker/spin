@@ -16,12 +16,18 @@ package util
 
 import (
 	"fmt"
-	"os"
+	"io"
 
 	"github.com/mitchellh/cli"
 	"github.com/mitchellh/colorstring"
 	"github.com/spinnaker/spin/cmd/output"
 )
+
+type Ui interface {
+	Success(message string)
+	JsonOutput(data interface{})
+	cli.Ui
+}
 
 type ColorizeUi struct {
 	Colorize       *colorstring.Colorize
@@ -37,8 +43,12 @@ type ColorizeUi struct {
 
 var UI *ColorizeUi
 
-func InitUI(quiet, color bool, outputFormater output.OutputFormater) {
-	UI = &ColorizeUi{
+func NewUI(
+	quiet, color bool,
+	outputFormater output.OutputFormater,
+	outWriter, errWriter io.Writer,
+) *ColorizeUi {
+	return &ColorizeUi{
 		Colorize: &colorstring.Colorize{
 			Colors:  colorstring.DefaultColors,
 			Disable: !color,
@@ -49,8 +59,8 @@ func InitUI(quiet, color bool, outputFormater output.OutputFormater) {
 		InfoColor:    "[blue]",
 		SuccessColor: "[bold][green]",
 		Ui: &cli.BasicUi{
-			Writer:      os.Stdout,
-			ErrorWriter: os.Stderr,
+			Writer:      outWriter,
+			ErrorWriter: errWriter,
 		},
 		Quiet:          quiet,
 		OutputFormater: outputFormater,

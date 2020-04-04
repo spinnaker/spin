@@ -19,11 +19,10 @@ import (
 	"net/http"
 
 	"github.com/spf13/cobra"
-	"github.com/spinnaker/spin/cmd/gateclient"
 	"github.com/spinnaker/spin/util"
 )
 
-type DeleteOptions struct {
+type deleteOptions struct {
 	*pipelineTemplateOptions
 	tag string
 }
@@ -33,9 +32,9 @@ var (
 	deletePipelineTemplateLong  = "Delete the provided pipeline template"
 )
 
-func NewDeleteCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Command {
-	options := DeleteOptions{
-		pipelineTemplateOptions: &pipelineTemplateOptions,
+func NewDeleteCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command {
+	options := &deleteOptions{
+		pipelineTemplateOptions: pipelineTemplateOptions,
 	}
 
 	cmd := &cobra.Command{
@@ -54,12 +53,7 @@ func NewDeleteCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Comman
 	return cmd
 }
 
-func deletePipelineTemplate(cmd *cobra.Command, options DeleteOptions, args []string) error {
-	gateClient, err := gateclient.NewGateClient(cmd.InheritedFlags())
-	if err != nil {
-		return err
-	}
-
+func deletePipelineTemplate(cmd *cobra.Command, options *deleteOptions, args []string) error {
 	id, err := util.ReadArgsOrStdin(args)
 	if err != nil {
 		return err
@@ -70,7 +64,7 @@ func deletePipelineTemplate(cmd *cobra.Command, options DeleteOptions, args []st
 		queryParams["tag"] = options.tag
 	}
 
-	_, resp, err := gateClient.V2PipelineTemplatesControllerApi.DeleteUsingDELETE1(gateClient.Context, id, queryParams)
+	_, resp, err := options.GateClient.V2PipelineTemplatesControllerApi.DeleteUsingDELETE1(options.GateClient.Context, id, queryParams)
 
 	if err != nil {
 		return err
@@ -80,6 +74,6 @@ func deletePipelineTemplate(cmd *cobra.Command, options DeleteOptions, args []st
 		return fmt.Errorf("Encountered an error deleting pipeline template, status code: %d\n", resp.StatusCode)
 	}
 
-	util.UI.Success(fmt.Sprintf("Pipeline template %s deleted", id))
+	options.Ui.Success(fmt.Sprintf("Pipeline template %s deleted", id))
 	return nil
 }

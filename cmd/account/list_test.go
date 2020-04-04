@@ -16,11 +16,13 @@ package account
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/spinnaker/spin/cmd"
 	"github.com/spinnaker/spin/util"
 )
 
@@ -28,15 +30,12 @@ func TestAccountList_basic(t *testing.T) {
 	ts := testGateAccountListSuccess()
 	defer ts.Close()
 
-	currentCmd := NewListCmd(accountOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd()
-	accCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(accCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewAccountCmd(options))
 
 	args := []string{"account", "list", "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -46,15 +45,12 @@ func TestAccountList_malformed(t *testing.T) {
 	ts := testGateAccountListMalformed()
 	defer ts.Close()
 
-	currentCmd := NewListCmd(accountOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd()
-	accCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(accCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewAccountCmd(options))
 
 	args := []string{"account", "list", "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -64,15 +60,12 @@ func TestAccountList_fail(t *testing.T) {
 	ts := GateServerFail()
 	defer ts.Close()
 
-	currentCmd := NewListCmd(accountOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd()
-	accCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(accCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewAccountCmd(options))
 
 	args := []string{"account", "list", "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

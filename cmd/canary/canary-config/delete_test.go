@@ -15,10 +15,13 @@
 package canary_config
 
 import (
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/spinnaker/spin/cmd"
+	"github.com/spinnaker/spin/cmd/canary"
 	"github.com/spinnaker/spin/util"
 )
 
@@ -26,15 +29,14 @@ func TestCanaryConfigDelete_basic(t *testing.T) {
 	ts := gateServerDeleteSuccess()
 	defer ts.Close()
 
-	args := []string{"canary-config", "delete", "configId", "--gate-endpoint", ts.URL}
-	currentCmd := NewDeleteCmd()
-	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd()
-	canaryConfigCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(canaryConfigCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	canaryCmd, canaryOpts := canary.NewCanaryCmd(rootOpts)
+	canaryCmd.AddCommand(NewCanaryConfigCmd(canaryOpts))
+	rootCmd.AddCommand(canaryCmd)
 
+	args := []string{"canary", "canary-config", "delete", "configId", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -44,15 +46,14 @@ func TestCanaryConfigDelete_fail(t *testing.T) {
 	ts := GateServerFail()
 	defer ts.Close()
 
-	args := []string{"canary-config", "delete", "configId", "--gate-endpoint", ts.URL}
-	currentCmd := NewDeleteCmd()
-	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd()
-	canaryConfigCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(canaryConfigCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	canaryCmd, canaryOpts := canary.NewCanaryCmd(rootOpts)
+	canaryCmd.AddCommand(NewCanaryConfigCmd(canaryOpts))
+	rootCmd.AddCommand(canaryCmd)
 
+	args := []string{"canary", "canary-config", "delete", "configId", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -62,15 +63,14 @@ func TestCanaryConfigDelete_missingid(t *testing.T) {
 	ts := gateServerDeleteSuccess()
 	defer ts.Close()
 
-	args := []string{"canary-config", "delete", "--gate-endpoint", ts.URL} // Missing cc id.
-	currentCmd := NewDeleteCmd()
-	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd()
-	canaryConfigCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(canaryConfigCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	canaryCmd, canaryOpts := canary.NewCanaryCmd(rootOpts)
+	canaryCmd.AddCommand(NewCanaryConfigCmd(canaryOpts))
+	rootCmd.AddCommand(canaryCmd)
 
+	args := []string{"canary", "canary-config", "delete", "--gate-endpoint", ts.URL} // Missing cc id.
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command errantly succeeded. %s", err)
 	}

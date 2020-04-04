@@ -2,9 +2,11 @@ package application
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/spinnaker/spin/cmd"
 )
 
 type applicationOptions struct {
+	*cmd.RootOptions
 }
 
 var (
@@ -13,8 +15,10 @@ var (
 	applicationExample = ""
 )
 
-func NewApplicationCmd() *cobra.Command {
-	options := applicationOptions{}
+func NewApplicationCmd(rootOptions *cmd.RootOptions) *cobra.Command {
+	options := &applicationOptions{
+		RootOptions: rootOptions,
+	}
 	cmd := &cobra.Command{
 		Use:     "application",
 		Aliases: []string{"applications", "app"},

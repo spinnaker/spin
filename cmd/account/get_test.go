@@ -16,12 +16,13 @@ package account
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"github.com/spinnaker/spin/util"
+	"github.com/spinnaker/spin/cmd"
 )
 
 // GateServerFail spins up a local http server that we will configure the GateClient
@@ -40,15 +41,12 @@ const (
 func TestAccountGet_basic(t *testing.T) {
 	ts := testGateAccountGetSuccess()
 	defer ts.Close()
-	currentCmd := NewGetCmd(accountOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd()
-	accCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(accCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewAccountCmd(options))
 
 	args := []string{"account", "get", ACCOUNT, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -57,14 +55,11 @@ func TestAccountGet_basic(t *testing.T) {
 func TestAccountGet_flags(t *testing.T) {
 	ts := testGateAccountGetSuccess()
 	defer ts.Close()
-	currentCmd := NewGetCmd(accountOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd()
-	accCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(accCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewAccountCmd(options))
 	args := []string{"account", "get", "--gate-endpoint", ts.URL} // Missing positional arg.
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil { // Success is actually failure here, flags are malformed.
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -74,15 +69,12 @@ func TestAccountGet_malformed(t *testing.T) {
 	ts := testGateAccountGetMalformed()
 	defer ts.Close()
 
-	currentCmd := NewGetCmd(accountOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd()
-	accCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(accCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewAccountCmd(options))
 
 	args := []string{"account", "get", ACCOUNT, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil { // Success is actually failure here, return payload is malformed.
 		t.Fatalf("Command failed with: %d", err)
 	}
@@ -92,15 +84,12 @@ func TestAccountGet_fail(t *testing.T) {
 	ts := GateServerFail()
 	defer ts.Close()
 
-	currentCmd := NewGetCmd(accountOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd()
-	accCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(accCmd)
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewAccountCmd(options))
 
 	args := []string{"account", "get", ACCOUNT, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil { // Success is actually failure here, return payload is malformed.
 		t.Fatalf("Command failed with: %d", err)
 	}

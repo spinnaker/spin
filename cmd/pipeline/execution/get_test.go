@@ -16,29 +16,29 @@ package execution
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/spinnaker/spin/cmd"
+	"github.com/spinnaker/spin/cmd/pipeline"
 	"github.com/spinnaker/spin/util"
 )
 
 func TestExecutionGet_basic(t *testing.T) {
 	ts := testGateExecutionGetSuccess()
 	defer ts.Close()
-	currentCmd := NewGetCmd()
-	rootCmd := util.NewRootCmdForTest()
 
-	executionCmd := NewExecutionCmd()
-	executionCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, pipelineOpts := pipeline.NewPipelineCmd(rootOpts)
+	pipelineCmd.AddCommand(NewExecutionCmd(pipelineOpts))
+	rootCmd.AddCommand(pipelineCmd)
 
-	rootCmd.AddCommand(executionCmd)
-
-	// Exclude 'pipeline' since we are testing only the 'execution' subcommand.
-	args := []string{"ex", "get", "someId", "--gate-endpoint", ts.URL}
+	args := []string{"pipeline", "ex", "get", "someId", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -47,18 +47,15 @@ func TestExecutionGet_basic(t *testing.T) {
 func TestExecutionGet_noinput(t *testing.T) {
 	ts := testGateExecutionGetSuccess()
 	defer ts.Close()
-	currentCmd := NewGetCmd()
-	rootCmd := util.NewRootCmdForTest()
 
-	executionCmd := NewExecutionCmd()
-	executionCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, pipelineOpts := pipeline.NewPipelineCmd(rootOpts)
+	pipelineCmd.AddCommand(NewExecutionCmd(pipelineOpts))
+	rootCmd.AddCommand(pipelineCmd)
 
-	rootCmd.AddCommand(executionCmd)
-
-	// Exclude 'pipeline' since we are testing only the 'execution' subcommand.
-	args := []string{"ex", "get", "--gate-endpoint", ts.URL}
+	args := []string{"pipeline", "ex", "get", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -67,18 +64,15 @@ func TestExecutionGet_noinput(t *testing.T) {
 func TestExecutionGet_failure(t *testing.T) {
 	ts := GateServerFail()
 	defer ts.Close()
-	currentCmd := NewGetCmd()
-	rootCmd := util.NewRootCmdForTest()
 
-	executionCmd := NewExecutionCmd()
-	executionCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, pipelineOpts := pipeline.NewPipelineCmd(rootOpts)
+	pipelineCmd.AddCommand(NewExecutionCmd(pipelineOpts))
+	rootCmd.AddCommand(pipelineCmd)
 
-	rootCmd.AddCommand(executionCmd)
-
-	// Exclude 'pipeline' since we are testing only the 'execution' subcommand.
-	args := []string{"ex", "get", "someId", "--gate-endpoint", ts.URL}
+	args := []string{"pipeline", "ex", "get", "someId", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

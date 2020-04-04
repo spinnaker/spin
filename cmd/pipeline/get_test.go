@@ -16,26 +16,27 @@ package pipeline
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/spinnaker/spin/cmd"
 	"github.com/spinnaker/spin/util"
 )
 
 func TestPipelineGet_basic(t *testing.T) {
 	ts := testGatePipelineGetSuccess()
 	defer ts.Close()
-	currentCmd := NewGetCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
 	args := []string{"pipeline", "get", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -45,15 +46,13 @@ func TestPipelineGet_flags(t *testing.T) {
 	ts := testGatePipelineGetSuccess()
 	defer ts.Close()
 
-	args := []string{"pipeline", "get", "--gate-endpoint", ts.URL} // Missing application and name.
-	currentCmd := NewGetCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "get", "--gate-endpoint", ts.URL} // Missing application and name.
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -64,15 +63,13 @@ func TestPipelineGet_malformed(t *testing.T) {
 	ts := testGatePipelineGetMalformed()
 	defer ts.Close()
 
-	args := []string{"pipeline", "get", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
-	currentCmd := NewGetCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "get", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -83,15 +80,13 @@ func TestPipelineGet_fail(t *testing.T) {
 	ts := GateServerFail()
 	defer ts.Close()
 
-	args := []string{"pipeline", "get", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
-	currentCmd := NewGetCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "get", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -101,15 +96,13 @@ func TestPipelineGet_notfound(t *testing.T) {
 	ts := testGatePipelineGetMissing()
 	defer ts.Close()
 
-	args := []string{"pipeline", "get", "--application", "app", "--name", "two", "--gate-endpoint", ts.URL}
-	currentCmd := NewGetCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "get", "--application", "app", "--name", "two", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

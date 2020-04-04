@@ -23,6 +23,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/spinnaker/spin/cmd"
 	"github.com/spinnaker/spin/util"
 )
 
@@ -34,11 +35,9 @@ const (
 func TestApplicationSave_basic(t *testing.T) {
 	ts := testGateApplicationSaveSuccess()
 	defer ts.Close()
-	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
+
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
 
 	args := []string{
 		"application", "save",
@@ -48,7 +47,7 @@ func TestApplicationSave_basic(t *testing.T) {
 		"--cloud-providers", "gce,kubernetes",
 	}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -57,6 +56,10 @@ func TestApplicationSave_basic(t *testing.T) {
 func TestApplicationSave_fail(t *testing.T) {
 	ts := GateServerFail()
 	defer ts.Close()
+
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
+
 	args := []string{
 		"application", "save",
 		"--application-name", NAME,
@@ -64,14 +67,8 @@ func TestApplicationSave_fail(t *testing.T) {
 		"--cloud-providers", "gce,kubernetes",
 		"--gate-endpoint=" + ts.URL,
 	}
-	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
-
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -81,18 +78,15 @@ func TestApplicationSave_flags(t *testing.T) {
 	ts := testGateApplicationSaveSuccess()
 	defer ts.Close()
 
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
+
 	args := []string{
 		"application", "save",
 		"--gate-endpoint=" + ts.URL,
 	}
-	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
-
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -102,20 +96,17 @@ func TestApplicationSave_missingname(t *testing.T) {
 	ts := testGateApplicationSaveSuccess()
 	defer ts.Close()
 
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
+
 	args := []string{
 		"application", "save",
 		"--owner-email", EMAIL,
 		"--cloud-providers", "gce,kubernetes",
 		"--gate-endpoint=" + ts.URL,
 	}
-	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
-
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -125,20 +116,17 @@ func TestApplicationSave_missingemail(t *testing.T) {
 	ts := testGateApplicationSaveSuccess()
 	defer ts.Close()
 
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
+
 	args := []string{
 		"application", "save",
 		"--application-name", NAME,
 		"--cloud-providers", "gce,kubernetes",
 		"--gate-endpoint", ts.URL,
 	}
-	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
-
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -148,20 +136,17 @@ func TestApplicationSave_missingproviders(t *testing.T) {
 	ts := testGateApplicationSaveSuccess()
 	defer ts.Close()
 
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
+
 	args := []string{
 		"application", "save",
 		"--application-name", NAME,
 		"--owner-email", EMAIL,
 		"--gate-endpoint", ts.URL,
 	}
-	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
-
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -177,20 +162,16 @@ func TestApplicationSave_filebasic(t *testing.T) {
 	}
 	defer os.Remove(tempFile.Name())
 
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
+
 	args := []string{
 		"application", "save",
 		"--file", tempFile.Name(),
 		"--gate-endpoint", ts.URL,
 	}
-
-	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
-
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -206,25 +187,22 @@ func TestApplicationSave_stdinbasic(t *testing.T) {
 	}
 	defer os.Remove(tempFile.Name())
 
+	//TODO(karlkfi): Pipe input writer through NewCmdRoot
 	// Prepare Stdin for test reading.
 	tempFile.Seek(0, 0)
 	oldStdin := os.Stdin
 	defer func() { os.Stdin = oldStdin }()
 	os.Stdin = tempFile
 
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
+
 	args := []string{
 		"application", "save",
 		"--gate-endpoint", ts.URL,
 	}
-
-	currentCmd := NewSaveCmd(applicationOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd()
-	appCmd.AddCommand(currentCmd)
-	rootCmd.AddCommand(appCmd)
-
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}

@@ -17,29 +17,28 @@ package execution
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"github.com/spinnaker/spin/util"
+	"github.com/spinnaker/spin/cmd"
+	"github.com/spinnaker/spin/cmd/pipeline"
 )
 
 func TestExecutionCancel_basic(t *testing.T) {
 	ts := testGateExecutionCancelSuccess()
 	defer ts.Close()
-	currentCmd := NewCancelCmd()
-	rootCmd := util.NewRootCmdForTest()
 
-	executionCmd := NewExecutionCmd()
-	executionCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, pipelineOpts := pipeline.NewPipelineCmd(rootOpts)
+	pipelineCmd.AddCommand(NewExecutionCmd(pipelineOpts))
+	rootCmd.AddCommand(pipelineCmd)
 
-	rootCmd.AddCommand(executionCmd)
-
-	// Exclude 'pipeline' since we are testing only the 'execution' subcommand.
-	args := []string{"ex", "cancel", "someId", "--gate-endpoint", ts.URL}
+	args := []string{"pipeline", "ex", "cancel", "someId", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -48,18 +47,16 @@ func TestExecutionCancel_basic(t *testing.T) {
 func TestExecutionCancel_noinput(t *testing.T) {
 	ts := testGateExecutionCancelSuccess()
 	defer ts.Close()
-	currentCmd := NewCancelCmd()
-	rootCmd := util.NewRootCmdForTest()
 
-	executionCmd := NewExecutionCmd()
-	executionCmd.AddCommand(currentCmd)
-
-	rootCmd.AddCommand(executionCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, pipelineOpts := pipeline.NewPipelineCmd(rootOpts)
+	pipelineCmd.AddCommand(NewExecutionCmd(pipelineOpts))
+	rootCmd.AddCommand(pipelineCmd)
 
 	// Exclude 'pipeline' since we are testing only the 'execution' subcommand.
-	args := []string{"ex", "cancel", "--gate-endpoint", ts.URL}
+	args := []string{"pipeline", "ex", "cancel", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %v", err)
 	}
@@ -68,18 +65,15 @@ func TestExecutionCancel_noinput(t *testing.T) {
 func TestExecutionCancel_failure(t *testing.T) {
 	ts := GateServerFail()
 	defer ts.Close()
-	currentCmd := NewCancelCmd()
-	rootCmd := util.NewRootCmdForTest()
 
-	executionCmd := NewExecutionCmd()
-	executionCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, pipelineOpts := pipeline.NewPipelineCmd(rootOpts)
+	pipelineCmd.AddCommand(NewExecutionCmd(pipelineOpts))
+	rootCmd.AddCommand(pipelineCmd)
 
-	rootCmd.AddCommand(executionCmd)
-
-	// Exclude 'pipeline' since we are testing only the 'execution' subcommand.
-	args := []string{"ex", "cancel", "someId", "--gate-endpoint", ts.URL}
+	args := []string{"pipeline", "ex", "cancel", "someId", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %v", err)
 	}

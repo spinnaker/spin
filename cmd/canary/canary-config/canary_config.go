@@ -16,9 +16,12 @@ package canary_config
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/spinnaker/spin/cmd/canary"
 )
 
-type canaryConfigOptions struct{}
+type canaryConfigOptions struct {
+	*canary.CanaryOptions
+}
 
 const (
 	canaryConfigShort   = ""
@@ -26,8 +29,10 @@ const (
 	canaryConfigExample = ""
 )
 
-func NewCanaryConfigCmd() *cobra.Command {
-	options := canaryConfigOptions{}
+func NewCanaryConfigCmd(canaryOptions *canary.CanaryOptions) *cobra.Command {
+	options := &canaryConfigOptions{
+		CanaryOptions: canaryOptions,
+	}
 	cmd := &cobra.Command{
 		Use:     "canary-config",
 		Aliases: []string{"canary-configs", "cc"},
@@ -37,7 +42,7 @@ func NewCanaryConfigCmd() *cobra.Command {
 	}
 
 	// create subcommands
-	cmd.AddCommand(NewDeleteCmd())
+	cmd.AddCommand(NewDeleteCmd(options))
 	cmd.AddCommand(NewGetCmd(options))
 	cmd.AddCommand(NewListCmd(options))
 	cmd.AddCommand(NewSaveCmd(options))

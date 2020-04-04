@@ -22,12 +22,12 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/spinnaker/spin/cmd/output"
+	//"github.com/spinnaker/spin/cmd/output"
 	"github.com/spinnaker/spin/util"
 	"sigs.k8s.io/yaml"
 )
 
-type UseOptions struct {
+type useOptions struct {
 	*pipelineTemplateOptions
 	id              string
 	tag             string
@@ -45,9 +45,9 @@ const (
 	usePipelineTemplateLong  = "Creates a pipeline configuration using a managed pipeline template"
 )
 
-func NewUseCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Command {
-	options := UseOptions{
-		pipelineTemplateOptions: &pipelineTemplateOptions,
+func NewUseCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command {
+	options := &useOptions{
+		pipelineTemplateOptions: pipelineTemplateOptions,
 	}
 	cmd := &cobra.Command{
 		Use:   "use",
@@ -71,7 +71,7 @@ func NewUseCmd(pipelineTemplateOptions pipelineTemplateOptions) *cobra.Command {
 	return cmd
 }
 
-func usePipelineTemplate(cmd *cobra.Command, options UseOptions, args []string) error {
+func usePipelineTemplate(cmd *cobra.Command, options *useOptions, args []string) error {
 	id, errID := getTemplateID(options, args)
 	if errID != nil {
 		return errID
@@ -92,13 +92,14 @@ func usePipelineTemplate(cmd *cobra.Command, options UseOptions, args []string) 
 	if err != nil {
 		return err
 	}
-	util.InitUI(false, false, output.MarshalToJson)
-	util.UI.JsonOutput(pipeline)
+	// TODO: why is this here???
+	// util.InitUI(false, false, output.MarshalToJson)
+	options.Ui.JsonOutput(pipeline)
 
 	return nil
 }
 
-func getTemplateID(options UseOptions, args []string) (string, error) {
+func getTemplateID(options *useOptions, args []string) (string, error) {
 	// Check options if they passed in like --id
 	optionsID := strings.TrimSpace(options.id)
 	if optionsID != "" {
@@ -117,7 +118,7 @@ func getTemplateID(options UseOptions, args []string) (string, error) {
 	return argsID, nil
 }
 
-func buildUsingTemplate(id string, options UseOptions) (map[string]interface{}, error) {
+func buildUsingTemplate(id string, options *useOptions) (map[string]interface{}, error) {
 	pipeline := make(map[string]interface{})
 
 	// get variables from cmd and files
@@ -151,7 +152,7 @@ func buildUsingTemplate(id string, options UseOptions) (map[string]interface{}, 
 	return pipeline, nil
 }
 
-func getVariables(options UseOptions) (map[string]string, error) {
+func getVariables(options *useOptions) (map[string]string, error) {
 	// Create map for variables
 	var variables map[string]string
 

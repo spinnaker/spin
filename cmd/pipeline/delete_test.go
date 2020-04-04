@@ -15,9 +15,10 @@
 package pipeline
 
 import (
+	"io/ioutil"
 	"testing"
 
-	"github.com/spinnaker/spin/util"
+	"github.com/spinnaker/spin/cmd"
 )
 
 // TODO(jacobkiefer): This test overlaps heavily with pipeline_save_test.go,
@@ -26,15 +27,13 @@ func TestPipelineDelete_basic(t *testing.T) {
 	ts := GateServerSuccess()
 	defer ts.Close()
 
-	args := []string{"pipeline", "delete", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
-	currentCmd := NewDeleteCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "delete", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -44,15 +43,13 @@ func TestPipelineDelete_fail(t *testing.T) {
 	ts := GateServerFail()
 	defer ts.Close()
 
-	args := []string{"pipeline", "delete", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
-	currentCmd := NewDeleteCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "delete", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -62,15 +59,13 @@ func TestPipelineDelete_flags(t *testing.T) {
 	ts := GateServerSuccess()
 	defer ts.Close()
 
-	args := []string{"pipeline", "delete", "--gate-endpoint", ts.URL} // Missing pipeline app and name.
-	currentCmd := NewDeleteCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "delete", "--gate-endpoint", ts.URL} // Missing pipeline app and name.
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
@@ -80,15 +75,13 @@ func TestPipelineDelete_missingname(t *testing.T) {
 	ts := GateServerSuccess()
 	defer ts.Close()
 
-	args := []string{"pipeline", "delete", "--application", "app", "--gate-endpoint", ts.URL}
-	currentCmd := NewDeleteCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "delete", "--application", "app", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command errantly succeeded. %s", err)
 	}
@@ -98,15 +91,13 @@ func TestPipelineDelete_missingapp(t *testing.T) {
 	ts := GateServerSuccess()
 	defer ts.Close()
 
-	args := []string{"pipeline", "delete", "--name", "one", "--gate-endpoint", ts.URL}
-	currentCmd := NewDeleteCmd(pipelineOptions{})
-	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd()
-	pipelineCmd.AddCommand(currentCmd)
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
+	args := []string{"pipeline", "delete", "--name", "one", "--gate-endpoint", ts.URL}
 	rootCmd.SetArgs(args)
-	_, err := util.ExecCmdForTest(rootCmd)
+	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command errantly succeeded. %s", err)
 	}
