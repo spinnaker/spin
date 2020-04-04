@@ -1,8 +1,6 @@
 package application
 
 import (
-	"io"
-
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +13,7 @@ var (
 	applicationExample = ""
 )
 
-func NewApplicationCmd(out io.Writer) *cobra.Command {
+func NewApplicationCmd() *cobra.Command {
 	options := applicationOptions{}
 	cmd := &cobra.Command{
 		Use:     "application",

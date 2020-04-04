@@ -17,7 +17,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -29,7 +28,7 @@ func TestPipelineGet_basic(t *testing.T) {
 	defer ts.Close()
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
@@ -47,7 +46,7 @@ func TestPipelineGet_args(t *testing.T) {
 	defer ts.Close()
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
@@ -65,7 +64,7 @@ func TestPipelineGet_tag(t *testing.T) {
 	defer ts.Close()
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
@@ -84,7 +83,7 @@ func TestPipelineGet_flags(t *testing.T) {
 
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
@@ -103,7 +102,7 @@ func TestPipelineGet_malformed(t *testing.T) {
 
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
@@ -122,7 +121,7 @@ func TestPipelineGet_fail(t *testing.T) {
 
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
@@ -141,7 +140,7 @@ func TestPipelineGet_notfound(t *testing.T) {
 
 	currentCmd := NewGetCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 

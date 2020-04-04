@@ -37,7 +37,7 @@ func TestPipelineTemplateUse_basic(t *testing.T) {
 
 	currentCmd := NewUseCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
@@ -56,7 +56,7 @@ func TestPipelineTemplateUse_basicShort(t *testing.T) {
 
 	currentCmd := NewUseCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
@@ -71,7 +71,7 @@ func TestPipelineTemplateUse_missingFlags(t *testing.T) {
 	args := []string{"pipeline-template", "use"} // Missing id, application, name
 	currentCmd := NewUseCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
@@ -99,7 +99,7 @@ func TestPipelineTemplateUse_templateVariables(t *testing.T) {
 
 	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 

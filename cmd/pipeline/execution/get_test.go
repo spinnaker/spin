@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -31,7 +30,7 @@ func TestExecutionGet_basic(t *testing.T) {
 	currentCmd := NewGetCmd()
 	rootCmd := util.NewRootCmdForTest()
 
-	executionCmd := NewExecutionCmd(os.Stdout)
+	executionCmd := NewExecutionCmd()
 	executionCmd.AddCommand(currentCmd)
 
 	rootCmd.AddCommand(executionCmd)
@@ -51,7 +50,7 @@ func TestExecutionGet_noinput(t *testing.T) {
 	currentCmd := NewGetCmd()
 	rootCmd := util.NewRootCmdForTest()
 
-	executionCmd := NewExecutionCmd(os.Stdout)
+	executionCmd := NewExecutionCmd()
 	executionCmd.AddCommand(currentCmd)
 
 	rootCmd.AddCommand(executionCmd)
@@ -71,7 +70,7 @@ func TestExecutionGet_failure(t *testing.T) {
 	currentCmd := NewGetCmd()
 	rootCmd := util.NewRootCmdForTest()
 
-	executionCmd := NewExecutionCmd(os.Stdout)
+	executionCmd := NewExecutionCmd()
 	executionCmd.AddCommand(currentCmd)
 
 	rootCmd.AddCommand(executionCmd)

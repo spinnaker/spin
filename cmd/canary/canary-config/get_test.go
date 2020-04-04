@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -33,7 +32,7 @@ func TestCanaryConfigGet_basic(t *testing.T) {
 	args := []string{"canary-config", "get", "--id", "3f3dbcc1", "--gate-endpoint", ts.URL}
 	currentCmd := NewGetCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -53,7 +52,7 @@ func TestCanaryConfigGet_args(t *testing.T) {
 	args := []string{"canary-config", "get", "--gate-endpoint", ts.URL}
 	currentCmd := NewGetCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -72,7 +71,7 @@ func TestCanaryConfigGet_malformed(t *testing.T) {
 	args := []string{"canary-config", "get", "--id", "3f3dbcc1", "--gate-endpoint", ts.URL}
 	currentCmd := NewGetCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -91,7 +90,7 @@ func TestCanaryConfigGet_fail(t *testing.T) {
 	args := []string{"canary-config", "get", "--id", "3f3dbcc1", "--gate-endpoint", ts.URL}
 	currentCmd := NewGetCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -108,7 +107,7 @@ func TestPipelineGet_notfound(t *testing.T) {
 
 	currentCmd := NewGetCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewCanaryConfigCmd(os.Stdout)
+	pipelineTemplateCmd := NewCanaryConfigCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 

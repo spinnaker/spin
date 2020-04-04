@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -43,7 +42,7 @@ func TestAccountGet_basic(t *testing.T) {
 	defer ts.Close()
 	currentCmd := NewGetCmd(accountOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd(os.Stdout)
+	accCmd := NewAccountCmd()
 	accCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(accCmd)
 
@@ -60,7 +59,7 @@ func TestAccountGet_flags(t *testing.T) {
 	defer ts.Close()
 	currentCmd := NewGetCmd(accountOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd(os.Stdout)
+	accCmd := NewAccountCmd()
 	accCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(accCmd)
 	args := []string{"account", "get", "--gate-endpoint", ts.URL} // Missing positional arg.
@@ -77,7 +76,7 @@ func TestAccountGet_malformed(t *testing.T) {
 
 	currentCmd := NewGetCmd(accountOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd(os.Stdout)
+	accCmd := NewAccountCmd()
 	accCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(accCmd)
 
@@ -95,7 +94,7 @@ func TestAccountGet_fail(t *testing.T) {
 
 	currentCmd := NewGetCmd(accountOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd(os.Stdout)
+	accCmd := NewAccountCmd()
 	accCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(accCmd)
 

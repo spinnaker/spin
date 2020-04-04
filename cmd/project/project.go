@@ -1,8 +1,6 @@
 package project
 
 import (
-	"io"
-
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +13,7 @@ var (
 	projectExample = ""
 )
 
-func NewProjectCmd(out io.Writer) *cobra.Command {
+func NewProjectCmd() *cobra.Command {
 	options := projectOptions{}
 	cmd := &cobra.Command{
 		Use:     "project",

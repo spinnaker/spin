@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/spinnaker/spin/util"
@@ -31,7 +30,7 @@ func TestApplicationDelete_basic(t *testing.T) {
 
 	currentCmd := NewDeleteCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
@@ -49,7 +48,7 @@ func TestApplicationDelete_fail(t *testing.T) {
 
 	currentCmd := NewDeleteCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
@@ -67,7 +66,7 @@ func TestApplicationDelete_flags(t *testing.T) {
 
 	currentCmd := NewDeleteCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 

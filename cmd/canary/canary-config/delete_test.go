@@ -17,7 +17,6 @@ package canary_config
 import (
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/spinnaker/spin/util"
@@ -30,7 +29,7 @@ func TestCanaryConfigDelete_basic(t *testing.T) {
 	args := []string{"canary-config", "delete", "configId", "--gate-endpoint", ts.URL}
 	currentCmd := NewDeleteCmd()
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -48,7 +47,7 @@ func TestCanaryConfigDelete_fail(t *testing.T) {
 	args := []string{"canary-config", "delete", "configId", "--gate-endpoint", ts.URL}
 	currentCmd := NewDeleteCmd()
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -66,7 +65,7 @@ func TestCanaryConfigDelete_missingid(t *testing.T) {
 	args := []string{"canary-config", "delete", "--gate-endpoint", ts.URL} // Missing cc id.
 	currentCmd := NewDeleteCmd()
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 

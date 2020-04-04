@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -30,7 +29,7 @@ func TestPipelineGet_basic(t *testing.T) {
 	defer ts.Close()
 	currentCmd := NewGetCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -49,7 +48,7 @@ func TestPipelineGet_flags(t *testing.T) {
 	args := []string{"pipeline", "get", "--gate-endpoint", ts.URL} // Missing application and name.
 	currentCmd := NewGetCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -68,7 +67,7 @@ func TestPipelineGet_malformed(t *testing.T) {
 	args := []string{"pipeline", "get", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
 	currentCmd := NewGetCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -87,7 +86,7 @@ func TestPipelineGet_fail(t *testing.T) {
 	args := []string{"pipeline", "get", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
 	currentCmd := NewGetCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -105,7 +104,7 @@ func TestPipelineGet_notfound(t *testing.T) {
 	args := []string{"pipeline", "get", "--application", "app", "--name", "two", "--gate-endpoint", ts.URL}
 	currentCmd := NewGetCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 

@@ -38,7 +38,7 @@ func TestPipelineSave_basic(t *testing.T) {
 
 	currentCmd := NewSaveCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -68,7 +68,7 @@ func TestPipelineSave_stdin(t *testing.T) {
 	args := []string{"pipeline", "save", "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -92,7 +92,7 @@ func TestPipelineSave_fail(t *testing.T) {
 	args := []string{"pipeline", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -116,7 +116,7 @@ func TestPipelineSave_accessdenied(t *testing.T) {
 	args := []string{"pipeline", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -133,7 +133,7 @@ func TestPipelineSave_flags(t *testing.T) {
 	args := []string{"pipeline", "save", "--gate-endpoint", ts.URL} // Missing pipeline spec file.
 	currentCmd := NewSaveCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -157,7 +157,7 @@ func TestPipelineSave_missingname(t *testing.T) {
 	args := []string{"pipeline", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -181,7 +181,7 @@ func TestPipelineSave_missingid(t *testing.T) {
 	args := []string{"pipeline", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -205,7 +205,7 @@ func TestPipelineSave_missingapp(t *testing.T) {
 	args := []string{"pipeline", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 

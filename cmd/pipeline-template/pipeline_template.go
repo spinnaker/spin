@@ -15,8 +15,6 @@
 package pipeline_template
 
 import (
-	"io"
-
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +26,7 @@ var (
 	pipelineTemplateExample = ""
 )
 
-func NewPipelineTemplateCmd(out io.Writer) *cobra.Command {
+func NewPipelineTemplateCmd() *cobra.Command {
 	options := pipelineTemplateOptions{}
 	cmd := &cobra.Command{
 		Use:     "pipeline-template",

@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -32,7 +31,7 @@ func TestExecutionList_basic(t *testing.T) {
 	args := []string{"execution", "list", "--pipeline-id", "myid", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(executionOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	executionCmd := NewExecutionCmd(os.Stdout)
+	executionCmd := NewExecutionCmd()
 	executionCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(executionCmd)
 
@@ -51,7 +50,7 @@ func TestExecutionList_flags(t *testing.T) {
 	args := []string{"execution", "list", "--gate-endpoint", ts.URL} // Missing pipeline id.
 	currentCmd := NewListCmd(executionOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	executionCmd := NewExecutionCmd(os.Stdout)
+	executionCmd := NewExecutionCmd()
 	executionCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(executionCmd)
 
@@ -69,7 +68,7 @@ func TestExecutionList_fail(t *testing.T) {
 	args := []string{"execution", "list", "--pipeline-id", "myid", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(executionOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	executionCmd := NewExecutionCmd(os.Stdout)
+	executionCmd := NewExecutionCmd()
 	executionCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(executionCmd)
 

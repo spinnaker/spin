@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -34,7 +33,7 @@ func TestApplicationGet_basic(t *testing.T) {
 	defer ts.Close()
 	currentCmd := NewGetCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
@@ -51,7 +50,7 @@ func TestApplicationGet_flags(t *testing.T) {
 	defer ts.Close()
 	currentCmd := NewGetCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 	args := []string{"application", "get", "--gate-endpoint", ts.URL} // Missing positional arg.
@@ -68,7 +67,7 @@ func TestApplicationGet_malformed(t *testing.T) {
 
 	currentCmd := NewGetCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
@@ -86,7 +85,7 @@ func TestApplicationGet_fail(t *testing.T) {
 
 	currentCmd := NewGetCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 

@@ -15,8 +15,6 @@
 package execution
 
 import (
-	"io"
-
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +26,7 @@ var (
 	executionExample = ""
 )
 
-func NewExecutionCmd(out io.Writer) *cobra.Command {
+func NewExecutionCmd() *cobra.Command {
 	options := executionOptions{}
 	cmd := &cobra.Command{
 		Use:     "execution",

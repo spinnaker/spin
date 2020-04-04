@@ -24,12 +24,7 @@ type RootOptions struct {
 	defaultHeaders   string
 }
 
-func Execute(out io.Writer) error {
-	cmd := NewCmdRoot(out)
-	return cmd.Execute()
-}
-
-func NewCmdRoot(out io.Writer) *cobra.Command {
+func NewCmdRoot(out, err io.Writer) *cobra.Command {
 	options := RootOptions{}
 
 	cmd := &cobra.Command{
@@ -37,6 +32,9 @@ func NewCmdRoot(out io.Writer) *cobra.Command {
 		SilenceErrors: true,
 		Version:       version.String(),
 	}
+
+	cmd.SetOut(out)
+	cmd.SetErr(err)
 
 	cmd.PersistentFlags().StringVar(&options.configFile, "config", "", "path to config file (default $HOME/.spin/config)")
 	cmd.PersistentFlags().StringVar(&options.GateEndpoint, "gate-endpoint", "", "Gate (API server) endpoint (default http://localhost:8084)")
@@ -47,12 +45,12 @@ func NewCmdRoot(out io.Writer) *cobra.Command {
 	cmd.PersistentFlags().StringVar(&options.defaultHeaders, "default-headers", "", "configure default headers for gate client as comma separated list (e.g. key1=value1,key2=value2)")
 
 	// create subcommands
-	cmd.AddCommand(application.NewApplicationCmd(out))
-	cmd.AddCommand(canary.NewCanaryCmd(out))
-	cmd.AddCommand(pipeline.NewPipelineCmd(out))
-	cmd.AddCommand(pipeline_template.NewPipelineTemplateCmd(out))
-	cmd.AddCommand(project.NewProjectCmd(out))
-	cmd.AddCommand(account.NewAccountCmd(out))
+	cmd.AddCommand(application.NewApplicationCmd())
+	cmd.AddCommand(canary.NewCanaryCmd())
+	cmd.AddCommand(pipeline.NewPipelineCmd())
+	cmd.AddCommand(pipeline_template.NewPipelineTemplateCmd())
+	cmd.AddCommand(project.NewProjectCmd())
+	cmd.AddCommand(account.NewAccountCmd())
 
 	return cmd
 }

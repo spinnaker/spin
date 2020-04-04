@@ -23,7 +23,7 @@ import (
 )
 
 func main() {
-	if err := cmd.Execute(os.Stdout); err != nil {
+	if err := cmd.NewCmdRoot(os.Stdout, os.Stderr).Execute(); err != nil {
 		if util.UI != nil {
 			util.UI.Error(err.Error())
 		} else {

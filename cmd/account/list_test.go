@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -31,7 +30,7 @@ func TestAccountList_basic(t *testing.T) {
 
 	currentCmd := NewListCmd(accountOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd(os.Stdout)
+	accCmd := NewAccountCmd()
 	accCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(accCmd)
 
@@ -49,7 +48,7 @@ func TestAccountList_malformed(t *testing.T) {
 
 	currentCmd := NewListCmd(accountOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd(os.Stdout)
+	accCmd := NewAccountCmd()
 	accCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(accCmd)
 
@@ -67,7 +66,7 @@ func TestAccountList_fail(t *testing.T) {
 
 	currentCmd := NewListCmd(accountOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	accCmd := NewAccountCmd(os.Stdout)
+	accCmd := NewAccountCmd()
 	accCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(accCmd)
 

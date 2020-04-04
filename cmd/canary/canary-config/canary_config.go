@@ -15,8 +15,6 @@
 package canary_config
 
 import (
-	"io"
-
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +26,7 @@ const (
 	canaryConfigExample = ""
 )
 
-func NewCanaryConfigCmd(out io.Writer) *cobra.Command {
+func NewCanaryConfigCmd() *cobra.Command {
 	options := canaryConfigOptions{}
 	cmd := &cobra.Command{
 		Use:     "canary-config",

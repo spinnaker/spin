@@ -46,7 +46,7 @@ func TestCanaryConfigRetro_file(t *testing.T) {
 
 	currentCmd := NewRetroCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -84,7 +84,7 @@ func TestCanaryConfigRetro_stdin(t *testing.T) {
 		"--gate-endpoint", ts.URL}
 	currentCmd := NewRetroCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -117,7 +117,7 @@ func TestCanaryConfigRetro_fail(t *testing.T) {
 		"--gate-endpoint", ts.URL}
 	currentCmd := NewRetroCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -152,7 +152,7 @@ func TestCanaryConfigRetro_timeout(t *testing.T) {
 		"--gate-endpoint", ts.URL}
 	currentCmd := NewRetroCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 

@@ -15,7 +15,6 @@
 package pipeline
 
 import (
-	"os"
 	"testing"
 
 	"github.com/spinnaker/spin/util"
@@ -30,7 +29,7 @@ func TestPipelineDelete_basic(t *testing.T) {
 	args := []string{"pipeline", "delete", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
 	currentCmd := NewDeleteCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -48,7 +47,7 @@ func TestPipelineDelete_fail(t *testing.T) {
 	args := []string{"pipeline", "delete", "--application", "app", "--name", "one", "--gate-endpoint", ts.URL}
 	currentCmd := NewDeleteCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -66,7 +65,7 @@ func TestPipelineDelete_flags(t *testing.T) {
 	args := []string{"pipeline", "delete", "--gate-endpoint", ts.URL} // Missing pipeline app and name.
 	currentCmd := NewDeleteCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -84,7 +83,7 @@ func TestPipelineDelete_missingname(t *testing.T) {
 	args := []string{"pipeline", "delete", "--application", "app", "--gate-endpoint", ts.URL}
 	currentCmd := NewDeleteCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -102,7 +101,7 @@ func TestPipelineDelete_missingapp(t *testing.T) {
 	args := []string{"pipeline", "delete", "--name", "one", "--gate-endpoint", ts.URL}
 	currentCmd := NewDeleteCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 

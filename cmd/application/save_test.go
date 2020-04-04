@@ -36,7 +36,7 @@ func TestApplicationSave_basic(t *testing.T) {
 	defer ts.Close()
 	currentCmd := NewSaveCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
@@ -66,7 +66,7 @@ func TestApplicationSave_fail(t *testing.T) {
 	}
 	currentCmd := NewSaveCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
@@ -87,7 +87,7 @@ func TestApplicationSave_flags(t *testing.T) {
 	}
 	currentCmd := NewSaveCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
@@ -110,7 +110,7 @@ func TestApplicationSave_missingname(t *testing.T) {
 	}
 	currentCmd := NewSaveCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
@@ -133,7 +133,7 @@ func TestApplicationSave_missingemail(t *testing.T) {
 	}
 	currentCmd := NewSaveCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
@@ -156,7 +156,7 @@ func TestApplicationSave_missingproviders(t *testing.T) {
 	}
 	currentCmd := NewSaveCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
@@ -185,7 +185,7 @@ func TestApplicationSave_filebasic(t *testing.T) {
 
 	currentCmd := NewSaveCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
@@ -219,7 +219,7 @@ func TestApplicationSave_stdinbasic(t *testing.T) {
 
 	currentCmd := NewSaveCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 

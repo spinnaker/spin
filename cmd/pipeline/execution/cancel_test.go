@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -32,7 +31,7 @@ func TestExecutionCancel_basic(t *testing.T) {
 	currentCmd := NewCancelCmd()
 	rootCmd := util.NewRootCmdForTest()
 
-	executionCmd := NewExecutionCmd(os.Stdout)
+	executionCmd := NewExecutionCmd()
 	executionCmd.AddCommand(currentCmd)
 
 	rootCmd.AddCommand(executionCmd)
@@ -52,7 +51,7 @@ func TestExecutionCancel_noinput(t *testing.T) {
 	currentCmd := NewCancelCmd()
 	rootCmd := util.NewRootCmdForTest()
 
-	executionCmd := NewExecutionCmd(os.Stdout)
+	executionCmd := NewExecutionCmd()
 	executionCmd.AddCommand(currentCmd)
 
 	rootCmd.AddCommand(executionCmd)
@@ -72,7 +71,7 @@ func TestExecutionCancel_failure(t *testing.T) {
 	currentCmd := NewCancelCmd()
 	rootCmd := util.NewRootCmdForTest()
 
-	executionCmd := NewExecutionCmd(os.Stdout)
+	executionCmd := NewExecutionCmd()
 	executionCmd.AddCommand(currentCmd)
 
 	rootCmd.AddCommand(executionCmd)

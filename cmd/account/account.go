@@ -15,8 +15,6 @@
 package account
 
 import (
-	"io"
-
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +27,7 @@ var (
 	accountExample = ""
 )
 
-func NewAccountCmd(out io.Writer) *cobra.Command {
+func NewAccountCmd() *cobra.Command {
 	options := accountOptions{}
 	cmd := &cobra.Command{
 		Use:     "account",

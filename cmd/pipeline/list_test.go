@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -32,7 +31,7 @@ func TestPipelineList_basic(t *testing.T) {
 	args := []string{"pipeline", "list", "--application", "app", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -51,7 +50,7 @@ func TestPipelineList_flags(t *testing.T) {
 	args := []string{"pipeline", "list", "--gate-endpoint", ts.URL} // Missing application.
 	currentCmd := NewListCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -69,7 +68,7 @@ func TestPipelineList_malformed(t *testing.T) {
 	args := []string{"pipeline", "list", "--application", "app", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -87,7 +86,7 @@ func TestPipelineList_fail(t *testing.T) {
 	args := []string{"pipeline", "list", "--application", "app", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(pipelineOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineCmd := NewPipelineCmd(os.Stdout)
+	pipelineCmd := NewPipelineCmd()
 	pipelineCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineCmd)
 

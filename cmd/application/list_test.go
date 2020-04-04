@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -31,7 +30,7 @@ func TestApplicationList_basic(t *testing.T) {
 
 	currentCmd := NewListCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
@@ -49,7 +48,7 @@ func TestApplicationList_malformed(t *testing.T) {
 
 	currentCmd := NewListCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 
@@ -67,7 +66,7 @@ func TestApplicationList_fail(t *testing.T) {
 
 	currentCmd := NewListCmd(applicationOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	appCmd := NewApplicationCmd(os.Stdout)
+	appCmd := NewApplicationCmd()
 	appCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(appCmd)
 

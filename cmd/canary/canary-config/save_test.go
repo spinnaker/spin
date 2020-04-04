@@ -39,7 +39,7 @@ func TestCanaryConfigSave_create(t *testing.T) {
 
 	currentCmd := NewSaveCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -64,7 +64,7 @@ func TestCanaryConfigSave_update(t *testing.T) {
 
 	currentCmd := NewSaveCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -95,7 +95,7 @@ func TestCanaryConfigSave_stdin(t *testing.T) {
 	args := []string{"canary-config", "save", "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -120,7 +120,7 @@ func TestCanaryConfigSave_fail(t *testing.T) {
 	args := []string{"canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -140,7 +140,7 @@ func TestCanaryConfigSave_flags(t *testing.T) {
 	args := []string{"canary-config", "save", "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -165,7 +165,7 @@ func TestCanaryConfigSave_missingid(t *testing.T) {
 	args := []string{"canary-config", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewSaveCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 

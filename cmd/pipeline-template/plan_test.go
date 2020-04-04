@@ -38,7 +38,7 @@ func TestPipelineTemplatePlan_basic(t *testing.T) {
 
 	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
@@ -68,7 +68,7 @@ func TestPipelineTemplatePlan_stdin(t *testing.T) {
 	args := []string{"pipeline-template", "plan", "--gate-endpoint", ts.URL}
 	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
@@ -92,7 +92,7 @@ func TestPipelineTemplatePlan_fail(t *testing.T) {
 	args := []string{"pipeline-template", "plan", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
 	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 
@@ -110,7 +110,7 @@ func TestPipelineTemplatePlan_flags(t *testing.T) {
 	args := []string{"pipeline-template", "plan", "--gate-endpoint", ts.URL} // Missing pipeline config file and stdin.
 	currentCmd := NewPlanCmd(pipelineTemplateOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	pipelineTemplateCmd := NewPipelineTemplateCmd(os.Stdout)
+	pipelineTemplateCmd := NewPipelineTemplateCmd()
 	pipelineTemplateCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(pipelineTemplateCmd)
 

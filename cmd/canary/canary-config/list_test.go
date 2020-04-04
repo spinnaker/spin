@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -33,7 +32,7 @@ func TestCanaryConfigList_basic(t *testing.T) {
 	args := []string{"canary-config", "list", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -52,7 +51,7 @@ func TestCanaryConfigList_malformed(t *testing.T) {
 	args := []string{"canary-config", "list", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 
@@ -71,7 +70,7 @@ func TestCanaryConfigList_fail(t *testing.T) {
 	args := []string{"canary-config", "list", "--gate-endpoint", ts.URL}
 	currentCmd := NewListCmd(canaryConfigOptions{})
 	rootCmd := util.NewRootCmdForTest()
-	canaryConfigCmd := NewCanaryConfigCmd(os.Stdout)
+	canaryConfigCmd := NewCanaryConfigCmd()
 	canaryConfigCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(canaryConfigCmd)
 

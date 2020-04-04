@@ -1,8 +1,6 @@
 package canary
 
 import (
-	"io"
-
 	"github.com/spf13/cobra"
 	canary_config "github.com/spinnaker/spin/cmd/canary/canary-config"
 )
@@ -15,7 +13,7 @@ const (
 	canaryExample = ""
 )
 
-func NewCanaryCmd(out io.Writer) *cobra.Command {
+func NewCanaryCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "canary",
 		Aliases: []string{},
@@ -25,6 +23,6 @@ func NewCanaryCmd(out io.Writer) *cobra.Command {
 	}
 
 	// create subcommands
-	cmd.AddCommand(canary_config.NewCanaryConfigCmd(out))
+	cmd.AddCommand(canary_config.NewCanaryConfigCmd())
 	return cmd
 }
