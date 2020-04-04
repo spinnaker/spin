@@ -15,51 +15,45 @@
 package util
 
 import (
-	"bytes"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/mitchellh/cli"
 	"github.com/mitchellh/colorstring"
 	"github.com/spinnaker/spin/cmd/output"
-	"k8s.io/client-go/util/jsonpath"
-	"sigs.k8s.io/yaml"
 )
 
 type ColorizeUi struct {
-	Colorize     *colorstring.Colorize
-	OutputColor  string
-	InfoColor    string
-	ErrorColor   string
-	WarnColor    string
-	SuccessColor string
-	Ui           cli.Ui
-	Quiet        bool
-	OutputFormat *output.OutputFormat
+	Colorize       *colorstring.Colorize
+	OutputColor    string
+	InfoColor      string
+	ErrorColor     string
+	WarnColor      string
+	SuccessColor   string
+	Ui             cli.Ui
+	Quiet          bool
+	OutputFormater output.OutputFormater
 }
 
 var UI *ColorizeUi
 
-func InitUI(quiet, color bool, outputFormat *output.OutputFormat) {
+func InitUI(quiet, color bool, outputFormater output.OutputFormater) {
 	UI = &ColorizeUi{
 		Colorize: &colorstring.Colorize{
 			Colors:  colorstring.DefaultColors,
 			Disable: !color,
 			Reset:   true,
 		},
-		ErrorColor: "[red]",
-		WarnColor:  "[yellow]",
-		InfoColor:  "[blue]",
-		SuccessColor:  "[bold][green]",
+		ErrorColor:   "[red]",
+		WarnColor:    "[yellow]",
+		InfoColor:    "[blue]",
+		SuccessColor: "[bold][green]",
 		Ui: &cli.BasicUi{
 			Writer:      os.Stdout,
 			ErrorWriter: os.Stderr,
 		},
-		Quiet: quiet,
-		OutputFormat: outputFormat,
+		Quiet:          quiet,
+		OutputFormater: outputFormater,
 	}
 }
 
@@ -75,62 +69,13 @@ func (u *ColorizeUi) Output(message string) {
 	u.Ui.Output(u.colorize(message, u.OutputColor))
 }
 
-// JsonOutput pretty prints the data specified in the input.
-// Callers can optionally supply a jsonpath template to pull out nested data in input.
-// This leverages the kubernetes jsonpath libs (https://kubernetes.io/docs/reference/kubectl/jsonpath/).
-func (u *ColorizeUi) JsonOutput(input interface{}) {
-	outputFormat := UI.OutputFormat
-	if outputFormat != nil {
-		template := outputFormat.JsonPath
-		if template != "" {
-			jsonValue, err := u.parseJsonPath(input, template)
-			if err != nil {
-				u.Error(fmt.Sprintf("Failed to parse jsonpath: %v", err))
-			}
-
-			// unquote since go quotes the string if the bytes is a string.
-			u.Output(u.colorize(u.unquote(jsonValue.String()), u.OutputColor))
-			return
-		}
-
-		if outputFormat.Yaml {
-			prettyStr, err := yaml.Marshal(input)
-			if err != nil {
-				u.Error(fmt.Sprintf("Failed to marshal to yaml: %v", err))
-			}
-			u.Output(string(prettyStr))
-			return
-		}
-	}
-
-	// default to json
-	prettyStr, err := json.MarshalIndent(input, "", " ")
+// JsonOutput prints the data specified using the configured OutputFormater.
+func (u *ColorizeUi) JsonOutput(data interface{}) {
+	output, err := u.OutputFormater(data)
 	if err != nil {
-		u.Error(fmt.Sprintf("Failed to marshal to json: %v", err))
+		u.Error(fmt.Sprintf("%v", err))
 	}
-	u.Output(u.colorize(string(prettyStr), u.OutputColor))
-}
-
-func (u *ColorizeUi) unquote(input string) string {
-	input = strings.TrimPrefix(input, "\"")
-	input = strings.TrimSuffix(input, "\"")
-	return input
-}
-
-// parseJsonPath finds the values specified in the input data as specified with the template.
-// This leverages the kubernetes jsonpath libs (https://kubernetes.io/docs/reference/kubectl/jsonpath/).
-func (u *ColorizeUi) parseJsonPath(input interface{}, template string) (*bytes.Buffer, error) {
-	j := jsonpath.New("json-path")
-	buf := new(bytes.Buffer)
-	if err := j.Parse(template); err != nil {
-		return buf, errors.New(fmt.Sprintf("Error parsing json: %v", err))
-	}
-	err := j.Execute(buf, input)
-	if err != nil {
-		return buf, errors.New(fmt.Sprintf("Error parsing value from input %v using template %s: %v ", input, template, err))
-	}
-
-	return buf, nil
+	u.Output(string(output))
 }
 
 func (u *ColorizeUi) Success(message string) {

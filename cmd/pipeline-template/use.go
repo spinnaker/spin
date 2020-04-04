@@ -22,8 +22,8 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/spinnaker/spin/util"
 	"github.com/spinnaker/spin/cmd/output"
+	"github.com/spinnaker/spin/util"
 	"sigs.k8s.io/yaml"
 )
 
@@ -92,7 +92,7 @@ func usePipelineTemplate(cmd *cobra.Command, options UseOptions, args []string) 
 	if err != nil {
 		return err
 	}
-	util.InitUI(false, false, &output.OutputFormat{Json: true})
+	util.InitUI(false, false, output.MarshalToJson)
 	util.UI.JsonOutput(pipeline)
 
 	return nil

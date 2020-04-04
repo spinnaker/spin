@@ -7,8 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/spinnaker/spin/cmd/output"
 	"github.com/spf13/cobra"
+	"github.com/spinnaker/spin/cmd/output"
 )
 
 func TestGateMuxWithVersionHandler() *http.ServeMux {
@@ -33,13 +33,13 @@ func NewRootCmdForTest() *cobra.Command {
 	rootCmd.PersistentFlags().Bool("no-color", false, "Disable color")
 	rootCmd.PersistentFlags().String("output", "", "Configure output formatting")
 	rootCmd.PersistentFlags().String("default-headers", "", "Configure additional headers for gate client requests")
-	InitUI(false, false, &output.OutputFormat{Json: true})
+	InitUI(false, false, output.MarshalToJson)
 	return rootCmd
 }
 
 // ExecCmdForTest executes the command and returns the STDOUT as a string.
 func ExecCmdForTest(cmd *cobra.Command) (string, error) {
-	buffer := bytes.NewBufferString("")
+	buffer := new(bytes.Buffer)
 	cmd.SetOut(buffer)
 	err := cmd.Execute()
 	out, bufferErr := ioutil.ReadAll(buffer)
