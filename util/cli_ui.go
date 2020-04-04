@@ -45,7 +45,11 @@ var UI *ColorizeUi
 
 func InitUI(quiet, color bool, outputFormat *output.OutputFormat) {
 	UI = &ColorizeUi{
-		Colorize:   Colorize(),
+		Colorize: &colorstring.Colorize{
+			Colors:  colorstring.DefaultColors,
+			Disable: !color,
+			Reset:   true,
+		},
 		ErrorColor: "[red]",
 		WarnColor:  "[yellow]",
 		InfoColor:  "[blue]",
@@ -56,15 +60,6 @@ func InitUI(quiet, color bool, outputFormat *output.OutputFormat) {
 		},
 		Quiet: quiet,
 		OutputFormat: outputFormat,
-	}
-}
-
-// Colorize initializes the ui colorization.
-func Colorize() *colorstring.Colorize {
-	return &colorstring.Colorize{
-		Colors:  colorstring.DefaultColors,
-		Disable: !hasColor,
-		Reset:   true,
 	}
 }
 
