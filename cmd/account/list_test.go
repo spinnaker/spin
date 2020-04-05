@@ -57,7 +57,7 @@ func TestAccountList_malformed(t *testing.T) {
 }
 
 func TestAccountList_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)

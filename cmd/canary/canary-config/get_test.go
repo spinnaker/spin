@@ -15,6 +15,7 @@
 package canary_config
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -22,16 +23,18 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/andreyvit/diff"
 	"github.com/spinnaker/spin/cmd"
 	"github.com/spinnaker/spin/cmd/canary"
 	"github.com/spinnaker/spin/util"
 )
 
-func TestCanaryConfigGet_basic(t *testing.T) {
+func TestCanaryConfigGet_json(t *testing.T) {
 	ts := testGateCanaryConfigGetSuccess()
 	defer ts.Close()
 
-	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	buffer := new(bytes.Buffer)
+	rootCmd, rootOpts := cmd.NewCmdRoot(buffer, buffer)
 	canaryCmd, canaryOpts := canary.NewCanaryCmd(rootOpts)
 	canaryCmd.AddCommand(NewCanaryConfigCmd(canaryOpts))
 	rootCmd.AddCommand(canaryCmd)
@@ -42,6 +45,37 @@ func TestCanaryConfigGet_basic(t *testing.T) {
 	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
+	}
+
+	expected := strings.TrimSpace(canaryConfigGetJson)
+	recieved := strings.TrimSpace(buffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected command output:\n%s", diff.LineDiff(expected, recieved))
+	}
+}
+
+func TestCanaryConfigGet_yaml(t *testing.T) {
+	ts := testGateCanaryConfigGetSuccess()
+	defer ts.Close()
+
+	buffer := new(bytes.Buffer)
+	rootCmd, rootOpts := cmd.NewCmdRoot(buffer, buffer)
+	canaryCmd, canaryOpts := canary.NewCanaryCmd(rootOpts)
+	canaryCmd.AddCommand(NewCanaryConfigCmd(canaryOpts))
+	rootCmd.AddCommand(canaryCmd)
+
+	args := []string{"canary", "canary-config", "get", "--id", "3f3dbcc1", "--output", "yaml", "--gate-endpoint", ts.URL}
+
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+
+	expected := strings.TrimSpace(canaryConfigGetYaml)
+	recieved := strings.TrimSpace(buffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected command output:\n%s", diff.LineDiff(expected, recieved))
 	}
 }
 
@@ -81,7 +115,7 @@ func TestCanaryConfigGet_malformed(t *testing.T) {
 }
 
 func TestCanaryConfigGet_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -169,4 +203,13 @@ const canaryConfigGetJson = `
  "updatedTimestamp": 1568131247595,
  "updatedTimestampIso": "2019-09-10T16:00:47.595Z"
 }
+`
+
+const canaryConfigGetYaml = `
+applications:
+- canaryconfigs
+id: 3f3dbcc1-002d-458c-b181-be4aa809922a
+name: exampleCanary
+updatedTimestamp: 1568131247595
+updatedTimestampIso: "2019-09-10T16:00:47.595Z"
 `

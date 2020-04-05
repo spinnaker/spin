@@ -28,7 +28,7 @@ import (
 )
 
 func TestPipelineTemplatePlan_basic(t *testing.T) {
-	ts := gateServerPlanSuccess()
+	ts := testGatePlanSuccess()
 	defer ts.Close()
 
 	tempFile := tempPipelineTemplateFile(testPlanConfig)
@@ -49,7 +49,7 @@ func TestPipelineTemplatePlan_basic(t *testing.T) {
 }
 
 func TestPipelineTemplatePlan_stdin(t *testing.T) {
-	ts := gateServerPlanSuccess()
+	ts := testGatePlanSuccess()
 	defer ts.Close()
 
 	tempFile := tempPipelineTemplateFile(testPlanConfig)
@@ -76,7 +76,7 @@ func TestPipelineTemplatePlan_stdin(t *testing.T) {
 }
 
 func TestPipelineTemplatePlan_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	tempFile := tempPipelineTemplateFile(testPlanConfig)
@@ -97,7 +97,7 @@ func TestPipelineTemplatePlan_fail(t *testing.T) {
 }
 
 func TestPipelineTemplatePlan_flags(t *testing.T) {
-	ts := gateServerPlanSuccess()
+	ts := testGatePlanSuccess()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -111,10 +111,10 @@ func TestPipelineTemplatePlan_flags(t *testing.T) {
 	}
 }
 
-// gateServerUpdateSuccess spins up a local http server that we will configure the GateClient
+// testGatePlanSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with 404 NotFound to indicate a pipeline template doesn't exist,
 // and Accepts POST calls.
-func gateServerPlanSuccess() *httptest.Server {
+func testGatePlanSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/v2/pipelineTemplates/plan", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {

@@ -62,7 +62,7 @@ func TestExecutionGet_noinput(t *testing.T) {
 }
 
 func TestExecutionGet_failure(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -88,9 +88,9 @@ func testGateExecutionGetSuccess() *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-// GateServerFail spins up a local http server that we will configure the GateClient
+// testGateFail spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 500 InternalServerError.
-func GateServerFail() *httptest.Server {
+func testGateFail() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/executions/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// TODO(jacobkiefer): Mock more robust errors once implemented upstream.

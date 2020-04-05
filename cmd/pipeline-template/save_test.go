@@ -15,19 +15,23 @@
 package pipeline_template
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/spinnaker/spin/cmd"
 	"github.com/spinnaker/spin/util"
 )
 
-func TestPipelineTemplateSave_create(t *testing.T) {
-	ts := gateServerCreateSuccess()
+func TestPipelineTemplateSave_createjson(t *testing.T) {
+	saveBuffer := new(bytes.Buffer)
+	ts := testGatePipelineTemplateCreateSuccess(saveBuffer)
 	defer ts.Close()
 
 	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
@@ -45,10 +49,41 @@ func TestPipelineTemplateSave_create(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := strings.TrimSpace(testPipelineTemplateJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+}
+
+func TestPipelineTemplateSave_createyaml(t *testing.T) {
+	saveBuffer := new(bytes.Buffer)
+	ts := testGatePipelineTemplateCreateSuccess(saveBuffer)
+	defer ts.Close()
+
+	tempFile := tempPipelineTemplateFile(testPipelineTemplateYamlStr)
+	if tempFile == nil {
+		t.Fatal("Could not create temp pipeline template file.")
+	}
+	defer os.Remove(tempFile.Name())
+
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewPipelineTemplateCmd(rootOpts))
+
+	args := []string{"pipeline-template", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+
+	expected := strings.TrimSpace(testPipelineTemplateJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineTemplateSave_createtag(t *testing.T) {
-	ts := gateServerCreateSuccess()
+	saveBuffer := new(bytes.Buffer)
+	ts := testGatePipelineTemplateCreateSuccess(saveBuffer)
 	defer ts.Close()
 
 	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
@@ -66,10 +101,15 @@ func TestPipelineTemplateSave_createtag(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := strings.TrimSpace(testPipelineTemplateJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineTemplateSave_update(t *testing.T) {
-	ts := gateServerUpdateSuccess()
+	saveBuffer := new(bytes.Buffer)
+	ts := testGatePipelineTemplateUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
 	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
@@ -87,10 +127,15 @@ func TestPipelineTemplateSave_update(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := strings.TrimSpace(testPipelineTemplateJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineTemplateSave_updatetag(t *testing.T) {
-	ts := gateServerUpdateSuccess()
+	saveBuffer := new(bytes.Buffer)
+	ts := testGatePipelineTemplateUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
 	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
@@ -108,10 +153,15 @@ func TestPipelineTemplateSave_updatetag(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := strings.TrimSpace(testPipelineTemplateJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineTemplateSave_stdin(t *testing.T) {
-	ts := gateServerUpdateSuccess()
+	saveBuffer := new(bytes.Buffer)
+	ts := testGatePipelineTemplateUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
 	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
@@ -135,10 +185,14 @@ func TestPipelineTemplateSave_stdin(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := strings.TrimSpace(testPipelineTemplateJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineTemplateSave_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
@@ -160,7 +214,8 @@ func TestPipelineTemplateSave_fail(t *testing.T) {
 }
 
 func TestPipelineTemplateSave_flags(t *testing.T) {
-	ts := gateServerUpdateSuccess()
+	saveBuffer := new(bytes.Buffer)
+	ts := testGatePipelineTemplateUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -172,10 +227,17 @@ func TestPipelineTemplateSave_flags(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := ""
+	recieved := strings.TrimSpace(saveBuffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected save request body:\n%s", recieved)
+	}
 }
 
 func TestPipelineTemplateSave_missingid(t *testing.T) {
-	ts := gateServerUpdateSuccess()
+	saveBuffer := new(bytes.Buffer)
+	ts := testGatePipelineTemplateUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
 	tempFile := tempPipelineTemplateFile(missingIdJsonStr)
@@ -193,10 +255,17 @@ func TestPipelineTemplateSave_missingid(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := ""
+	recieved := strings.TrimSpace(saveBuffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected save request body:\n%s", recieved)
+	}
 }
 
 func TestPipelineTemplateSave_missingschema(t *testing.T) {
-	ts := gateServerUpdateSuccess()
+	saveBuffer := new(bytes.Buffer)
+	ts := testGatePipelineTemplateUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
 	tempFile := tempPipelineTemplateFile(missingSchemaJsonStr)
@@ -214,6 +283,12 @@ func TestPipelineTemplateSave_missingschema(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := ""
+	recieved := strings.TrimSpace(saveBuffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected save request body:\n%s", recieved)
+	}
 }
 
 func tempPipelineTemplateFile(pipelineContent string) *os.File {
@@ -226,18 +301,16 @@ func tempPipelineTemplateFile(pipelineContent string) *os.File {
 	return tempFile
 }
 
-// gateServerUpdateSuccess spins up a local http server that we will configure the GateClient
+// testGatePipelineTemplateUpdateSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with OK to indicate a pipeline template exists,
 // and Accepts POST calls.
-func gateServerUpdateSuccess() *httptest.Server {
+// Writes request body to buffer for testing.
+func testGatePipelineTemplateUpdateSuccess(buffer io.Writer) *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
-	mux.Handle("/v2/pipelineTemplates/update/testSpelTemplate", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodPost {
-			w.WriteHeader(http.StatusAccepted)
-		} else {
-			w.WriteHeader(http.StatusOK)
-		}
-	}))
+	mux.Handle(
+		"/v2/pipelineTemplates/update/testSpelTemplate",
+		util.NewTestBufferHandlerFunc(http.MethodPost, buffer, http.StatusAccepted, ""),
+	)
 	// Return that we found an MPT to signal that we should update.
 	mux.Handle("/v2/pipelineTemplates/testSpelTemplate", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -245,18 +318,16 @@ func gateServerUpdateSuccess() *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-// gateServerCreateSuccess spins up a local http server that we will configure the GateClient
+// testGatePipelineTemplateCreateSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with 404 NotFound to indicate a pipeline template doesn't exist,
 // and Accepts POST calls.
-func gateServerCreateSuccess() *httptest.Server {
+// Writes request body to buffer for testing.
+func testGatePipelineTemplateCreateSuccess(buffer io.Writer) *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
-	mux.Handle("/v2/pipelineTemplates/create", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodPost {
-			w.WriteHeader(http.StatusAccepted)
-		} else {
-			w.WriteHeader(http.StatusNotFound)
-		}
-	}))
+	mux.Handle(
+		"/v2/pipelineTemplates/create",
+		util.NewTestBufferHandlerFunc(http.MethodPost, buffer, http.StatusAccepted, ""),
+	)
 	// Return that there are no existing MPTs.
 	mux.Handle("/v2/pipelineTemplates/testSpelTemplate", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
@@ -428,4 +499,46 @@ const testPipelineTemplateJsonStr = `
   }
  ]
 }
+`
+
+const testPipelineTemplateYamlStr = `
+id: testSpelTemplate
+lastModifiedBy: anonymous
+metadata:
+  description: A generic application bake and tag pipeline.
+  name: Default Bake and Tag
+  owner: example@example.com
+  scopes:
+  - global
+pipeline:
+  description: ''
+  keepWaitingPipelines: false
+  lastModifiedBy: anonymous
+  limitConcurrent: true
+  notifications: []
+  parameterConfig: []
+  stages:
+  - name: My Wait Stage
+    refId: wait1
+    requisiteStageRefIds: []
+    type: wait
+    waitTime: "${ templateVariables.waitTime }"
+  triggers:
+  - attributeConstraints: {}
+    enabled: true
+    payloadConstraints: {}
+    pubsubSystem: google
+    source: jake
+    subscription: super-why
+    subscriptionName: super-why
+    type: pubsub
+  updateTs: '1543509523663'
+protect: false
+schema: v2
+updateTs: '1544475186050'
+variables:
+- defaultValue: 42
+  description: The time a wait stage shall pauseth
+  name: waitTime
+  type: int
 `

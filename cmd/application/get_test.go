@@ -15,6 +15,7 @@
 package application
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -22,19 +23,22 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/andreyvit/diff"
 	"github.com/spinnaker/spin/cmd"
+	"github.com/spinnaker/spin/util"
 )
 
 const (
 	APP = "app"
 )
 
-func TestApplicationGet_basic(t *testing.T) {
+func TestApplicationGet_json(t *testing.T) {
 	ts := testGateApplicationGetSuccess()
 	defer ts.Close()
 
-	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
-	rootCmd.AddCommand(NewApplicationCmd(options))
+	buffer := new(bytes.Buffer)
+	rootCmd, rootOpts := cmd.NewCmdRoot(buffer, buffer)
+	rootCmd.AddCommand(NewApplicationCmd(rootOpts))
 
 	args := []string{"application", "get", APP, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
@@ -42,14 +46,42 @@ func TestApplicationGet_basic(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := strings.TrimSpace(applicationJson)
+	recieved := strings.TrimSpace(buffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected command output:\n%s", diff.LineDiff(expected, recieved))
+	}
+}
+
+func TestApplicationGet_yaml(t *testing.T) {
+	ts := testGateApplicationGetSuccess()
+	defer ts.Close()
+
+	buffer := new(bytes.Buffer)
+	rootCmd, rootOpts := cmd.NewCmdRoot(buffer, buffer)
+	rootCmd.AddCommand(NewApplicationCmd(rootOpts))
+
+	args := []string{"application", "get", APP, "--output", "yaml", "--gate-endpoint=" + ts.URL}
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+
+	expected := strings.TrimSpace(applicationYaml)
+	recieved := strings.TrimSpace(buffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected command output:\n%s", diff.LineDiff(expected, recieved))
+	}
 }
 
 func TestApplicationGet_flags(t *testing.T) {
 	ts := testGateApplicationGetSuccess()
 	defer ts.Close()
 
-	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
-	rootCmd.AddCommand(NewApplicationCmd(options))
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(rootOpts))
 
 	args := []string{"application", "get", "--gate-endpoint", ts.URL} // Missing positional arg.
 	rootCmd.SetArgs(args)
@@ -63,8 +95,8 @@ func TestApplicationGet_malformed(t *testing.T) {
 	ts := testGateApplicationGetMalformed()
 	defer ts.Close()
 
-	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
-	rootCmd.AddCommand(NewApplicationCmd(options))
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(rootOpts))
 
 	args := []string{"application", "get", APP, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
@@ -75,11 +107,11 @@ func TestApplicationGet_malformed(t *testing.T) {
 }
 
 func TestApplicationGet_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
-	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
-	rootCmd.AddCommand(NewApplicationCmd(options))
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(rootOpts))
 
 	args := []string{"application", "get", APP, "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
@@ -92,16 +124,20 @@ func TestApplicationGet_fail(t *testing.T) {
 // testGateApplicationGetSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 200 and a well-formed pipeline list.
 func testGateApplicationGetSuccess() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(applicationJson))
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/applications/"+APP, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, strings.TrimSpace(applicationJsonExpanded))
 	}))
+	return httptest.NewServer(mux)
 }
 
 // testGateApplicationGetMalformed returns a malformed list of pipeline configs.
 func testGateApplicationGetMalformed() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle("/applications/"+APP, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, strings.TrimSpace(malformedApplicationGetJson))
 	}))
+	return httptest.NewServer(mux)
 }
 
 const malformedApplicationGetJson = `
@@ -120,12 +156,14 @@ const malformedApplicationGetJson = `
 }
 `
 
-const applicationJson = `
+// GET /applications/{app} returns an envelope with 'attributes' and 'clusters'.
+const applicationJsonExpanded = `
 {
+ "attributes": {
   "accounts": "account1",
   "cloudproviders": [
-    "gce",
-    "kubernetes"
+   "gce",
+   "kubernetes"
   ],
   "createTs": "1527261941734",
   "email": "app",
@@ -134,5 +172,47 @@ const applicationJson = `
   "name": "app",
   "updateTs": "1527261941735",
   "user": "anonymous"
+ },
+ "clusters": {
+  "account1": [
+   {
+    "loadBalancers": [],
+    "name": "deployment example-deployment",
+    "provider": "kubernetes",
+    "serverGroups": []
+   }
+  ]
+ }
 }
+`
+
+const applicationJson = `
+{
+ "accounts": "account1",
+ "cloudproviders": [
+  "gce",
+  "kubernetes"
+ ],
+ "createTs": "1527261941734",
+ "email": "app",
+ "instancePort": 80,
+ "lastModifiedBy": "anonymous",
+ "name": "app",
+ "updateTs": "1527261941735",
+ "user": "anonymous"
+}
+`
+
+const applicationYaml = `
+accounts: account1
+cloudproviders:
+- gce
+- kubernetes
+createTs: "1527261941734"
+email: app
+instancePort: 80
+lastModifiedBy: anonymous
+name: app
+updateTs: "1527261941735"
+user: anonymous
 `

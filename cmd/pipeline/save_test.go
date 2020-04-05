@@ -15,19 +15,23 @@
 package pipeline
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/spinnaker/spin/cmd"
 	"github.com/spinnaker/spin/util"
 )
 
-func TestPipelineSave_basic(t *testing.T) {
-	ts := GateServerSuccess()
+func TestPipelineSave_json(t *testing.T) {
+	saveBuffer := new(bytes.Buffer)
+	ts := testGatePipelineSaveSuccess(saveBuffer)
 	defer ts.Close()
 
 	tempFile := tempPipelineFile(testPipelineJsonStr)
@@ -46,10 +50,42 @@ func TestPipelineSave_basic(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := strings.TrimSpace(testPipelineJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+}
+
+func TestPipelineSave_yaml(t *testing.T) {
+	saveBuffer := new(bytes.Buffer)
+	ts := testGatePipelineSaveSuccess(saveBuffer)
+	defer ts.Close()
+
+	tempFile := tempPipelineFile(testPipelineYamlStr)
+	if tempFile == nil {
+		t.Fatal("Could not create temp pipeline file.")
+	}
+	defer os.Remove(tempFile.Name())
+
+	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
+	rootCmd.AddCommand(pipelineCmd)
+
+	args := []string{"pipeline", "save", "--file", tempFile.Name(), "--gate-endpoint", ts.URL}
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+
+	expected := strings.TrimSpace(testPipelineJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineSave_stdin(t *testing.T) {
-	ts := GateServerSuccess()
+	saveBuffer := new(bytes.Buffer)
+	ts := testGatePipelineSaveSuccess(saveBuffer)
 	defer ts.Close()
 
 	tempFile := tempPipelineFile(testPipelineJsonStr)
@@ -74,10 +110,14 @@ func TestPipelineSave_stdin(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := strings.TrimSpace(testPipelineJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineSave_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	tempFile := tempPipelineFile(testPipelineJsonStr)
@@ -99,7 +139,7 @@ func TestPipelineSave_fail(t *testing.T) {
 }
 
 func TestPipelineSave_accessdenied(t *testing.T) {
-	ts := GateServerReadOnly()
+	ts := testGateReadOnly()
 	defer ts.Close()
 
 	tempFile := tempPipelineFile(testPipelineJsonStr)
@@ -120,7 +160,7 @@ func TestPipelineSave_accessdenied(t *testing.T) {
 	}
 }
 func TestPipelineSave_flags(t *testing.T) {
-	ts := GateServerSuccess()
+	ts := testGateSuccess()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -136,7 +176,7 @@ func TestPipelineSave_flags(t *testing.T) {
 }
 
 func TestPipelineSave_missingname(t *testing.T) {
-	ts := GateServerSuccess()
+	ts := testGateSuccess()
 	defer ts.Close()
 
 	tempFile := tempPipelineFile(missingNameJsonStr)
@@ -158,7 +198,7 @@ func TestPipelineSave_missingname(t *testing.T) {
 }
 
 func TestPipelineSave_missingid(t *testing.T) {
-	ts := GateServerSuccess()
+	ts := testGateSuccess()
 	defer ts.Close()
 
 	tempFile := tempPipelineFile(missingIdJsonStr)
@@ -180,7 +220,7 @@ func TestPipelineSave_missingid(t *testing.T) {
 }
 
 func TestPipelineSave_missingapp(t *testing.T) {
-	ts := GateServerSuccess()
+	ts := testGateSuccess()
 	defer ts.Close()
 
 	tempFile := tempPipelineFile(missingAppJsonStr)
@@ -211,9 +251,28 @@ func tempPipelineFile(pipelineContent string) *os.File {
 	return tempFile
 }
 
-// GateServerSuccess spins up a local http server that we will configure the GateClient
+// testGatePipelineSaveSuccess spins up a local http server that we will configure the
+// GateClient to direct requests to. Responds with a 200 OK.
+// Writes pipeline body to buffer for testing.
+func testGatePipelineSaveSuccess(buffer io.Writer) *httptest.Server {
+	mux := util.TestGateMuxWithVersionHandler()
+	mux.Handle(
+		"/applications/app/pipelineConfigs/pipeline1",
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Confirm the pipeline exists.
+			fmt.Fprintln(w, "")
+		}),
+	)
+	mux.Handle(
+		"/pipelines",
+		util.NewTestBufferHandlerFunc(http.MethodPost, buffer, http.StatusOK, ""),
+	)
+	return httptest.NewServer(mux)
+}
+
+// testGateSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 200 OK.
-func GateServerSuccess() *httptest.Server {
+func testGateSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "") // Just write an empty 200 success on save.
@@ -221,9 +280,9 @@ func GateServerSuccess() *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-// GateServerReadOnly spins up a local http server that we will configure the GateClient
+// testGateReadOnly spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 200 OK for READ-type requests (GET), 400 otherwise.
-func GateServerReadOnly() *httptest.Server {
+func testGateReadOnly() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch method := r.Method; method {
@@ -237,9 +296,9 @@ func GateServerReadOnly() *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-// GateServerFail spins up a local http server that we will configure the GateClient
+// testGateFail spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 500 InternalServerError.
-func GateServerFail() *httptest.Server {
+func testGateFail() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// TODO(jacobkiefer): Mock more robust errors once implemented upstream.
@@ -313,31 +372,54 @@ const missingAppJsonStr = `
 
 const testPipelineJsonStr = `
 {
-  "name": "pipeline1",
-  "id": "pipeline1",
-  "application": "app",
-  "keepWaitingPipelines": false,
-  "lastModifiedBy": "anonymous",
-  "limitConcurrent": true,
-  "parameterConfig": [
-    {
-      "default": "bar",
-      "description": "A foo.",
-      "name": "foo",
-      "required": true
-    }
-  ],
-  "stages": [
-    {
-      "comments": "${ parameters.derp }",
-      "name": "Wait",
-      "refId": "1",
-      "requisiteStageRefIds": [],
-      "type": "wait",
-      "waitTime": 30
-    }
-  ],
-  "triggers": [],
-  "updateTs": "1520879791608"
+ "application": "app",
+ "id": "pipeline1",
+ "keepWaitingPipelines": false,
+ "lastModifiedBy": "anonymous",
+ "limitConcurrent": true,
+ "name": "pipeline1",
+ "parameterConfig": [
+  {
+   "default": "bar",
+   "description": "A foo.",
+   "name": "foo",
+   "required": true
+  }
+ ],
+ "stages": [
+  {
+   "comments": "${ parameters.derp }",
+   "name": "Wait",
+   "refId": "1",
+   "requisiteStageRefIds": [],
+   "type": "wait",
+   "waitTime": 30
+  }
+ ],
+ "triggers": [],
+ "updateTs": "1520879791608"
 }
+`
+
+const testPipelineYamlStr = `
+name: pipeline1
+id: pipeline1
+application: app
+keepWaitingPipelines: false
+lastModifiedBy: anonymous
+limitConcurrent: true
+parameterConfig:
+- default: bar
+  description: A foo.
+  name: foo
+  required: true
+stages:
+- comments: ${ parameters.derp }
+  name: Wait
+  refId: "1"
+  requisiteStageRefIds: []
+  type: wait
+  waitTime: 30
+triggers: []
+updateTs: "1520879791608"
 `

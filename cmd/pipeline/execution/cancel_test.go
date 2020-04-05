@@ -63,7 +63,7 @@ func TestExecutionCancel_noinput(t *testing.T) {
 }
 
 func TestExecutionCancel_failure(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)

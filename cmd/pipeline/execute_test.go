@@ -54,7 +54,7 @@ func TestPipelineExecute_basic(t *testing.T) {
 }
 
 func TestPipelineExecute_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	tempFile := tempPipelineFile(testPipelineJsonStr)
@@ -76,7 +76,7 @@ func TestPipelineExecute_fail(t *testing.T) {
 }
 
 func TestPipelineExecute_flags(t *testing.T) {
-	ts := GateServerSuccess()
+	ts := testGateSuccess()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -92,7 +92,7 @@ func TestPipelineExecute_flags(t *testing.T) {
 }
 
 func TestPipelineExecute_missingname(t *testing.T) {
-	ts := GateServerSuccess()
+	ts := testGateSuccess()
 	defer ts.Close()
 
 	tempFile := tempPipelineFile(missingNameJsonStr)
@@ -114,7 +114,7 @@ func TestPipelineExecute_missingname(t *testing.T) {
 }
 
 func TestPipelineExecute_missingapp(t *testing.T) {
-	ts := GateServerSuccess()
+	ts := testGateSuccess()
 	defer ts.Close()
 
 	tempFile := tempPipelineFile(missingAppJsonStr)

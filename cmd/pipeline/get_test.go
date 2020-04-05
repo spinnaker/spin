@@ -15,6 +15,7 @@
 package pipeline
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -22,15 +23,17 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/andreyvit/diff"
 	"github.com/spinnaker/spin/cmd"
 	"github.com/spinnaker/spin/util"
 )
 
-func TestPipelineGet_basic(t *testing.T) {
+func TestPipelineGet_json(t *testing.T) {
 	ts := testGatePipelineGetSuccess()
 	defer ts.Close()
 
-	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	buffer := new(bytes.Buffer)
+	rootCmd, rootOpts := cmd.NewCmdRoot(buffer, buffer)
 	pipelineCmd, _ := NewPipelineCmd(rootOpts)
 	rootCmd.AddCommand(pipelineCmd)
 
@@ -39,6 +42,35 @@ func TestPipelineGet_basic(t *testing.T) {
 	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
+	}
+
+	expected := strings.TrimSpace(pipelineGetJson)
+	recieved := strings.TrimSpace(buffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected command output:\n%s", diff.LineDiff(expected, recieved))
+	}
+}
+
+func TestPipelineGet_yaml(t *testing.T) {
+	ts := testGatePipelineGetSuccess()
+	defer ts.Close()
+
+	buffer := new(bytes.Buffer)
+	rootCmd, rootOpts := cmd.NewCmdRoot(buffer, buffer)
+	pipelineCmd, _ := NewPipelineCmd(rootOpts)
+	rootCmd.AddCommand(pipelineCmd)
+
+	args := []string{"pipeline", "get", "--application", "app", "--name", "one", "--output", "yaml", "--gate-endpoint", ts.URL}
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+
+	expected := strings.TrimSpace(pipelineGetYaml)
+	recieved := strings.TrimSpace(buffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected command output:\n%s", diff.LineDiff(expected, recieved))
 	}
 }
 
@@ -56,7 +88,6 @@ func TestPipelineGet_flags(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
-
 }
 
 func TestPipelineGet_malformed(t *testing.T) {
@@ -73,11 +104,10 @@ func TestPipelineGet_malformed(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
-
 }
 
 func TestPipelineGet_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -112,7 +142,7 @@ func TestPipelineGet_notfound(t *testing.T) {
 // to direct requests to. Responds with a 200 and a well-formed pipeline get response.
 func testGatePipelineGetSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
-	mux.Handle("/applications/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("/applications/app/pipelineConfigs/one", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, strings.TrimSpace(pipelineGetJson))
 	}))
 	return httptest.NewServer(mux)
@@ -121,7 +151,7 @@ func testGatePipelineGetSuccess() *httptest.Server {
 // testGatePipelineGetMalformed returns a malformed get response of pipeline configs.
 func testGatePipelineGetMalformed() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
-	mux.Handle("/applications/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("/applications/app/pipelineConfigs/one", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineGetJson))
 	}))
 	return httptest.NewServer(mux)
@@ -130,7 +160,7 @@ func testGatePipelineGetMalformed() *httptest.Server {
 // testGatePipelineGetMissing returns a 404 Not Found for an errant pipeline name|application pair.
 func testGatePipelineGetMissing() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
-	mux.Handle("/applications/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle("/applications/app/pipelineConfigs/two", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 	}))
 	return httptest.NewServer(mux)
@@ -169,32 +199,56 @@ const malformedPipelineGetJson = `
 
 const pipelineGetJson = `
 {
-  "application": "app",
-  "id": "pipeline_one",
-  "index": 0,
-  "keepWaitingPipelines": false,
-  "lastModifiedBy": "jacobkiefer@google.com",
-  "limitConcurrent": true,
-  "name": "one",
-  "parameterConfig": [
-    {
-      "default": "blah",
-      "description": "A foo.",
-      "name": "foooB",
-      "required": true
-    }
-  ],
-  "stages": [
-    {
-      "comments": "${ parameters.derp }",
-      "name": "Wait",
-      "refId": "1",
-      "requisiteStageRefIds": [],
-      "type": "wait",
-      "waitTime": 30
-    }
-  ],
-  "triggers": [],
-  "updateTs": "1526578883109"
+ "application": "app",
+ "id": "pipeline_one",
+ "index": 0,
+ "keepWaitingPipelines": false,
+ "lastModifiedBy": "jacobkiefer@google.com",
+ "limitConcurrent": true,
+ "name": "one",
+ "parameterConfig": [
+  {
+   "default": "blah",
+   "description": "A foo.",
+   "name": "foooB",
+   "required": true
+  }
+ ],
+ "stages": [
+  {
+   "comments": "${ parameters.derp }",
+   "name": "Wait",
+   "refId": "1",
+   "requisiteStageRefIds": [],
+   "type": "wait",
+   "waitTime": 30
+  }
+ ],
+ "triggers": [],
+ "updateTs": "1526578883109"
 }
+`
+
+const pipelineGetYaml = `
+application: app
+id: pipeline_one
+index: 0
+keepWaitingPipelines: false
+lastModifiedBy: jacobkiefer@google.com
+limitConcurrent: true
+name: one
+parameterConfig:
+- default: blah
+  description: A foo.
+  name: foooB
+  required: true
+stages:
+- comments: ${ parameters.derp }
+  name: Wait
+  refId: "1"
+  requisiteStageRefIds: []
+  type: wait
+  waitTime: 30
+triggers: []
+updateTs: "1526578883109"
 `

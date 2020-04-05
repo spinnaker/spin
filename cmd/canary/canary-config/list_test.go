@@ -62,7 +62,7 @@ func TestCanaryConfigList_malformed(t *testing.T) {
 }
 
 func TestCanaryConfigList_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -101,9 +101,9 @@ func testGateCanaryConfigListMalformed() *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-// GateServerFail spins up a local http server that we will configure the GateClient
+// testGateFail spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 500 InternalServerError.
-func GateServerFail() *httptest.Server {
+func testGateFail() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}))

@@ -14,6 +14,7 @@
 package pipeline_template
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -21,15 +22,17 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/andreyvit/diff"
 	"github.com/spinnaker/spin/cmd"
 	"github.com/spinnaker/spin/util"
 )
 
-func TestPipelineGet_basic(t *testing.T) {
+func TestPipelineGet_json(t *testing.T) {
 	ts := testGatePipelineTemplateGetSuccess()
 	defer ts.Close()
 
-	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	buffer := new(bytes.Buffer)
+	rootCmd, rootOpts := cmd.NewCmdRoot(buffer, buffer)
 	rootCmd.AddCommand(NewPipelineTemplateCmd(rootOpts))
 
 	args := []string{"pipeline-template", "get", "--id", "newSpelTemplate", "--gate-endpoint", ts.URL}
@@ -38,6 +41,35 @@ func TestPipelineGet_basic(t *testing.T) {
 	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
+	}
+
+	expected := strings.TrimSpace(pipelineTemplateGetJson)
+	recieved := strings.TrimSpace(buffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected command output:\n%s", diff.LineDiff(expected, recieved))
+	}
+}
+
+func TestPipelineGet_yaml(t *testing.T) {
+	ts := testGatePipelineTemplateGetSuccess()
+	defer ts.Close()
+
+	buffer := new(bytes.Buffer)
+	rootCmd, rootOpts := cmd.NewCmdRoot(buffer, buffer)
+	rootCmd.AddCommand(NewPipelineTemplateCmd(rootOpts))
+
+	args := []string{"pipeline-template", "get", "--id", "newSpelTemplate", "--output", "yaml", "--gate-endpoint", ts.URL}
+	rootCmd.SetArgs(args)
+
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+
+	expected := strings.TrimSpace(pipelineTemplateGetYaml)
+	recieved := strings.TrimSpace(buffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected command output:\n%s", diff.LineDiff(expected, recieved))
 	}
 }
 
@@ -106,7 +138,7 @@ func TestPipelineGet_malformed(t *testing.T) {
 }
 
 func TestPipelineGet_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -165,9 +197,9 @@ func testGatePipelineTemplateGetMissing() *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-// GateServerFail spins up a local http server that we will configure the GateClient
+// testGateFail spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 500 InternalServerError.
-func GateServerFail() *httptest.Server {
+func testGateFail() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// TODO(jacobkiefer): Mock more robust errors once implemented upstream.
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -283,4 +315,46 @@ const pipelineTemplateGetJson = `
   }
  ]
 }
+`
+
+const pipelineTemplateGetYaml = `
+id: newSpelTemplate
+lastModifiedBy: anonymous
+metadata:
+  description: A generic application bake and tag pipeline.
+  name: Default Bake and Tag
+  owner: example@example.com
+  scopes:
+  - global
+pipeline:
+  description: ""
+  keepWaitingPipelines: false
+  lastModifiedBy: anonymous
+  limitConcurrent: true
+  notifications: []
+  parameterConfig: []
+  stages:
+  - name: My Wait Stage
+    refId: wait1
+    requisiteStageRefIds: []
+    type: wait
+    waitTime: ${ templateVariables.waitTime }
+  triggers:
+  - attributeConstraints: {}
+    enabled: true
+    payloadConstraints: {}
+    pubsubSystem: google
+    source: jtk54
+    subscription: super-pub
+    subscriptionName: super-pub
+    type: pubsub
+  updateTs: "1543509523663"
+protect: false
+schema: v2
+updateTs: "1543860678988"
+variables:
+- defaultValue: 42
+  description: The time a wait stage shall pauseth
+  name: waitTime
+  type: int
 `

@@ -57,7 +57,7 @@ func TestApplicationList_malformed(t *testing.T) {
 }
 
 func TestApplicationList_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)

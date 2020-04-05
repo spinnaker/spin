@@ -99,7 +99,7 @@ func TestCanaryConfigRetro_stdin(t *testing.T) {
 }
 
 func TestCanaryConfigRetro_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	tempFile := tempCanaryConfigFile(testCanaryConfigJsonStr)

@@ -32,7 +32,7 @@ var testDescription = "test-description"
 var testVariables = "one=1,two=2,three=3,four=4"
 
 func TestPipelineTemplateUse_basic(t *testing.T) {
-	ts := gateServerVersionSuccess()
+	ts := testGateVersionSuccess()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -54,7 +54,7 @@ func TestPipelineTemplateUse_basic(t *testing.T) {
 }
 
 func TestPipelineTemplateUse_basicShort(t *testing.T) {
-	ts := gateServerVersionSuccess()
+	ts := testGateVersionSuccess()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -76,7 +76,7 @@ func TestPipelineTemplateUse_basicShort(t *testing.T) {
 }
 
 func TestPipelineTemplateUse_missingFlags(t *testing.T) {
-	ts := gateServerVersionSuccess()
+	ts := testGateVersionSuccess()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -95,7 +95,7 @@ func TestPipelineTemplateUse_missingFlags(t *testing.T) {
 }
 
 func TestPipelineTemplateUse_templateVariables(t *testing.T) {
-	ts := gateServerVersionSuccess()
+	ts := testGateVersionSuccess()
 	defer ts.Close()
 
 	tempDir, tempFiles := createTestValuesFiles()
@@ -125,9 +125,9 @@ func TestPipelineTemplateUse_templateVariables(t *testing.T) {
 	}
 }
 
-// gateServerVersionSuccess spins up a local http server that we will configure the GateClient
+// testGateVersionSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds healthy to the version endpoint only.
-func gateServerVersionSuccess() *httptest.Server {
+func testGateVersionSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	return httptest.NewServer(mux)
 }

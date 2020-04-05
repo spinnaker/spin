@@ -15,12 +15,14 @@
 package application
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/spinnaker/spin/cmd"
@@ -33,7 +35,8 @@ const (
 )
 
 func TestApplicationSave_basic(t *testing.T) {
-	ts := testGateApplicationSaveSuccess()
+	saveBuffer := new(bytes.Buffer)
+	ts := testGateAppSaveSuccess(saveBuffer)
 	defer ts.Close()
 
 	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -51,10 +54,14 @@ func TestApplicationSave_basic(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := strings.TrimSpace(testAppTaskJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
 }
 
 func TestApplicationSave_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -75,7 +82,8 @@ func TestApplicationSave_fail(t *testing.T) {
 }
 
 func TestApplicationSave_flags(t *testing.T) {
-	ts := testGateApplicationSaveSuccess()
+	saveBuffer := new(bytes.Buffer)
+	ts := testGateAppSaveSuccess(saveBuffer)
 	defer ts.Close()
 
 	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -89,11 +97,18 @@ func TestApplicationSave_flags(t *testing.T) {
 	err := rootCmd.Execute()
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
+	}
+
+	expected := ""
+	recieved := strings.TrimSpace(saveBuffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected save request body:\n%s", recieved)
 	}
 }
 
 func TestApplicationSave_missingname(t *testing.T) {
-	ts := testGateApplicationSaveSuccess()
+	saveBuffer := new(bytes.Buffer)
+	ts := testGateAppSaveSuccess(saveBuffer)
 	defer ts.Close()
 
 	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -110,10 +125,17 @@ func TestApplicationSave_missingname(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := ""
+	recieved := strings.TrimSpace(saveBuffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected save request body:\n%s", recieved)
+	}
 }
 
 func TestApplicationSave_missingemail(t *testing.T) {
-	ts := testGateApplicationSaveSuccess()
+	saveBuffer := new(bytes.Buffer)
+	ts := testGateAppSaveSuccess(saveBuffer)
 	defer ts.Close()
 
 	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -130,10 +152,17 @@ func TestApplicationSave_missingemail(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := ""
+	recieved := strings.TrimSpace(saveBuffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected save request body:\n%s", recieved)
+	}
 }
 
 func TestApplicationSave_missingproviders(t *testing.T) {
-	ts := testGateApplicationSaveSuccess()
+	saveBuffer := new(bytes.Buffer)
+	ts := testGateAppSaveSuccess(saveBuffer)
 	defer ts.Close()
 
 	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -150,10 +179,17 @@ func TestApplicationSave_missingproviders(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := ""
+	recieved := strings.TrimSpace(saveBuffer.String())
+	if expected != recieved {
+		t.Fatalf("Unexpected save request body:\n%s", recieved)
+	}
 }
 
-func TestApplicationSave_filebasic(t *testing.T) {
-	ts := testGateApplicationSaveSuccess()
+func TestApplicationSave_filejson(t *testing.T) {
+	saveBuffer := new(bytes.Buffer)
+	ts := testGateAppSaveSuccess(saveBuffer)
 	defer ts.Close()
 
 	tempFile := tempAppFile(testAppJsonStr)
@@ -175,10 +211,45 @@ func TestApplicationSave_filebasic(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := strings.TrimSpace(testAppTaskJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
 }
 
-func TestApplicationSave_stdinbasic(t *testing.T) {
-	ts := testGateApplicationSaveSuccess()
+func TestApplicationSave_fileyaml(t *testing.T) {
+	saveBuffer := new(bytes.Buffer)
+	ts := testGateAppSaveSuccess(saveBuffer)
+	defer ts.Close()
+
+	tempFile := tempAppFile(testAppYamlStr)
+	if tempFile == nil {
+		t.Fatal("Could not create temp app file.")
+	}
+	defer os.Remove(tempFile.Name())
+
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
+
+	args := []string{
+		"application", "save",
+		"--file", tempFile.Name(),
+		"--gate-endpoint", ts.URL,
+	}
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+
+	expected := strings.TrimSpace(testAppTaskJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+}
+
+func TestApplicationSave_stdinjson(t *testing.T) {
+	saveBuffer := new(bytes.Buffer)
+	ts := testGateAppSaveSuccess(saveBuffer)
 	defer ts.Close()
 
 	tempFile := tempAppFile(testAppJsonStr)
@@ -187,7 +258,6 @@ func TestApplicationSave_stdinbasic(t *testing.T) {
 	}
 	defer os.Remove(tempFile.Name())
 
-	//TODO(karlkfi): Pipe input writer through NewCmdRoot
 	// Prepare Stdin for test reading.
 	tempFile.Seek(0, 0)
 	oldStdin := os.Stdin
@@ -206,34 +276,67 @@ func TestApplicationSave_stdinbasic(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
+
+	expected := strings.TrimSpace(testAppTaskJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
 }
 
-// GateServerFail spins up a local http server that we will configure the GateClient
+func TestApplicationSave_stdinyaml(t *testing.T) {
+	saveBuffer := new(bytes.Buffer)
+	ts := testGateAppSaveSuccess(saveBuffer)
+	defer ts.Close()
+
+	tempFile := tempAppFile(testAppYamlStr)
+	if tempFile == nil {
+		t.Fatal("Could not create temp app file.")
+	}
+	defer os.Remove(tempFile.Name())
+
+	// Prepare Stdin for test reading.
+	tempFile.Seek(0, 0)
+	oldStdin := os.Stdin
+	defer func() { os.Stdin = oldStdin }()
+	os.Stdin = tempFile
+
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewApplicationCmd(options))
+
+	args := []string{
+		"application", "save",
+		"--gate-endpoint", ts.URL,
+	}
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err != nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+
+	expected := strings.TrimSpace(testAppTaskJsonStr)
+	recieved := saveBuffer.Bytes()
+	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+}
+
+// testGateFail spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with a 500 InternalServerError.
-func GateServerFail() *httptest.Server {
+func testGateFail() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// TODO(jacobkiefer): Mock more robust errors once implemented upstream.
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}))
 }
 
-// testGatePipelineExecuteSuccess spins up a local http server that we will configure the GateClient
+// testGateAppSaveSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to. Responds with successful responses to pipeline execute API calls.
-func testGateApplicationSaveSuccess() *httptest.Server {
+// Writes request body to buffer for testing.
+func testGateAppSaveSuccess(buffer io.Writer) *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
-	mux.Handle("/tasks", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		payload := map[string]string{
-			"ref": "/tasks/id",
-		}
-		b, _ := json.Marshal(&payload)
-		fmt.Fprintln(w, string(b))
-	}))
+	mux.Handle(
+		"/tasks",
+		util.NewTestBufferHandlerFunc(http.MethodPost, buffer, http.StatusOK, strings.TrimSpace(testAppTaskRefJsonStr)),
+	)
 	mux.Handle("/tasks/id", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		payload := map[string]string{
-			"status": "SUCCEEDED",
-		}
-		b, _ := json.Marshal(&payload)
-		fmt.Fprintln(w, string(b))
+		fmt.Fprintln(w, strings.TrimSpace(testAppTaskStatusJsonStr))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -248,13 +351,48 @@ func tempAppFile(appContent string) *os.File {
 	return tempFile
 }
 
+const testAppTaskRefJsonStr = `
+{
+ "ref": "/tasks/id"
+}
+`
+
+const testAppTaskStatusJsonStr = `
+{
+ "status": "SUCCEEDED"
+}
+`
+
 const testAppJsonStr = `
 {
-   "email" : "someone@example.com",
-   "cloudProviders" : [
-      "gce"
-   ],
-   "name" : "sampleapp"
+   "email" : "appowner@spinnaker-test.net",
+   "cloudProviders" : "gce,kubernetes",
+   "name" : "app",
+	 "instancePort": 80
 }
+`
 
+const testAppYamlStr = `
+email: appowner@spinnaker-test.net
+cloudProviders: gce,kubernetes
+name: app
+instancePort: 80
+`
+
+const testAppTaskJsonStr = `
+{
+ "application": "app",
+ "description": "Create Application: app",
+ "job": [
+  {
+   "application": {
+    "cloudProviders": "gce,kubernetes",
+    "email": "appowner@spinnaker-test.net",
+    "instancePort": 80,
+    "name": "app"
+   },
+   "type": "createApplication"
+  }
+ ]
+}
 `

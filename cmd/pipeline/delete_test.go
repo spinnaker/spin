@@ -24,7 +24,7 @@ import (
 // TODO(jacobkiefer): This test overlaps heavily with pipeline_save_test.go,
 // consider factoring common testing code out.
 func TestPipelineDelete_basic(t *testing.T) {
-	ts := GateServerSuccess()
+	ts := testGateSuccess()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -40,7 +40,7 @@ func TestPipelineDelete_basic(t *testing.T) {
 }
 
 func TestPipelineDelete_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -56,7 +56,7 @@ func TestPipelineDelete_fail(t *testing.T) {
 }
 
 func TestPipelineDelete_flags(t *testing.T) {
-	ts := GateServerSuccess()
+	ts := testGateSuccess()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -72,7 +72,7 @@ func TestPipelineDelete_flags(t *testing.T) {
 }
 
 func TestPipelineDelete_missingname(t *testing.T) {
-	ts := GateServerSuccess()
+	ts := testGateSuccess()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -88,7 +88,7 @@ func TestPipelineDelete_missingname(t *testing.T) {
 }
 
 func TestPipelineDelete_missingapp(t *testing.T) {
-	ts := GateServerSuccess()
+	ts := testGateSuccess()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)

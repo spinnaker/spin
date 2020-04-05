@@ -72,7 +72,7 @@ func TestPipelineTemplateList_malformed(t *testing.T) {
 }
 
 func TestPipelineTemplateList_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)

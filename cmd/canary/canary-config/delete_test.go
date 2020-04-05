@@ -26,7 +26,7 @@ import (
 )
 
 func TestCanaryConfigDelete_basic(t *testing.T) {
-	ts := gateServerDeleteSuccess()
+	ts := testGateDeleteSuccess()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -43,7 +43,7 @@ func TestCanaryConfigDelete_basic(t *testing.T) {
 }
 
 func TestCanaryConfigDelete_fail(t *testing.T) {
-	ts := GateServerFail()
+	ts := testGateFail()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -60,7 +60,7 @@ func TestCanaryConfigDelete_fail(t *testing.T) {
 }
 
 func TestCanaryConfigDelete_missingid(t *testing.T) {
-	ts := gateServerDeleteSuccess()
+	ts := testGateDeleteSuccess()
 	defer ts.Close()
 
 	rootCmd, rootOpts := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
@@ -76,9 +76,9 @@ func TestCanaryConfigDelete_missingid(t *testing.T) {
 	}
 }
 
-// gateServerDeleteSuccess spins up a local http server that we will configure the GateClient
+// testGateDeleteSuccess spins up a local http server that we will configure the GateClient
 // to direct requests to.
-func gateServerDeleteSuccess() *httptest.Server {
+func testGateDeleteSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/v2/canaryConfig/configId", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
