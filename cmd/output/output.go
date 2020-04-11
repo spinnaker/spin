@@ -65,18 +65,17 @@ func MarshalToJsonPathWrapper(expression string) OutputFormater {
 	// aka MarshalToJsonPath
 	return func(input interface{}) ([]byte, error) {
 		jp := jsonpath.New("json-path")
-		buffer := new(bytes.Buffer)
 
 		if err := jp.Parse(expr); err != nil {
-			return buffer.Bytes(), fmt.Errorf("Failed to parse jsonpath expression: %v", err)
+			return nil, fmt.Errorf("Failed to parse jsonpath expression: %v", err)
 		}
 
+		buffer := new(bytes.Buffer)
 		err := jp.Execute(buffer, input)
 		if err != nil {
-			return buffer.Bytes(), fmt.Errorf("Failed to execute jsonpath %s on input %s: %v ", expr, input, err)
+			return nil, fmt.Errorf("Failed to execute jsonpath %s on input %s: %v ", expr, input, err)
 		}
 
-		// unquote since go quotes the string if the bytes is a string.
 		return unquote(buffer.Bytes()), nil
 	}
 }
@@ -89,24 +88,8 @@ func MarshalToYaml(input interface{}) ([]byte, error) {
 	return pretty, nil
 }
 
-// TODO: is this nessesary when using bytes.Bytes() instead of bytes.String() ?
 func unquote(input []byte) []byte {
 	input = bytes.TrimLeft(input, "\"")
 	input = bytes.TrimRight(input, "\"")
 	return input
-}
-
-// parseJsonPath finds the values specified in the input data as specified with the template.
-// This leverages the kubernetes jsonpath libs (https://kubernetes.io/docs/reference/kubectl/jsonpath/).
-func parseJsonPath(input interface{}, template string) (*bytes.Buffer, error) {
-	j := jsonpath.New("json-path")
-	buf := new(bytes.Buffer)
-	if err := j.Parse(template); err != nil {
-		return buf, fmt.Errorf("Error parsing json: %v", err)
-	}
-	err := j.Execute(buf, input)
-	if err != nil {
-		return buf, fmt.Errorf("Error parsing value from input %v using template %s: %v ", input, template, err)
-	}
-	return buf, nil
 }
