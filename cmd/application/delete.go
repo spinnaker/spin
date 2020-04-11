@@ -93,6 +93,6 @@ func deleteApplication(cmd *cobra.Command, options *deleteOptions, args []string
 		return err
 	}
 
-	options.Ui.Output("Application deleted")
+	options.Ui.Success("Application deleted")
 	return nil
 }
