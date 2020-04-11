@@ -160,7 +160,10 @@ const malformedAccountGetJson = `
 }
 `
 
-//TODO(karlkfi): Why is the json consistently ordered but not alphabetical?
+// Weirdly sorted ordering matches AccountDetails object field order,
+// which is directly from the Swagger API definition.
+// See: gateapi/account_details.go
+// TODO(karlkfi): sort alphabetically. I doubt anyone depends on the order.
 const accountJson = `
 {
  "name": "account",
