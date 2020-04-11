@@ -92,8 +92,7 @@ func usePipelineTemplate(cmd *cobra.Command, options *useOptions, args []string)
 	if err != nil {
 		return err
 	}
-	// TODO: why is this here???
-	// util.InitUI(false, false, output.MarshalToJson)
+
 	options.Ui.JsonOutput(pipeline)
 
 	return nil
