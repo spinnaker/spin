@@ -7,7 +7,6 @@ import (
 
 	"github.com/spinnaker/spin/cmd/gateclient"
 	"github.com/spinnaker/spin/cmd/output"
-	"github.com/spinnaker/spin/util"
 	"github.com/spinnaker/spin/version"
 )
 
@@ -20,7 +19,7 @@ type RootOptions struct {
 	outputFormat     string
 	defaultHeaders   string
 
-	Ui         util.Ui
+	Ui         output.Ui
 	GateClient *gateclient.GatewayClient
 }
 
@@ -56,7 +55,7 @@ func NewCmdRoot(outWriter, errWriter io.Writer) (*cobra.Command, *RootOptions) {
 		if err != nil {
 			return err
 		}
-		options.Ui = util.NewUI(options.quiet, options.color, outputFormater, outw, errw)
+		options.Ui = output.NewUI(options.quiet, options.color, outputFormater, outw, errw)
 
 		gateClient, err := gateclient.NewGateClient(
 			options.Ui,

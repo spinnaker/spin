@@ -34,9 +34,9 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/spinnaker/spin/cmd/output"
 	"github.com/spinnaker/spin/config"
 	iap "github.com/spinnaker/spin/config/auth/iap"
-	"github.com/spinnaker/spin/util"
 	"github.com/spinnaker/spin/version"
 
 	"github.com/mitchellh/go-homedir"
@@ -84,7 +84,7 @@ type GatewayClient struct {
 	// Raw Http Client to do OAuth2 login.
 	httpClient *http.Client
 
-	ui util.Ui
+	ui output.Ui
 }
 
 func (m *GatewayClient) GateEndpoint() string {
@@ -98,7 +98,7 @@ func (m *GatewayClient) GateEndpoint() string {
 }
 
 // Create new spinnaker gateway client with flag
-func NewGateClient(ui util.Ui, gateEndpoint, defaultHeaders, configLocation string, ignoreCertErrors bool) (*GatewayClient, error) {
+func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation string, ignoreCertErrors bool) (*GatewayClient, error) {
 	gateClient := &GatewayClient{
 		gateEndpoint:     gateEndpoint,
 		ignoreCertErrors: ignoreCertErrors,

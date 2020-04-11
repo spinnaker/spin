@@ -12,7 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-package util
+package output
 
 import (
 	"fmt"
@@ -20,7 +20,6 @@ import (
 
 	"github.com/mitchellh/cli"
 	"github.com/mitchellh/colorstring"
-	"github.com/spinnaker/spin/cmd/output"
 )
 
 type Ui interface {
@@ -38,14 +37,12 @@ type ColorizeUi struct {
 	SuccessColor   string
 	Ui             cli.Ui
 	Quiet          bool
-	OutputFormater output.OutputFormater
+	OutputFormater OutputFormater
 }
-
-var UI *ColorizeUi
 
 func NewUI(
 	quiet, color bool,
-	outputFormater output.OutputFormater,
+	outputFormater OutputFormater,
 	outWriter, errWriter io.Writer,
 ) *ColorizeUi {
 	return &ColorizeUi{
