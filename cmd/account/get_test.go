@@ -167,12 +167,12 @@ const malformedAccountGetJson = `
 const accountJson = `
 {
  "name": "account",
- "environment": "self",
+ "cloudProvider": "kubernetes",
  "providerVersion": "v2",
- "type": "kubernetes",
- "skin": "v2",
  "accountType": "self",
- "cloudProvider": "kubernetes"
+ "skin": "v2",
+ "environment": "self",
+ "type": "kubernetes"
 }
 `
 
