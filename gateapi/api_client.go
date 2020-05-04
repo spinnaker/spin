@@ -15,6 +15,8 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"golang.org/x/net/context"
+	"golang.org/x/oauth2"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -27,9 +29,6 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
-
-	"golang.org/x/net/context"
-	"golang.org/x/oauth2"
 )
 
 var (
@@ -50,6 +49,7 @@ type APIClient struct {
 	AuthControllerApi                 *AuthControllerApiService
 	BakeControllerApi                 *BakeControllerApiService
 	BuildControllerApi                *BuildControllerApiService
+	CiControllerApi                   *CiControllerApiService
 	ClusterControllerApi              *ClusterControllerApiService
 	ConcourseControllerApi            *ConcourseControllerApiService
 	CredentialsControllerApi          *CredentialsControllerApiService
@@ -60,6 +60,7 @@ type APIClient struct {
 	InstanceControllerApi             *InstanceControllerApiService
 	JobControllerApi                  *JobControllerApiService
 	LoadBalancerControllerApi         *LoadBalancerControllerApiService
+	ManagedControllerApi              *ManagedControllerApiService
 	NetworkControllerApi              *NetworkControllerApiService
 	PipelineConfigControllerApi       *PipelineConfigControllerApiService
 	PipelineControllerApi             *PipelineControllerApiService
@@ -103,6 +104,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.AuthControllerApi = (*AuthControllerApiService)(&c.common)
 	c.BakeControllerApi = (*BakeControllerApiService)(&c.common)
 	c.BuildControllerApi = (*BuildControllerApiService)(&c.common)
+	c.CiControllerApi = (*CiControllerApiService)(&c.common)
 	c.ClusterControllerApi = (*ClusterControllerApiService)(&c.common)
 	c.ConcourseControllerApi = (*ConcourseControllerApiService)(&c.common)
 	c.CredentialsControllerApi = (*CredentialsControllerApiService)(&c.common)
@@ -113,6 +115,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.InstanceControllerApi = (*InstanceControllerApiService)(&c.common)
 	c.JobControllerApi = (*JobControllerApiService)(&c.common)
 	c.LoadBalancerControllerApi = (*LoadBalancerControllerApiService)(&c.common)
+	c.ManagedControllerApi = (*ManagedControllerApiService)(&c.common)
 	c.NetworkControllerApi = (*NetworkControllerApiService)(&c.common)
 	c.PipelineConfigControllerApi = (*PipelineConfigControllerApiService)(&c.common)
 	c.PipelineControllerApi = (*PipelineControllerApiService)(&c.common)

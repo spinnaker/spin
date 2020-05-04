@@ -11,12 +11,11 @@ package swagger
 
 import (
 	"encoding/json"
+	"golang.org/x/net/context"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-
-	"golang.org/x/net/context"
 )
 
 // Linger please
@@ -27,9 +26,11 @@ var (
 type AuthControllerApiService service
 
 /* AuthControllerApiService Get service accounts
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @return []interface{}*/
-func (a *AuthControllerApiService) GetServiceAccountsUsingGET(ctx context.Context) ([]interface{}, *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param optional (nil or map[string]interface{}) with one or more of:
+    @param "application" (string) application
+@return []interface{}*/
+func (a *AuthControllerApiService) GetServiceAccountsUsingGET(ctx context.Context, localVarOptionals map[string]interface{}) ([]interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
@@ -45,6 +46,13 @@ func (a *AuthControllerApiService) GetServiceAccountsUsingGET(ctx context.Contex
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if err := typeCheckParameter(localVarOptionals["application"], "string", "application"); err != nil {
+		return successPayload, nil, err
+	}
+
+	if localVarTempParam, localVarOk := localVarOptionals["application"].(string); localVarOk {
+		localVarQueryParams.Add("application", parameterToString(localVarTempParam, ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 

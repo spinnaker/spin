@@ -12,12 +12,11 @@ package swagger
 import (
 	"encoding/json"
 	"fmt"
+	"golang.org/x/net/context"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-
-	"golang.org/x/net/context"
 )
 
 // Linger please
@@ -30,10 +29,8 @@ type SubnetControllerApiService service
 /* SubnetControllerApiService Retrieve a list of subnets for a given cloud provider
 * @param ctx context.Context for authentication, logging, tracing, etc.
 @param cloudProvider cloudProvider
-@param optional (nil or map[string]interface{}) with one or more of:
-    @param "xRateLimitApp" (string) X-RateLimit-App
 @return []interface{}*/
-func (a *SubnetControllerApiService) AllByCloudProviderUsingGET1(ctx context.Context, cloudProvider string, localVarOptionals map[string]interface{}) ([]interface{}, *http.Response, error) {
+func (a *SubnetControllerApiService) AllByCloudProviderUsingGET1(ctx context.Context, cloudProvider string) ([]interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
@@ -49,10 +46,6 @@ func (a *SubnetControllerApiService) AllByCloudProviderUsingGET1(ctx context.Con
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-
-	if err := typeCheckParameter(localVarOptionals["xRateLimitApp"], "string", "xRateLimitApp"); err != nil {
-		return successPayload, nil, err
-	}
 
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -72,9 +65,6 @@ func (a *SubnetControllerApiService) AllByCloudProviderUsingGET1(ctx context.Con
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if localVarTempParam, localVarOk := localVarOptionals["xRateLimitApp"].(string); localVarOk {
-		localVarHeaderParams["X-RateLimit-App"] = parameterToString(localVarTempParam, "")
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {

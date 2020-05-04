@@ -166,13 +166,13 @@ const malformedAccountGetJson = `
 // TODO(karlkfi): sort alphabetically. I doubt anyone depends on the order.
 const accountJson = `
 {
- "name": "account",
- "environment": "self",
- "providerVersion": "v2",
- "type": "kubernetes",
- "skin": "v2",
  "accountType": "self",
- "cloudProvider": "kubernetes"
+ "cloudProvider": "kubernetes",
+ "environment": "self",
+ "name": "account",
+ "providerVersion": "v2",
+ "skin": "v2",
+ "type": "kubernetes"
 }
 `
 
