@@ -11,7 +11,6 @@ package swagger
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -25,13 +24,16 @@ var (
 	_ context.Context
 )
 
-type SubnetControllerApiService service
+type CiControllerApiService service
 
-/* SubnetControllerApiService Retrieve a list of subnets for a given cloud provider
+/* CiControllerApiService getBuilds
 * @param ctx context.Context for authentication, logging, tracing, etc.
-@param cloudProvider cloudProvider
+@param projectKey projectKey
+@param repoSlug repoSlug
+@param optional (nil or map[string]interface{}) with one or more of:
+    @param "completionStatus" (string) completionStatus
 @return []interface{}*/
-func (a *SubnetControllerApiService) AllByCloudProviderUsingGET1(ctx context.Context, cloudProvider string) ([]interface{}, *http.Response, error) {
+func (a *CiControllerApiService) GetBuildsUsingGET1(ctx context.Context, projectKey string, repoSlug string, localVarOptionals map[string]interface{}) ([]interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
@@ -41,13 +43,21 @@ func (a *SubnetControllerApiService) AllByCloudProviderUsingGET1(ctx context.Con
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/subnets/{cloudProvider}"
-	localVarPath = strings.Replace(localVarPath, "{"+"cloudProvider"+"}", fmt.Sprintf("%v", cloudProvider), -1)
+	localVarPath := a.client.cfg.BasePath + "/ci/builds"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if err := typeCheckParameter(localVarOptionals["completionStatus"], "string", "completionStatus"); err != nil {
+		return successPayload, nil, err
+	}
+
+	if localVarTempParam, localVarOk := localVarOptionals["completionStatus"].(string); localVarOk {
+		localVarQueryParams.Add("completionStatus", parameterToString(localVarTempParam, ""))
+	}
+	localVarQueryParams.Add("projectKey", parameterToString(projectKey, ""))
+	localVarQueryParams.Add("repoSlug", parameterToString(repoSlug, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 

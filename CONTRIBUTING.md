@@ -6,7 +6,7 @@ Interested in contributing to Spinnaker? Please review the [contribution documen
 
 ### Go
 
-[Install Go 1.13.x](https://golang.org/doc/install). 
+[Install Go 1.13.x](https://golang.org/doc/install).
 
 ### Go modules
 
@@ -50,10 +50,18 @@ from the root `spin/` directory.
 
 ## Updating the Gate API
 
-Spin CLI uses [Swagger](https://swagger.io/) to generate the API client library for [Gate](https://github.com/spinnaker/gate). To update the client library:
+Spin CLI uses [Swagger](https://swagger.io/) to generate the API client library for [Gate](https://github.com/spinnaker/gate).
 
-- From the root of the Gate directory, execute `swagger/generate_swagger.sh` to create the `swagger.json` API spec.
-- Get the [Swagger Codegen CLI](https://github.com/swagger-api/swagger-codegen). Use the version specified [here](https://github.com/spinnaker/spin/blob/master/gateapi/.swagger-codegen/VERSION).
-- Remove the existing generated code from the spin directory `rm -r ~/spin/gateapi`
-- Use the Swagger Codegen CLI to generate the new library and drop it into the spin project `java -jar ~/swagger-codegen-cli.jar generate -i ~/gate/swagger/swagger.json -l go -o ~/spin/gateapi`
-- Commit the changes and open a PR.
+To make it easier, without having to have a full local Spinnaker build environment, we use Docker as to cache dependencies and standardize versions.
+
+Build the `spinnaker/swagger` image locally:
+```bash
+docker build -t spinnaker/swagger -f Dockerfile.swagger .
+```
+
+Run the `spinnaker/swagger` image locally to generate a new `gateapi/` from the Gate source code:
+```bash
+docker run --rm -v "$(pwd):/workspace" --workdir "/workspace" spinnaker/swagger
+```
+
+Once generated, commit the changes to a new branch and create a PR.

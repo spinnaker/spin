@@ -9,10 +9,10 @@
 
 package swagger
 
-type PipelineTemplateDependent struct {
-	PipelineName string `json:"pipelineName,omitempty"`
+type EnvironmentArtifactVeto struct {
+	Version string `json:"version,omitempty"`
 
-	PipelineConfigId string `json:"pipelineConfigId,omitempty"`
+	TargetEnvironment string `json:"targetEnvironment,omitempty"`
 
-	Application string `json:"application,omitempty"`
+	Reference string `json:"reference,omitempty"`
 }

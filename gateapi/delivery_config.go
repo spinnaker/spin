@@ -9,10 +9,16 @@
 
 package swagger
 
-type PipelineTemplateDependent struct {
-	PipelineName string `json:"pipelineName,omitempty"`
-
-	PipelineConfigId string `json:"pipelineConfigId,omitempty"`
+type DeliveryConfig struct {
+	ApiVersion string `json:"apiVersion,omitempty"`
 
 	Application string `json:"application,omitempty"`
+
+	Environments []Environment `json:"environments,omitempty"`
+
+	ServiceAccount string `json:"serviceAccount,omitempty"`
+
+	Name string `json:"name,omitempty"`
+
+	Artifacts []Mapstringobject `json:"artifacts,omitempty"`
 }

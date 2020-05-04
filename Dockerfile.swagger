@@ -1,0 +1,10 @@
+FROM golang:1.14-buster
+RUN apt-get update && \
+    apt-get -y install openjdk-11-jre-headless wget unzip libcam-pdf-perl git
+RUN env GO111MODULE=off go get -v golang.org/x/tools/cmd/goimports
+RUN mkdir -p /spinnaker/spin
+WORKDIR /spinnaker/spin
+ARG SWAGGER_VERSION=2.3.1
+RUN wget -O /spinnaker/swagger-codegen-cli.jar \
+    https://repo1.maven.org/maven2/io/swagger/swagger-codegen-cli/${SWAGGER_VERSION}/swagger-codegen-cli-${SWAGGER_VERSION}.jar
+CMD ["./gateapi-update.sh"]
