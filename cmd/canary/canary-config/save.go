@@ -24,7 +24,6 @@ import (
 
 type saveOptions struct {
 	*canaryConfigOptions
-	output       string
 	templateFile string
 }
 

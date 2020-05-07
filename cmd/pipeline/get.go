@@ -24,7 +24,6 @@ import (
 
 type getOptions struct {
 	*PipelineOptions
-	output      string
 	application string
 	name        string
 }

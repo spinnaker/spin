@@ -24,7 +24,6 @@ import (
 
 type deleteOptions struct {
 	*PipelineOptions
-	output      string
 	application string
 	name        string
 }

@@ -93,17 +93,6 @@ var testMap = map[string]interface{}{
 	"updateTs": "1520879791608",
 }
 
-const testJsonPathArrayOfMapsStr = `
-[
- {
-  "default": "bar",
-  "description": "A foo.",
-  "name": "foo",
-  "required": true
- }
-]
-`
-
 const testJsonStr = `
 {
  "application": "app",

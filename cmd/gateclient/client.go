@@ -187,6 +187,9 @@ func userConfig(gateClient *GatewayClient, configLocation string) error {
 	}
 
 	yamlFile, err := ioutil.ReadFile(gateClient.configLocation)
+	if err != nil {
+		return err
+	}
 	if yamlFile != nil {
 		err = yaml.UnmarshalStrict([]byte(os.ExpandEnv(string(yamlFile))), &gateClient.Config)
 		if err != nil {
@@ -477,14 +480,11 @@ func writeYAML(v interface{}, dest string, defaultMode os.FileMode) error {
 		return err
 	}
 
-	mode := defaultMode
 	info, err := os.Stat(dest)
 	if err != nil && !os.IsNotExist(err) {
 		return nil
-	} else {
-		// Preserve existing file mode
-		mode = info.Mode()
 	}
+	mode := info.Mode()
 
 	return ioutil.WriteFile(dest, buf, mode)
 }

@@ -52,6 +52,8 @@ func cancelExecution(cmd *cobra.Command, options *cancelOptions, args []string) 
 	executionId, err := util.ReadArgsOrStdin(args)
 	if executionId == "" {
 		return errors.New("no execution id supplied, exiting")
+	} else if err != nil {
+		return err
 	}
 
 	resp, err := options.GateClient.PipelineControllerApi.CancelPipelineUsingPUT1(options.GateClient.Context,

@@ -24,7 +24,6 @@ import (
 
 type listOptions struct {
 	*PipelineOptions
-	output      string
 	application string
 }
 

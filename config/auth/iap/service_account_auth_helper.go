@@ -27,7 +27,7 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/oauth2/jws"
+	"golang.org/x/oauth2/jws" //nolint
 
 	oauth "golang.org/x/oauth2/google"
 )

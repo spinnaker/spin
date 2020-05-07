@@ -25,7 +25,6 @@ import (
 
 type listOptions struct {
 	*executionOptions
-	output           string
 	pipelineConfigId string
 	limit            int32
 	running          bool

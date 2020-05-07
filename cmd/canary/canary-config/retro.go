@@ -27,7 +27,6 @@ import (
 
 type retroOptions struct {
 	*canaryConfigOptions
-	output              string
 	canaryConfigFile    string
 	controlGroup        string
 	controlLocation     string
@@ -187,7 +186,7 @@ func retroCanaryConfig(cmd *cobra.Command, options *retroOptions) error {
 
 	retries := 0
 	for retries < 10 && complete == false && canaryResultErr == nil {
-		canaryResult, canaryResultResp, canaryResultErr = options.GateClient.V2CanaryControllerApi.GetCanaryResultUsingGET1(options.GateClient.Context, canaryExecutionId, queryOptionalParams)
+		canaryResult, _, canaryResultErr = options.GateClient.V2CanaryControllerApi.GetCanaryResultUsingGET1(options.GateClient.Context, canaryExecutionId, queryOptionalParams)
 		complete = canaryResult.(map[string]interface{})["complete"].(bool)
 		time.Sleep(retrySleepCycle)
 		retries += 1

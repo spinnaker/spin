@@ -25,7 +25,6 @@ import (
 
 type executeOptions struct {
 	*PipelineOptions
-	output        string
 	application   string
 	name          string
 	parameterFile string
@@ -69,7 +68,7 @@ func executePipeline(cmd *cobra.Command, options *executeOptions) error {
 		return fmt.Errorf("Could not parse supplied pipeline parameters: %v.\n", err)
 	}
 
-	artifactsFile := map[string]interface{}{}
+	var artifactsFile map[string]interface{}
 	artifactsFile, err = util.ParseJsonFromFile(options.artifactsFile, true)
 	if err != nil {
 		return fmt.Errorf("Could not parse supplied artifacts: %v.\n", err)

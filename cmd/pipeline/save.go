@@ -25,7 +25,6 @@ import (
 
 type saveOptions struct {
 	*PipelineOptions
-	output       string
 	pipelineFile string
 }
 

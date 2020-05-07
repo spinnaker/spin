@@ -24,7 +24,6 @@ import (
 
 type saveOptions struct {
 	*pipelineTemplateOptions
-	output       string
 	templateFile string
 	tag          string
 }
