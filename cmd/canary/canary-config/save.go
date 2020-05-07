@@ -68,24 +68,23 @@ func saveCanaryConfig(cmd *cobra.Command, options *saveOptions) error {
 
 	_, resp, queryErr := options.GateClient.V2CanaryConfigControllerApi.GetCanaryConfigUsingGET(
 		options.GateClient.Context, templateId, map[string]interface{}{})
-
+	if queryErr != nil {
+		return queryErr
+	}
 	var saveResp *http.Response
 	var saveErr error
-	if resp.StatusCode == http.StatusOK {
+	switch {
+	case resp.StatusCode == http.StatusOK:
 		_, saveResp, saveErr = options.GateClient.V2CanaryConfigControllerApi.UpdateCanaryConfigUsingPUT(
 			options.GateClient.Context, templateJson, templateId, map[string]interface{}{})
-	} else if resp.StatusCode == http.StatusNotFound {
+	case resp.StatusCode == http.StatusNotFound:
 		_, saveResp, saveErr = options.GateClient.V2CanaryConfigControllerApi.CreateCanaryConfigUsingPOST(
 			options.GateClient.Context, templateJson, map[string]interface{}{})
-	} else {
-		if queryErr != nil {
-			return queryErr
-		}
+	default:
 		return fmt.Errorf(
 			"Encountered an unexpected status code %d querying canary config with id %s\n",
 			resp.StatusCode, templateId)
 	}
-
 	if saveErr != nil {
 		return saveErr
 	}

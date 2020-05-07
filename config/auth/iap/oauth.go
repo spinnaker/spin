@@ -196,7 +196,7 @@ func RequestIapIDToken(token string, clientId string, clientSecret string, iapCl
 	}
 
 	// Check that it's not empty/blank
-	if len(oauthResponse.IDToken) <= 0 {
+	if len(oauthResponse.IDToken) == 0 {
 		return "", fmt.Errorf("Invalid ID Token returned")
 	}
 

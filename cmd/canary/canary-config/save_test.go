@@ -251,7 +251,7 @@ func testGateCanaryConfigUpdateSuccess(buffer io.Writer) *httptest.Server {
 				http.Error(w, "Failed to ready body", http.StatusInternalServerError)
 				return
 			}
-			buffer.Write([]byte(body))
+			buffer.Write(body)
 
 			w.Write([]byte(responseJson))
 		} else {
@@ -274,7 +274,7 @@ func testGateCanaryConfigSaveSuccess(buffer io.Writer) *httptest.Server {
 			http.Error(w, "Failed to ready body", http.StatusInternalServerError)
 			return
 		}
-		buffer.Write([]byte(body))
+		buffer.Write(body)
 
 		w.Write([]byte(responseJson))
 	}))

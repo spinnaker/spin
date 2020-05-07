@@ -19,8 +19,10 @@ import (
 	"bufio"
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -34,16 +36,12 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/mitchellh/go-homedir"
 	"github.com/spinnaker/spin/cmd/output"
 	"github.com/spinnaker/spin/config"
 	iap "github.com/spinnaker/spin/config/auth/iap"
 	"github.com/spinnaker/spin/version"
-
-	"github.com/mitchellh/go-homedir"
 	"sigs.k8s.io/yaml"
-
-	"crypto/sha256"
-	"encoding/base64"
 
 	gate "github.com/spinnaker/spin/gateapi"
 	"golang.org/x/crypto/ssh/terminal"
@@ -212,7 +210,8 @@ func (m *GatewayClient) initializeClient() (*http.Client, error) {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	}
 
-	if auth != nil && auth.Enabled && auth.X509 != nil {
+	switch {
+	case auth != nil && auth.Enabled && auth.X509 != nil:
 		X509 := auth.X509
 		client.Transport = &http.Transport{
 			TLSClientConfig: &tls.Config{},
@@ -222,8 +221,8 @@ func (m *GatewayClient) initializeClient() (*http.Client, error) {
 			// Misconfigured.
 			return nil, errors.New("Incorrect x509 auth configuration.\nMust specify certPath/keyPath or cert/key pair.")
 		}
-
-		if X509.CertPath != "" && X509.KeyPath != "" {
+		switch {
+		case X509.CertPath != "" && X509.KeyPath != "":
 			certPath, err := homedir.Expand(X509.CertPath)
 			if err != nil {
 				return nil, err
@@ -244,7 +243,7 @@ func (m *GatewayClient) initializeClient() (*http.Client, error) {
 			}
 
 			return m.initializeX509Config(client, clientCA, cert), nil
-		} else if X509.Cert != "" && X509.Key != "" {
+		case X509.Cert != "" && X509.Key != "":
 			certBytes := []byte(X509.Cert)
 			keyBytes := []byte(X509.Key)
 			cert, err := tls.X509KeyPair(certBytes, keyBytes)
@@ -253,15 +252,15 @@ func (m *GatewayClient) initializeClient() (*http.Client, error) {
 			}
 
 			return m.initializeX509Config(client, certBytes, cert), nil
-		} else {
+		default:
 			// Misconfigured.
 			return nil, errors.New("Incorrect x509 auth configuration.\nMust specify certPath/keyPath or cert/key pair.")
 		}
-	} else if auth != nil && auth.Enabled && auth.Iap != nil {
+	case auth != nil && auth.Enabled && auth.Iap != nil:
 		accessToken, err := m.authenticateIAP()
 		m.Context = context.WithValue(context.Background(), gate.ContextAccessToken, accessToken)
 		return &client, err
-	} else if auth != nil && auth.Enabled && auth.Basic != nil {
+	case auth != nil && auth.Enabled && auth.Basic != nil:
 		if !auth.Basic.IsValid() {
 			return nil, errors.New("Incorrect Basic auth configuration. Must include username and password.")
 		}
@@ -270,9 +269,8 @@ func (m *GatewayClient) initializeClient() (*http.Client, error) {
 			Password: auth.Basic.Password,
 		})
 		return &client, nil
-	} else {
-		return &client, nil
 	}
+	return &client, nil
 }
 
 func (m *GatewayClient) initializeX509Config(client http.Client, clientCA []byte, cert tls.Certificate) *http.Client {
@@ -515,7 +513,7 @@ func (m *GatewayClient) prompt(inputMsg string) string {
 
 func (m *GatewayClient) securePrompt(inputMsg string) string {
 	m.ui.Output(inputMsg)
-	byteSecret, _ := terminal.ReadPassword(int(syscall.Stdin))
+	byteSecret, _ := terminal.ReadPassword(syscall.Stdin)
 	secret := string(byteSecret)
 	return strings.TrimSpace(secret)
 }

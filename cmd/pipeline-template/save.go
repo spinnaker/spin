@@ -83,21 +83,20 @@ func savePipelineTemplate(cmd *cobra.Command, options *saveOptions) error {
 	}
 
 	_, resp, queryErr := options.GateClient.V2PipelineTemplatesControllerApi.GetUsingGET2(options.GateClient.Context, templateId, queryParams)
-
+	if queryErr != nil {
+		return queryErr
+	}
 	var saveResp *http.Response
 	var saveErr error
-	if resp.StatusCode == http.StatusOK {
+	switch {
+	case resp.StatusCode == http.StatusOK:
 		saveResp, saveErr = options.GateClient.V2PipelineTemplatesControllerApi.UpdateUsingPOST1(options.GateClient.Context, templateId, templateJson, queryParams)
-	} else if resp.StatusCode == http.StatusNotFound {
+	case resp.StatusCode == http.StatusNotFound:
 		saveResp, saveErr = options.GateClient.V2PipelineTemplatesControllerApi.CreateUsingPOST1(options.GateClient.Context, templateJson, queryParams)
-	} else {
-		if queryErr != nil {
-			return queryErr
-		}
+	default:
 		return fmt.Errorf("Encountered an unexpected status code %d querying pipeline template with id %s\n",
 			resp.StatusCode, templateId)
 	}
-
 	if saveErr != nil {
 		return saveErr
 	}
