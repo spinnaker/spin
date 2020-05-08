@@ -47,7 +47,7 @@ func TestApplicationGet_json(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(applicationJson)
+	expected := strings.TrimSpace(applicationJSON)
 	recieved := strings.TrimSpace(buffer.String())
 	if expected != recieved {
 		t.Fatalf("Unexpected command output:\n%s", diff.LineDiff(expected, recieved))
@@ -126,7 +126,7 @@ func TestApplicationGet_fail(t *testing.T) {
 func testGateApplicationGetSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/applications/"+APP, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(applicationJsonExpanded))
+		fmt.Fprintln(w, strings.TrimSpace(applicationJSONExpanded))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -135,12 +135,12 @@ func testGateApplicationGetSuccess() *httptest.Server {
 func testGateApplicationGetMalformed() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/applications/"+APP, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(malformedApplicationGetJson))
+		fmt.Fprintln(w, strings.TrimSpace(malformedApplicationGetJSON))
 	}))
 	return httptest.NewServer(mux)
 }
 
-const malformedApplicationGetJson = `
+const malformedApplicationGetJSON = `
   "accounts": "account1",
   "cloudproviders": [
     "gce",
@@ -157,7 +157,7 @@ const malformedApplicationGetJson = `
 `
 
 // GET /applications/{app} returns an envelope with 'attributes' and 'clusters'.
-const applicationJsonExpanded = `
+const applicationJSONExpanded = `
 {
  "attributes": {
   "accounts": "account1",
@@ -186,7 +186,7 @@ const applicationJsonExpanded = `
 }
 `
 
-const applicationJson = `
+const applicationJSON = `
 {
  "accounts": "account1",
  "cloudproviders": [

@@ -25,9 +25,9 @@ func TestGateMuxWithVersionHandler() *http.ServeMux {
 	return mux
 }
 
-// TestPrettyJsonDiff compares prettified json against an expected json string.
+// TestPrettyJSONDiff compares prettified json against an expected json string.
 // Leading and trailing whitespace is trimmed before the comparison.
-func TestPrettyJsonDiff(t *testing.T, description, expected string, recieved []byte) {
+func TestPrettyJSONDiff(t *testing.T, description, expected string, recieved []byte) {
 	pretty := new(bytes.Buffer)
 	err := json.Indent(pretty, recieved, "", " ")
 	if err != nil {

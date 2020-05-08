@@ -61,6 +61,6 @@ func listAccount(options *listOptions) error {
 		return fmt.Errorf("Encountered an error listing accounts, status code: %d\n", resp.StatusCode)
 	}
 
-	options.Ui.JsonOutput(accountList)
+	options.UI.JSONOutput(accountList)
 	return nil
 }

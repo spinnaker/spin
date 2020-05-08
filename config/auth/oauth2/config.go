@@ -21,14 +21,14 @@ import (
 // Config is the configuration for using OAuth2.0 to
 // authenticate with Spinnaker
 type Config struct {
-	TokenUrl     string        `yaml:"tokenUrl"`
-	AuthUrl      string        `yaml:"authUrl"`
-	ClientId     string        `yaml:"clientId"`
+	TokenURL     string        `yaml:"tokenUrl"`
+	AuthURL      string        `yaml:"authUrl"`
+	ClientID     string        `yaml:"clientId"`
 	ClientSecret string        `yaml:"clientSecret"`
 	Scopes       []string      `yaml:"scopes"`
 	CachedToken  *oauth2.Token `yaml:"cachedToken,omitempty"`
 }
 
 func (x *Config) IsValid() bool {
-	return x.TokenUrl != "" && x.AuthUrl != "" && len(x.Scopes) != 0
+	return x.TokenURL != "" && x.AuthURL != "" && len(x.Scopes) != 0
 }

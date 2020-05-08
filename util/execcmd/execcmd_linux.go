@@ -19,6 +19,6 @@ import (
 )
 
 //open the application with parameters
-func OpenUrl(url string) error {
+func OpenURL(url string) error {
 	return exec.Command("xdg-open", url).Run()
 }

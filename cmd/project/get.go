@@ -71,7 +71,7 @@ func getProject(options *getOptions, args []string) error {
 	if err != nil {
 		return err
 	}
-	options.Ui.JsonOutput(project)
+	options.UI.JSONOutput(project)
 
 	return nil
 }

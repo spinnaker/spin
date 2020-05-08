@@ -68,7 +68,7 @@ func getAccount(options *getOptions, args []string) error {
 	if err != nil {
 		return err
 	}
-	options.Ui.JsonOutput(account)
+	options.UI.JSONOutput(account)
 
 	return nil
 }

@@ -23,7 +23,7 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
-func ParseJsonFromFileOrStdin(filePath string, tolerateEmptyStdin bool) (map[string]interface{}, error) {
+func ParseJSONFromFileOrStdin(filePath string, tolerateEmptyStdin bool) (map[string]interface{}, error) {
 	var fromFile *os.File
 	var err error
 	var jsonContent map[string]interface{}
@@ -63,7 +63,7 @@ func ParseJsonFromFileOrStdin(filePath string, tolerateEmptyStdin bool) (map[str
 	return jsonContent, nil
 }
 
-func ParseJsonFromFile(filePath string, tolerateEmptyInput bool) (map[string]interface{}, error) {
+func ParseJSONFromFile(filePath string, tolerateEmptyInput bool) (map[string]interface{}, error) {
 	var fromFile *os.File
 	var err error
 	var jsonContent map[string]interface{}

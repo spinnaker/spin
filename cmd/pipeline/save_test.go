@@ -34,7 +34,7 @@ func TestPipelineSave_json(t *testing.T) {
 	ts := testGatePipelineSaveSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempPipelineFile(testPipelineJsonStr)
+	tempFile := tempPipelineFile(testPipelineJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline file.")
 	}
@@ -51,9 +51,9 @@ func TestPipelineSave_json(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testPipelineJsonStr)
+	expected := strings.TrimSpace(testPipelineJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineSave_yaml(t *testing.T) {
@@ -78,9 +78,9 @@ func TestPipelineSave_yaml(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testPipelineJsonStr)
+	expected := strings.TrimSpace(testPipelineJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineSave_stdin(t *testing.T) {
@@ -88,7 +88,7 @@ func TestPipelineSave_stdin(t *testing.T) {
 	ts := testGatePipelineSaveSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempPipelineFile(testPipelineJsonStr)
+	tempFile := tempPipelineFile(testPipelineJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline file.")
 	}
@@ -111,16 +111,16 @@ func TestPipelineSave_stdin(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testPipelineJsonStr)
+	expected := strings.TrimSpace(testPipelineJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineSave_fail(t *testing.T) {
 	ts := testGateFail()
 	defer ts.Close()
 
-	tempFile := tempPipelineFile(testPipelineJsonStr)
+	tempFile := tempPipelineFile(testPipelineJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline file.")
 	}
@@ -142,7 +142,7 @@ func TestPipelineSave_accessdenied(t *testing.T) {
 	ts := testGateReadOnly()
 	defer ts.Close()
 
-	tempFile := tempPipelineFile(testPipelineJsonStr)
+	tempFile := tempPipelineFile(testPipelineJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline file.")
 	}
@@ -179,7 +179,7 @@ func TestPipelineSave_missingname(t *testing.T) {
 	ts := testGateSuccess()
 	defer ts.Close()
 
-	tempFile := tempPipelineFile(missingNameJsonStr)
+	tempFile := tempPipelineFile(missingNameJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline file.")
 	}
@@ -201,7 +201,7 @@ func TestPipelineSave_missingid(t *testing.T) {
 	ts := testGateSuccess()
 	defer ts.Close()
 
-	tempFile := tempPipelineFile(missingIdJsonStr)
+	tempFile := tempPipelineFile(missingIDJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline file.")
 	}
@@ -223,7 +223,7 @@ func TestPipelineSave_missingapp(t *testing.T) {
 	ts := testGateSuccess()
 	defer ts.Close()
 
-	tempFile := tempPipelineFile(missingAppJsonStr)
+	tempFile := tempPipelineFile(missingAppJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline file.")
 	}
@@ -307,7 +307,7 @@ func testGateFail() *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-const missingNameJsonStr = `
+const missingNameJSONStr = `
 {
   "id": "pipeline1",
   "application": "app",
@@ -328,7 +328,7 @@ const missingNameJsonStr = `
 }
 `
 
-const missingIdJsonStr = `
+const missingIDJSONStr = `
 {
   "name": "pipeline1",
   "application": "app",
@@ -349,7 +349,7 @@ const missingIdJsonStr = `
 }
 `
 
-const missingAppJsonStr = `
+const missingAppJSONStr = `
 {
   "name": "pipeline1",
   "id": "pipeline1",
@@ -370,7 +370,7 @@ const missingAppJsonStr = `
 }
 `
 
-const testPipelineJsonStr = `
+const testPipelineJSONStr = `
 {
  "application": "app",
  "id": "pipeline1",

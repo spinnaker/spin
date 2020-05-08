@@ -72,6 +72,6 @@ func getPipeline(options *getOptions) error {
 			resp.StatusCode)
 	}
 
-	options.Ui.JsonOutput(successPayload)
+	options.UI.JSONOutput(successPayload)
 	return nil
 }

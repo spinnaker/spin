@@ -60,7 +60,7 @@ func NewSaveCmd(appOptions *applicationOptions) *cobra.Command {
 func saveApplication(options *saveOptions) error {
 	// TODO(jacobkiefer): Should we check for an existing application of the same name?
 
-	initialApp, err := util.ParseJsonFromFileOrStdin(options.applicationFile, true)
+	initialApp, err := util.ParseJSONFromFileOrStdin(options.applicationFile, true)
 	if err != nil {
 		return fmt.Errorf("Could not parse supplied application: %v.\n", err)
 	}
@@ -69,15 +69,15 @@ func saveApplication(options *saveOptions) error {
 	if len(initialApp) > 0 {
 		app = initialApp
 		if len(*options.cloudProviders) != 0 {
-			options.Ui.Warn("Overriding application cloud providers with explicit flag values.\n")
+			options.UI.Warn("Overriding application cloud providers with explicit flag values.\n")
 			app["cloudProviders"] = strings.Join(*options.cloudProviders, ",")
 		}
 		if options.applicationName != "" {
-			options.Ui.Warn("Overriding application name with explicit flag values.\n")
+			options.UI.Warn("Overriding application name with explicit flag values.\n")
 			app["name"] = options.applicationName
 		}
 		if options.ownerEmail != "" {
-			options.Ui.Warn("Overriding application owner email with explicit flag values.\n")
+			options.UI.Warn("Overriding application owner email with explicit flag values.\n")
 			app["email"] = options.ownerEmail
 		}
 		// TODO(jacobkiefer): Add validation for valid cloudProviders and well-formed emails.
@@ -112,6 +112,6 @@ func saveApplication(options *saveOptions) error {
 		return err
 	}
 
-	options.Ui.Success("Application save succeeded")
+	options.UI.Success("Application save succeeded")
 	return nil
 }

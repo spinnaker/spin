@@ -53,34 +53,34 @@ func NewSaveCmd(pipelineOptions *PipelineOptions) *cobra.Command {
 }
 
 func savePipeline(options *saveOptions) error {
-	pipelineJson, err := util.ParseJsonFromFileOrStdin(options.pipelineFile, false)
+	pipelineJSON, err := util.ParseJSONFromFileOrStdin(options.pipelineFile, false)
 	if err != nil {
 		return err
 	}
 	valid := true
-	if _, exists := pipelineJson["name"]; !exists {
-		options.Ui.Error("Required pipeline key 'name' missing...\n")
+	if _, exists := pipelineJSON["name"]; !exists {
+		options.UI.Error("Required pipeline key 'name' missing...\n")
 		valid = false
 	}
 
-	if _, exists := pipelineJson["application"]; !exists {
-		options.Ui.Error("Required pipeline key 'application' missing...\n")
+	if _, exists := pipelineJSON["application"]; !exists {
+		options.UI.Error("Required pipeline key 'application' missing...\n")
 		valid = false
 	}
 
-	if template, exists := pipelineJson["template"]; exists && len(template.(map[string]interface{})) > 0 {
-		if _, exists := pipelineJson["schema"]; !exists {
-			options.Ui.Error("Required pipeline key 'schema' missing for templated pipeline...\n")
+	if template, exists := pipelineJSON["template"]; exists && len(template.(map[string]interface{})) > 0 {
+		if _, exists := pipelineJSON["schema"]; !exists {
+			options.UI.Error("Required pipeline key 'schema' missing for templated pipeline...\n")
 			valid = false
 		}
-		pipelineJson["type"] = "templatedPipeline"
+		pipelineJSON["type"] = "templatedPipeline"
 	}
 
 	if !valid {
-		return fmt.Errorf("Submitted pipeline is invalid: %s\n", pipelineJson)
+		return fmt.Errorf("Submitted pipeline is invalid: %s\n", pipelineJSON)
 	}
-	application := pipelineJson["application"].(string)
-	pipelineName := pipelineJson["name"].(string)
+	application := pipelineJSON["application"].(string)
+	pipelineName := pipelineJSON["name"].(string)
 
 	foundPipeline, queryResp, _ := options.GateClient.ApplicationControllerApi.GetPipelineConfigUsingGET(options.GateClient.Context, application, pipelineName)
 
@@ -88,16 +88,16 @@ func savePipeline(options *saveOptions) error {
 		return fmt.Errorf("Encountered an error querying pipeline, status code: %d\n", queryResp.StatusCode)
 	}
 
-	_, exists := pipelineJson["id"].(string)
-	var foundPipelineId string
+	_, exists := pipelineJSON["id"].(string)
+	var foundPipelineID string
 	if len(foundPipeline) > 0 {
-		foundPipelineId = foundPipeline["id"].(string)
+		foundPipelineID = foundPipeline["id"].(string)
 	}
-	if !exists && foundPipelineId != "" {
-		pipelineJson["id"] = foundPipelineId
+	if !exists && foundPipelineID != "" {
+		pipelineJSON["id"] = foundPipelineID
 	}
 
-	saveResp, saveErr := options.GateClient.PipelineControllerApi.SavePipelineUsingPOST(options.GateClient.Context, pipelineJson)
+	saveResp, saveErr := options.GateClient.PipelineControllerApi.SavePipelineUsingPOST(options.GateClient.Context, pipelineJSON)
 
 	if saveErr != nil {
 		return saveErr
@@ -106,6 +106,6 @@ func savePipeline(options *saveOptions) error {
 		return fmt.Errorf("Encountered an error saving pipeline, status code: %d\n", saveResp.StatusCode)
 	}
 
-	options.Ui.Success("Pipeline save succeeded")
+	options.UI.Success("Pipeline save succeeded")
 	return nil
 }

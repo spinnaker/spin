@@ -68,6 +68,6 @@ func listPipeline(options *listOptions) error {
 			resp.StatusCode)
 	}
 
-	options.Ui.JsonOutput(successPayload)
+	options.UI.JSONOutput(successPayload)
 	return nil
 }

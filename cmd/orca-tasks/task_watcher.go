@@ -29,7 +29,7 @@ func WaitForSuccessfulTask(gateClient *gateclient.GatewayClient, taskRef map[str
 
 	attempts := 0
 	for (task == nil || !taskCompleted(task)) && attempts < maxAttempts {
-		attempts += 1
+		attempts++
 		time.Sleep(time.Duration(attempts*attempts) * time.Second)
 		id := idFromTaskRef(taskRef)
 		task, resp, err = gateClient.TaskControllerApi.GetTaskUsingGET1(gateClient.Context, id)

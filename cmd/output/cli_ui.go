@@ -22,20 +22,20 @@ import (
 	"github.com/mitchellh/colorstring"
 )
 
-type Ui interface {
+type UI interface {
 	Success(message string)
-	JsonOutput(data interface{})
+	JSONOutput(data interface{})
 	cli.Ui
 }
 
-type ColorizeUi struct {
+type ColorizeUI struct {
 	Colorize       *colorstring.Colorize
 	OutputColor    string
 	InfoColor      string
 	ErrorColor     string
 	WarnColor      string
 	SuccessColor   string
-	Ui             cli.Ui
+	UI             cli.Ui
 	Quiet          bool
 	OutputFormater OutputFormater
 }
@@ -44,8 +44,8 @@ func NewUI(
 	quiet, color bool,
 	outputFormater OutputFormater,
 	outWriter, errWriter io.Writer,
-) *ColorizeUi {
-	return &ColorizeUi{
+) *ColorizeUI {
+	return &ColorizeUI{
 		Colorize: &colorstring.Colorize{
 			Colors:  colorstring.DefaultColors,
 			Disable: !color,
@@ -55,7 +55,7 @@ func NewUI(
 		WarnColor:    "[yellow]",
 		InfoColor:    "[blue]",
 		SuccessColor: "[bold][green]",
-		Ui: &cli.BasicUi{
+		UI: &cli.BasicUi{
 			Writer:      outWriter,
 			ErrorWriter: errWriter,
 		},
@@ -64,20 +64,20 @@ func NewUI(
 	}
 }
 
-func (u *ColorizeUi) Ask(query string) (string, error) {
-	return u.Ui.Ask(u.colorize(query, u.OutputColor))
+func (u *ColorizeUI) Ask(query string) (string, error) {
+	return u.UI.Ask(u.colorize(query, u.OutputColor))
 }
 
-func (u *ColorizeUi) AskSecret(query string) (string, error) {
-	return u.Ui.AskSecret(u.colorize(query, u.OutputColor))
+func (u *ColorizeUI) AskSecret(query string) (string, error) {
+	return u.UI.AskSecret(u.colorize(query, u.OutputColor))
 }
 
-func (u *ColorizeUi) Output(message string) {
-	u.Ui.Output(u.colorize(message, u.OutputColor))
+func (u *ColorizeUI) Output(message string) {
+	u.UI.Output(u.colorize(message, u.OutputColor))
 }
 
-// JsonOutput prints the data specified using the configured OutputFormater.
-func (u *ColorizeUi) JsonOutput(data interface{}) {
+// JSONOutput prints the data specified using the configured OutputFormater.
+func (u *ColorizeUI) JSONOutput(data interface{}) {
 	output, err := u.OutputFormater(data)
 	if err != nil {
 		u.Error(fmt.Sprintf("%v", err))
@@ -85,29 +85,29 @@ func (u *ColorizeUi) JsonOutput(data interface{}) {
 	u.Output(string(output))
 }
 
-func (u *ColorizeUi) Success(message string) {
+func (u *ColorizeUI) Success(message string) {
 	if !u.Quiet {
-		u.Ui.Info(u.colorize(message, u.SuccessColor))
+		u.UI.Info(u.colorize(message, u.SuccessColor))
 	}
 }
 
-func (u *ColorizeUi) Info(message string) {
+func (u *ColorizeUI) Info(message string) {
 	if !u.Quiet {
-		u.Ui.Info(u.colorize(message, u.InfoColor))
+		u.UI.Info(u.colorize(message, u.InfoColor))
 	}
 }
 
-func (u *ColorizeUi) Error(message string) {
-	u.Ui.Error(u.colorize(message, u.ErrorColor))
+func (u *ColorizeUI) Error(message string) {
+	u.UI.Error(u.colorize(message, u.ErrorColor))
 }
 
-func (u *ColorizeUi) Warn(message string) {
+func (u *ColorizeUI) Warn(message string) {
 	if !u.Quiet {
-		u.Ui.Warn(u.colorize(message, u.WarnColor))
+		u.UI.Warn(u.colorize(message, u.WarnColor))
 	}
 }
 
-func (u *ColorizeUi) colorize(message string, color string) string {
+func (u *ColorizeUI) colorize(message string, color string) string {
 	if color == "" {
 		return message
 	}

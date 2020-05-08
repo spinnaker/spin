@@ -49,15 +49,15 @@ func NewCancelCmd(executionOptions *executionOptions) *cobra.Command {
 }
 
 func cancelExecution(options *cancelOptions, args []string) error {
-	executionId, err := util.ReadArgsOrStdin(args)
-	if executionId == "" {
+	executionID, err := util.ReadArgsOrStdin(args)
+	if executionID == "" {
 		return errors.New("no execution id supplied, exiting")
 	} else if err != nil {
 		return err
 	}
 
 	resp, err := options.GateClient.PipelineControllerApi.CancelPipelineUsingPUT1(options.GateClient.Context,
-		executionId,
+		executionID,
 		map[string]interface{}{})
 
 	if err != nil {
@@ -66,10 +66,10 @@ func cancelExecution(options *cancelOptions, args []string) error {
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("encountered an error canceling execution with id %s, status code: %d\n",
-			executionId,
+			executionID,
 			resp.StatusCode)
 	}
 
-	options.Ui.Success(fmt.Sprintf("Execution %s successfully canceled", executionId))
+	options.UI.Success(fmt.Sprintf("Execution %s successfully canceled", executionID))
 	return nil
 }

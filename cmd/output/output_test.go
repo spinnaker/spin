@@ -22,12 +22,12 @@ import (
 )
 
 func TestOutputMarshalToJson(t *testing.T) {
-	jsonBytes, err := MarshalToJson(testMap)
+	jsonBytes, err := MarshalToJSON(testMap)
 	if err != nil {
 		t.Fatalf("Failed to format: %s", err)
 	}
 
-	expected := strings.TrimSpace(testJsonStr)
+	expected := strings.TrimSpace(testJSONStr)
 	recieved := strings.TrimSpace(string(jsonBytes))
 	if expected != recieved {
 		t.Fatalf("Unexpected formatted yaml output (want- get+):\n%s", diff.LineDiff(expected, recieved))
@@ -48,7 +48,7 @@ func TestOutputMarshalToYaml(t *testing.T) {
 }
 
 func TestOutputMarshalToJsonPath_string(t *testing.T) {
-	formatFunc := MarshalToJsonPathWrapper("{.parameterConfig[0].name}")
+	formatFunc := MarshalToJSONPathWrapper("{.parameterConfig[0].name}")
 	jsonBytes, err := formatFunc(testMap)
 	if err != nil {
 		t.Fatalf("Failed to format: %s", err)
@@ -93,7 +93,7 @@ var testMap = map[string]interface{}{
 	"updateTs": "1520879791608",
 }
 
-const testJsonStr = `
+const testJSONStr = `
 {
  "application": "app",
  "id": "pipeline1",

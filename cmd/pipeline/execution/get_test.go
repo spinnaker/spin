@@ -83,7 +83,7 @@ func TestExecutionGet_failure(t *testing.T) {
 func testGateExecutionGetSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/executions/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(executionGetJson))
+		fmt.Fprintln(w, strings.TrimSpace(executionGetJSON))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -99,7 +99,7 @@ func testGateFail() *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-const executionGetJson = `
+const executionGetJSON = `
 [
  {
   "application": "jtk54",

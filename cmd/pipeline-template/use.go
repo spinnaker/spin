@@ -93,7 +93,7 @@ func usePipelineTemplate(options *useOptions, args []string) error {
 		return err
 	}
 
-	options.Ui.JsonOutput(pipeline)
+	options.UI.JSONOutput(pipeline)
 
 	return nil
 }

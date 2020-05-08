@@ -66,6 +66,6 @@ func deleteCanaryConfig(options *deleteOptions, args []string) error {
 			"Encountered an error deleting canary config, status code: %d\n", resp.StatusCode)
 	}
 
-	options.Ui.Success(fmt.Sprintf("Canary config %s deleted", id))
+	options.UI.Success(fmt.Sprintf("Canary config %s deleted", id))
 	return nil
 }

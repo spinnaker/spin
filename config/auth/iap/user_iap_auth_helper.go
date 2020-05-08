@@ -36,11 +36,11 @@ const (
 
 // returns the token get from google for IAP
 func GetIapToken(iapConfig Config) (string, error) {
-	if iapConfig.IapIdToken != "" {
-		return iapConfig.IapIdToken, nil
+	if iapConfig.IapIDToken != "" {
+		return iapConfig.IapIDToken, nil
 	}
 
-	if iapConfig.ServiceAccountKeyPath != "" && iapConfig.IapClientId != "" {
+	if iapConfig.ServiceAccountKeyPath != "" && iapConfig.IapClientID != "" {
 		return GetIDTokenWithServiceAccount(iapConfig)
 	}
 
@@ -49,9 +49,9 @@ func GetIapToken(iapConfig Config) (string, error) {
 	}
 
 	return RequestIapIDToken(iapConfig.IapClientRefresh,
-		iapConfig.OAuthClientId,
+		iapConfig.OAuthClientID,
 		iapConfig.OAuthClientSecret,
-		iapConfig.IapClientId)
+		iapConfig.IapClientID)
 }
 
 // userInteract lets the spin user fetch a token.
@@ -76,9 +76,9 @@ func userInteract(cfg Config) (string, error) {
 		doneChan:    make(chan error),
 		callback: func(token *oauth2.Token, config *oauth2.Config, s2 string) (string, error) {
 			iapToken, err := RequestIapIDToken(token.AccessToken,
-				cfg.OAuthClientId,
+				cfg.OAuthClientID,
 				cfg.OAuthClientSecret,
-				cfg.IapClientId)
+				cfg.IapClientID)
 			if err != nil {
 				close(accessToken)
 				return "", err
@@ -86,17 +86,17 @@ func userInteract(cfg Config) (string, error) {
 			accessToken <- iapToken
 			return "", nil
 		},
-		clientId:     cfg.OAuthClientId,
+		clientID:     cfg.OAuthClientID,
 		clientSecret: cfg.OAuthClientSecret,
 	}
 
 	srv := http.Server{Addr: listener.Addr().String(), Handler: rcv, ConnState: rcv.killWhenReady}
 	go srv.Serve(listener)
 
-	url := oauthURL(cfg.OAuthClientId, clientState, port)
+	url := oauthURL(cfg.OAuthClientID, clientState, port)
 
 	resStr := fmt.Sprintf("Your browser has been opened to visit:\n%s\n\n", url)
-	if err = execcmd.OpenUrl(url); err != nil {
+	if err = execcmd.OpenURL(url); err != nil {
 		resStr = fmt.Sprintf("Follow this link in your browser:\n%s\n\n", url)
 	}
 	fmt.Println(resStr)
@@ -104,20 +104,20 @@ func userInteract(cfg Config) (string, error) {
 	return <-accessToken, nil
 }
 
-func oauthURL(clientId string, clientState string, port int) string {
-	oauthUrl := url.URL{
+func oauthURL(clientID string, clientState string, port int) string {
+	oauthURL := url.URL{
 		Scheme: googleOauthSchema,
 		Host:   googleOauthHost,
 		Path:   googleOauthPath,
 	}
 
-	q := oauthUrl.Query()
-	q.Add("client_id", clientId)
+	q := oauthURL.Query()
+	q.Add("client_id", clientID)
 	q.Add("state", clientState)
 	q.Add("response_type", googleOauthResponseType)
 	q.Add("scope", googleOauthScope)
 	q.Add("redirect_uri", fmt.Sprintf("http://localhost:%d", port))
-	oauthUrl.RawQuery = q.Encode()
+	oauthURL.RawQuery = q.Encode()
 
-	return oauthUrl.String()
+	return oauthURL.String()
 }

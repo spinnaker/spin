@@ -88,7 +88,7 @@ func NewRetroCmd(canaryConfigOptions *canaryConfigOptions) *cobra.Command {
 }
 
 func retroCanaryConfig(options *retroOptions) error {
-	canaryConfigJson, err := util.ParseJsonFromFileOrStdin(options.canaryConfigFile, false)
+	canaryConfigJSON, err := util.ParseJSONFromFileOrStdin(options.canaryConfigFile, false)
 	if err != nil {
 		return err
 	}
@@ -137,7 +137,7 @@ func retroCanaryConfig(options *retroOptions) error {
 	}
 
 	adhocRequest := map[string]interface{}{
-		"canaryConfig":     canaryConfigJson,
+		"canaryConfig":     canaryConfigJSON,
 		"executionRequest": executionRequest,
 	}
 
@@ -149,7 +149,7 @@ func retroCanaryConfig(options *retroOptions) error {
 		initiateOptionalParams["storageAccountName"] = options.storageAccount
 	}
 
-	options.Ui.Info("Initiating canary execution for supplied canary config")
+	options.UI.Info("Initiating canary execution for supplied canary config")
 	canaryExecutionResp, initiateResp, initiateErr := options.GateClient.V2CanaryControllerApi.InitiateCanaryWithConfigUsingPOST(options.GateClient.Context, adhocRequest, initiateOptionalParams)
 
 	if initiateErr != nil {
@@ -162,15 +162,15 @@ func retroCanaryConfig(options *retroOptions) error {
 			initiateResp.StatusCode)
 	}
 
-	canaryExecutionId := canaryExecutionResp.(map[string]interface{})["canaryExecutionId"].(string)
-	options.Ui.Info(fmt.Sprintf("Spawned canary execution with id %s, polling for completion...", canaryExecutionId))
+	canaryExecutionID := canaryExecutionResp.(map[string]interface{})["canaryExecutionId"].(string)
+	options.UI.Info(fmt.Sprintf("Spawned canary execution with id %s, polling for completion...", canaryExecutionID))
 
 	queryOptionalParams := map[string]interface{}{}
 	if options.storageAccount != "" {
 		queryOptionalParams["storageAccountName"] = options.storageAccount
 	}
 
-	canaryResult, canaryResultResp, canaryResultErr := options.GateClient.V2CanaryControllerApi.GetCanaryResultUsingGET1(options.GateClient.Context, canaryExecutionId, queryOptionalParams)
+	canaryResult, canaryResultResp, canaryResultErr := options.GateClient.V2CanaryControllerApi.GetCanaryResultUsingGET1(options.GateClient.Context, canaryExecutionID, queryOptionalParams)
 
 	if canaryResultErr != nil {
 		return canaryResultErr
@@ -179,31 +179,31 @@ func retroCanaryConfig(options *retroOptions) error {
 	if canaryResultResp.StatusCode != http.StatusOK {
 		return fmt.Errorf(
 			"Encountered an unexpected status code %d querying canary execution with id: %s\n",
-			canaryResultResp.StatusCode, canaryExecutionId)
+			canaryResultResp.StatusCode, canaryExecutionID)
 	}
 
 	complete := canaryResult.(map[string]interface{})["complete"].(bool)
 
 	retries := 0
 	for retries < 10 && !complete && canaryResultErr == nil {
-		canaryResult, _, canaryResultErr = options.GateClient.V2CanaryControllerApi.GetCanaryResultUsingGET1(options.GateClient.Context, canaryExecutionId, queryOptionalParams)
+		canaryResult, _, canaryResultErr = options.GateClient.V2CanaryControllerApi.GetCanaryResultUsingGET1(options.GateClient.Context, canaryExecutionID, queryOptionalParams)
 		complete = canaryResult.(map[string]interface{})["complete"].(bool)
 		time.Sleep(retrySleepCycle)
-		retries += 1
+		retries++
 	}
 
 	if canaryResultErr != nil {
 		return canaryResultErr
 	} else if !complete {
 		return fmt.Errorf(
-			"Canary execution %s incomplete after 60 seconds, aborting", canaryExecutionId)
+			"Canary execution %s incomplete after 60 seconds, aborting", canaryExecutionID)
 	}
 
 	judgement := canaryResult.(map[string]interface{})["result"].(map[string]interface{})["judgeResult"].(map[string]interface{})["score"].(map[string]interface{})["classification"].(string)
 
-	options.Ui.Info(fmt.Sprintf("Retrospective canary execution finished, judgement = %s", strings.ToUpper(judgement)))
+	options.UI.Info(fmt.Sprintf("Retrospective canary execution finished, judgement = %s", strings.ToUpper(judgement)))
 	if options.fullResult {
-		options.Ui.JsonOutput(canaryResult)
+		options.UI.JSONOutput(canaryResult)
 	}
 	return nil
 }

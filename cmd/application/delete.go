@@ -93,6 +93,6 @@ func deleteApplication(options *deleteOptions, args []string) error {
 		return err
 	}
 
-	options.Ui.Success("Application deleted")
+	options.UI.Success("Application deleted")
 	return nil
 }

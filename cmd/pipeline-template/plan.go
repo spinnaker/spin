@@ -52,16 +52,16 @@ func NewPlanCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command
 }
 
 func planPipelineTemplate(options *planOptions) error {
-	configJson, err := util.ParseJsonFromFileOrStdin(options.configPath, false)
+	configJSON, err := util.ParseJSONFromFileOrStdin(options.configPath, false)
 	if err != nil {
 		return err
 	}
 
-	if _, exists := configJson["schema"]; !exists {
+	if _, exists := configJSON["schema"]; !exists {
 		return errors.New("Required pipeline key 'schema' missing for templated pipeline config...\n")
 	}
 
-	successPayload, resp, err := options.GateClient.V2PipelineTemplatesControllerApi.PlanUsingPOST(options.GateClient.Context, configJson)
+	successPayload, resp, err := options.GateClient.V2PipelineTemplatesControllerApi.PlanUsingPOST(options.GateClient.Context, configJSON)
 
 	if err != nil {
 		return err
@@ -72,6 +72,6 @@ func planPipelineTemplate(options *planOptions) error {
 			resp.StatusCode)
 	}
 
-	options.Ui.JsonOutput(successPayload)
+	options.UI.JSONOutput(successPayload)
 	return nil
 }

@@ -44,7 +44,7 @@ func TestPipelineGet_json(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(pipelineGetJson)
+	expected := strings.TrimSpace(pipelineGetJSON)
 	recieved := strings.TrimSpace(buffer.String())
 	if expected != recieved {
 		t.Fatalf("Unexpected command output:\n%s", diff.LineDiff(expected, recieved))
@@ -143,7 +143,7 @@ func TestPipelineGet_notfound(t *testing.T) {
 func testGatePipelineGetSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/applications/app/pipelineConfigs/one", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(pipelineGetJson))
+		fmt.Fprintln(w, strings.TrimSpace(pipelineGetJSON))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -152,7 +152,7 @@ func testGatePipelineGetSuccess() *httptest.Server {
 func testGatePipelineGetMalformed() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/applications/app/pipelineConfigs/one", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineGetJson))
+		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineGetJSON))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -166,7 +166,7 @@ func testGatePipelineGetMissing() *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-const malformedPipelineGetJson = `
+const malformedPipelineGetJSON = `
   "application": "app",
   "id": "pipeline_one",
   "index": 0,
@@ -197,7 +197,7 @@ const malformedPipelineGetJson = `
 }
 `
 
-const pipelineGetJson = `
+const pipelineGetJSON = `
 {
  "application": "app",
  "id": "pipeline_one",

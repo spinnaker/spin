@@ -43,7 +43,7 @@ func TestPipelineGet_json(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(pipelineTemplateGetJson)
+	expected := strings.TrimSpace(pipelineTemplateGetJSON)
 	recieved := strings.TrimSpace(buffer.String())
 	if expected != recieved {
 		t.Fatalf("Unexpected command output:\n%s", diff.LineDiff(expected, recieved))
@@ -174,7 +174,7 @@ func TestPipelineGet_notfound(t *testing.T) {
 func testGatePipelineTemplateGetSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/v2/pipelineTemplates/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(pipelineTemplateGetJson))
+		fmt.Fprintln(w, strings.TrimSpace(pipelineTemplateGetJSON))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -183,7 +183,7 @@ func testGatePipelineTemplateGetSuccess() *httptest.Server {
 func testGatePipelineTemplateGetMalformed() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/v2/pipelineTemplates/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineTemplateGetJson))
+		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineTemplateGetJSON))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -206,7 +206,7 @@ func testGateFail() *httptest.Server {
 	}))
 }
 
-const malformedPipelineTemplateGetJson = `
+const malformedPipelineTemplateGetJSON = `
  "id": "newSpelTemplate",
  "lastModifiedBy": "anonymous",
  "metadata": {
@@ -261,7 +261,7 @@ const malformedPipelineTemplateGetJson = `
 }
 `
 
-const pipelineTemplateGetJson = `
+const pipelineTemplateGetJSON = `
 {
  "id": "newSpelTemplate",
  "lastModifiedBy": "anonymous",

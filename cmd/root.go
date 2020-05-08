@@ -19,7 +19,7 @@ type RootOptions struct {
 	outputFormat     string
 	defaultHeaders   string
 
-	Ui         output.Ui
+	UI         output.UI
 	GateClient *gateclient.GatewayClient
 }
 
@@ -55,10 +55,10 @@ func NewCmdRoot(outWriter, errWriter io.Writer) (*cobra.Command, *RootOptions) {
 		if err != nil {
 			return err
 		}
-		options.Ui = output.NewUI(options.quiet, options.color, outputFormater, outw, errw)
+		options.UI = output.NewUI(options.quiet, options.color, outputFormater, outw, errw)
 
 		gateClient, err := gateclient.NewGateClient(
-			options.Ui,
+			options.UI,
 			options.gateEndpoint,
 			options.defaultHeaders,
 			options.configPath,

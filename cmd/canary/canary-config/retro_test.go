@@ -31,7 +31,7 @@ func TestCanaryConfigRetro_file(t *testing.T) {
 	ts := gateServerRetroPass()
 	defer ts.Close()
 
-	tempFile := tempCanaryConfigFile(testCanaryConfigJsonStr)
+	tempFile := tempCanaryConfigFile(testCanaryConfigJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp canary config file.")
 	}
@@ -64,7 +64,7 @@ func TestCanaryConfigRetro_stdin(t *testing.T) {
 	ts := gateServerRetroPass()
 	defer ts.Close()
 
-	tempFile := tempCanaryConfigFile(testCanaryConfigJsonStr)
+	tempFile := tempCanaryConfigFile(testCanaryConfigJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp canary config file.")
 	}
@@ -102,7 +102,7 @@ func TestCanaryConfigRetro_fail(t *testing.T) {
 	ts := testGateFail()
 	defer ts.Close()
 
-	tempFile := tempCanaryConfigFile(testCanaryConfigJsonStr)
+	tempFile := tempCanaryConfigFile(testCanaryConfigJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp canary config file.")
 	}
@@ -137,7 +137,7 @@ func TestCanaryConfigRetro_timeout(t *testing.T) {
 	ts := gateServerExecHang()
 	defer ts.Close()
 
-	tempFile := tempCanaryConfigFile(testCanaryConfigJsonStr)
+	tempFile := tempCanaryConfigFile(testCanaryConfigJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp canary config file.")
 	}
@@ -169,11 +169,11 @@ func TestCanaryConfigRetro_timeout(t *testing.T) {
 func gateServerRetroPass() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/v2/canaries/canary", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(canaryExecRespJson))
+		w.Write([]byte(canaryExecRespJSON))
 	}))
 
 	mux.Handle("/v2/canaries/canary/executionId", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(canaryFinishedPassJson))
+		w.Write([]byte(canaryFinishedPassJSON))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -181,28 +181,28 @@ func gateServerRetroPass() *httptest.Server {
 func gateServerExecHang() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/v2/canaries/canary", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(canaryExecRespJson))
+		w.Write([]byte(canaryExecRespJSON))
 	}))
 
 	mux.Handle("/v2/canaries/canary/executionId", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(canaryUnfinishedJson))
+		w.Write([]byte(canaryUnfinishedJSON))
 	}))
 	return httptest.NewServer(mux)
 }
 
-const canaryExecRespJson = `
+const canaryExecRespJSON = `
 {
   "canaryExecutionId": "executionId"
 }
 `
 
-const canaryUnfinishedJson = `
+const canaryUnfinishedJSON = `
 {
   "complete": false,
 }
 `
 
-const canaryFinishedPassJson = `
+const canaryFinishedPassJSON = `
 {
   "complete": true,
   "result": {

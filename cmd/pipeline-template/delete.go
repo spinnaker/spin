@@ -74,6 +74,6 @@ func deletePipelineTemplate(options *deleteOptions, args []string) error {
 		return fmt.Errorf("Encountered an error deleting pipeline template, status code: %d\n", resp.StatusCode)
 	}
 
-	options.Ui.Success(fmt.Sprintf("Pipeline template %s deleted", id))
+	options.UI.Success(fmt.Sprintf("Pipeline template %s deleted", id))
 	return nil
 }

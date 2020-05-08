@@ -77,6 +77,6 @@ func getCanaryConfig(options *getOptions, args []string) error {
 			resp.StatusCode)
 	}
 
-	options.Ui.JsonOutput(successPayload)
+	options.UI.JSONOutput(successPayload)
 	return nil
 }

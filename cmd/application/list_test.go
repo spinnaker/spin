@@ -78,16 +78,16 @@ func testGateApplicationList(returnMalformed bool) *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/applications", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if returnMalformed {
-			fmt.Fprintln(w, strings.TrimSpace(malformedApplicationListJson))
+			fmt.Fprintln(w, strings.TrimSpace(malformedApplicationListJSON))
 		} else {
-			fmt.Fprintln(w, strings.TrimSpace(applicationListJson))
+			fmt.Fprintln(w, strings.TrimSpace(applicationListJSON))
 		}
 	}))
 
 	return httptest.NewServer(mux)
 }
 
-const malformedApplicationListJson = `
+const malformedApplicationListJSON = `
   {
     "accounts": "account1",
     "cloudproviders": [
@@ -105,7 +105,7 @@ const malformedApplicationListJson = `
 ]
 `
 
-const applicationListJson = `
+const applicationListJSON = `
 [
   {
     "accounts": "account1",

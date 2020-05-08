@@ -56,7 +56,7 @@ func TestAccountGet_json(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(accountJson)
+	expected := strings.TrimSpace(accountJSON)
 	recieved := strings.TrimSpace(buffer.String())
 	if expected != recieved {
 		t.Fatalf("Unexpected command output:\n%s", diff.LineDiff(expected, recieved))
@@ -135,7 +135,7 @@ func TestAccountGet_fail(t *testing.T) {
 func testGateAccountGetSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/credentials/"+ACCOUNT, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(accountJson))
+		fmt.Fprintln(w, strings.TrimSpace(accountJSON))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -144,12 +144,12 @@ func testGateAccountGetSuccess() *httptest.Server {
 func testGateAccountGetMalformed() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/credentials/"+ACCOUNT, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(malformedAccountGetJson))
+		fmt.Fprintln(w, strings.TrimSpace(malformedAccountGetJSON))
 	}))
 	return httptest.NewServer(mux)
 }
 
-const malformedAccountGetJson = `
+const malformedAccountGetJSON = `
  "type": "kubernetes",
  "providerVersion": "v2",
  "environment": "self",
@@ -164,7 +164,7 @@ const malformedAccountGetJson = `
 // which is directly from the Swagger API definition.
 // See: gateapi/account_details.go
 // TODO(karlkfi): sort alphabetically. I doubt anyone depends on the order.
-const accountJson = `
+const accountJSON = `
 {
  "name": "account",
  "environment": "self",

@@ -95,7 +95,7 @@ func TestPipelineList_fail(t *testing.T) {
 func testGatePipelineListSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/applications/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(pipelineListJson))
+		fmt.Fprintln(w, strings.TrimSpace(pipelineListJSON))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -104,12 +104,12 @@ func testGatePipelineListSuccess() *httptest.Server {
 func testGatePipelineListMalformed() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/applications/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineListJson))
+		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineListJSON))
 	}))
 	return httptest.NewServer(mux)
 }
 
-const malformedPipelineListJson = `
+const malformedPipelineListJSON = `
   {
     "application": "app",
     "id": "pipeline1",
@@ -142,7 +142,7 @@ const malformedPipelineListJson = `
 ]
 `
 
-const pipelineListJson = `
+const pipelineListJSON = `
 [
   {
     "application": "app",

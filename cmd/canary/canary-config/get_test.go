@@ -47,7 +47,7 @@ func TestCanaryConfigGet_json(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(canaryConfigGetJson)
+	expected := strings.TrimSpace(canaryConfigGetJSON)
 	recieved := strings.TrimSpace(buffer.String())
 	if expected != recieved {
 		t.Fatalf("Unexpected command output:\n%s", diff.LineDiff(expected, recieved))
@@ -156,7 +156,7 @@ func testGateCanaryConfigGetSuccess() *httptest.Server {
 	mux.Handle(
 		"/v2/canaryConfig/",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintln(w, strings.TrimSpace(canaryConfigGetJson))
+			fmt.Fprintln(w, strings.TrimSpace(canaryConfigGetJSON))
 		}))
 	return httptest.NewServer(mux)
 }
@@ -167,7 +167,7 @@ func testGateCanaryConfigGetMalformed() *httptest.Server {
 	mux.Handle(
 		"/v2/canaryConfig/",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintln(w, strings.TrimSpace(malformedCanaryConfigGetJson))
+			fmt.Fprintln(w, strings.TrimSpace(malformedCanaryConfigGetJSON))
 		}))
 	return httptest.NewServer(mux)
 }
@@ -181,7 +181,7 @@ func testGateCanaryConfigGetMissing() *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-const malformedCanaryConfigGetJson = `
+const malformedCanaryConfigGetJSON = `
 {{
  "applications": [
   "canaryconfigs"
@@ -193,7 +193,7 @@ const malformedCanaryConfigGetJson = `
 }
 `
 
-const canaryConfigGetJson = `
+const canaryConfigGetJSON = `
 {
  "applications": [
   "canaryconfigs"

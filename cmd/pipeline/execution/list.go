@@ -25,7 +25,7 @@ import (
 
 type listOptions struct {
 	*executionOptions
-	pipelineConfigId string
+	pipelineConfigID string
 	limit            int32
 	running          bool
 	succeeded        bool
@@ -52,7 +52,7 @@ func NewListCmd(executionOptions *executionOptions) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVarP(&options.pipelineConfigId, "pipeline-id", "i", "", "Spinnaker pipeline id to list executions for")
+	cmd.PersistentFlags().StringVarP(&options.pipelineConfigID, "pipeline-id", "i", "", "Spinnaker pipeline id to list executions for")
 	cmd.PersistentFlags().Int32VarP(&options.limit, "limit", "l", -1, "number of executions to return")
 	cmd.PersistentFlags().BoolVar(&options.running, "running", false, "add filter for running executions")
 	cmd.PersistentFlags().BoolVar(&options.succeeded, "succeeded", false, "add filter for succeeded executions")
@@ -63,12 +63,12 @@ func NewListCmd(executionOptions *executionOptions) *cobra.Command {
 }
 
 func listExecution(options *listOptions) error {
-	if options.pipelineConfigId == "" {
+	if options.pipelineConfigID == "" {
 		return errors.New("required parameter 'pipeline-id' not set")
 	}
 
 	query := map[string]interface{}{
-		"pipelineConfigIds": options.pipelineConfigId,
+		"pipelineConfigIds": options.pipelineConfigID,
 	}
 
 	var statuses []string
@@ -101,10 +101,10 @@ func listExecution(options *listOptions) error {
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("Encountered an error listing executions for pipeline id %s, status code: %d\n",
-			options.pipelineConfigId,
+			options.pipelineConfigID,
 			resp.StatusCode)
 	}
 
-	options.Ui.JsonOutput(successPayload)
+	options.UI.JSONOutput(successPayload)
 	return nil
 }

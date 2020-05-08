@@ -28,7 +28,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
-	_ "net/http/pprof"
 	"net/url"
 	"os"
 	"os/user"
@@ -75,7 +74,7 @@ type GatewayClient struct {
 	// Raw Http Client to do OAuth2 login.
 	httpClient *http.Client
 
-	ui output.Ui
+	ui output.UI
 }
 
 func (m *GatewayClient) GateEndpoint() string {
@@ -89,7 +88,7 @@ func (m *GatewayClient) GateEndpoint() string {
 }
 
 // Create new spinnaker gateway client with flag
-func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation string, ignoreCertErrors bool) (*GatewayClient, error) {
+func NewGateClient(ui output.UI, gateEndpoint, defaultHeaders, configLocation string, ignoreCertErrors bool) (*GatewayClient, error) {
 	gateClient := &GatewayClient{
 		gateEndpoint:     gateEndpoint,
 		ignoreCertErrors: ignoreCertErrors,
@@ -167,9 +166,7 @@ func userConfig(gateClient *GatewayClient, configLocation string) error {
 		if err != nil {
 			// Fallback by trying to read $HOME
 			userHome = os.Getenv("HOME")
-			if userHome != "" {
-				err = nil
-			} else {
+			if userHome == "" {
 				gateClient.ui.Error("Could not read current user from environment, failing.")
 				return err
 			}
@@ -250,7 +247,7 @@ func (m *GatewayClient) initializeClient() (*http.Client, error) {
 			return m.initializeX509Config(client, certBytes, cert), nil
 		default:
 			// Misconfigured.
-			return nil, errors.New("Incorrect x509 auth configuration.\nMust specify certPath/keyPath or cert/key pair.")
+			return nil, errors.New("Incorrect x509 auth configuration.\nMust specify certPath/keyPath or cert/key pair")
 		}
 	case auth != nil && auth.Enabled && auth.Iap != nil:
 		accessToken, err := m.authenticateIAP()
@@ -258,7 +255,7 @@ func (m *GatewayClient) initializeClient() (*http.Client, error) {
 		return &client, err
 	case auth != nil && auth.Enabled && auth.Basic != nil:
 		if !auth.Basic.IsValid() {
-			return nil, errors.New("Incorrect Basic auth configuration. Must include username and password.")
+			return nil, errors.New("Incorrect Basic auth configuration. Must include username and password")
 		}
 		m.Context = context.WithValue(context.Background(), gate.ContextBasicAuth, gate.BasicAuth{
 			UserName: auth.Basic.Username,
@@ -292,13 +289,13 @@ func (m *GatewayClient) authenticateOAuth2() error {
 		}
 
 		config := &oauth2.Config{
-			ClientID:     OAuth2.ClientId,
+			ClientID:     OAuth2.ClientID,
 			ClientSecret: OAuth2.ClientSecret,
 			RedirectURL:  "http://localhost:8085",
 			Scopes:       OAuth2.Scopes,
 			Endpoint: oauth2.Endpoint{
-				AuthURL:  OAuth2.AuthUrl,
-				TokenURL: OAuth2.TokenUrl,
+				AuthURL:  OAuth2.AuthURL,
+				TokenURL: OAuth2.TokenURL,
 			},
 		}
 		var newToken *oauth2.Token

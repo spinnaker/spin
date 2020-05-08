@@ -33,7 +33,7 @@ type OutputFormater func(interface{}) ([]byte, error)
 func ParseOutputFormat(outputFormat string) (OutputFormater, error) {
 	switch {
 	case outputFormat == "" || outputFormat == "json":
-		return MarshalToJson, nil
+		return MarshalToJSON, nil
 	case outputFormat == "yaml":
 		return MarshalToYaml, nil
 	case strings.HasPrefix(outputFormat, "jsonpath=") && outputFormat != "jsonpath=":
@@ -41,13 +41,13 @@ func ParseOutputFormat(outputFormat string) (OutputFormater, error) {
 		if len(toks) != 2 {
 			return nil, fmt.Errorf("Failed to parse output format flag value: %s", outputFormat)
 		}
-		return MarshalToJsonPathWrapper(toks[1]), nil
+		return MarshalToJSONPathWrapper(toks[1]), nil
 	default:
 		return nil, fmt.Errorf("Failed to parse output format flag value: %s", outputFormat)
 	}
 }
 
-func MarshalToJson(input interface{}) ([]byte, error) {
+func MarshalToJSON(input interface{}) ([]byte, error) {
 	pretty, err := json.MarshalIndent(input, "", " ")
 	if err != nil {
 		return nil, fmt.Errorf("Failed to marshal to json: %v", err)
@@ -55,11 +55,11 @@ func MarshalToJson(input interface{}) ([]byte, error) {
 	return pretty, nil
 }
 
-// MarshalToJsonPathWrapper returns a MarshalToJsonPath function that uses the
+// MarshalToJSONPathWrapper returns a MarshalToJsonPath function that uses the
 // specified jsonpath expression.
 // This leverages the kubernetes jsonpath library
 // (https://kubernetes.io/docs/reference/kubectl/jsonpath/).
-func MarshalToJsonPathWrapper(expression string) OutputFormater {
+func MarshalToJSONPathWrapper(expression string) OutputFormater {
 	expr := expression
 	// aka MarshalToJsonPath
 	return func(input interface{}) ([]byte, error) {
@@ -78,7 +78,7 @@ func MarshalToJsonPathWrapper(expression string) OutputFormater {
 			return nil, fmt.Errorf("Error parsing value from input %v using template %s: %v ", input, expr, err)
 		}
 
-		json, err := MarshalToJson(values[0][0].Interface())
+		json, err := MarshalToJSON(values[0][0].Interface())
 		if err != nil {
 			return nil, err
 		}

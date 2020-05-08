@@ -16,10 +16,10 @@ package config
 
 //Config mapping to the config file for IAP
 type Config struct {
-	OAuthClientId         string `yaml:"oauthClientId"`
+	OAuthClientID         string `yaml:"oauthClientId"`
 	OAuthClientSecret     string `yaml:"oauthClientSecret"`
-	IapClientId           string `yaml:"iapClientId"`
+	IapClientID           string `yaml:"iapClientId"`
 	IapClientRefresh      string `yaml:"iapClientRefresh"`
-	IapIdToken            string `yaml:"iapIdToken"`
+	IapIDToken            string `yaml:"iapIdToken"`
 	ServiceAccountKeyPath string `yaml:"serviceAccountKeyPath"`
 }

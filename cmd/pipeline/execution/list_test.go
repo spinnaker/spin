@@ -84,12 +84,12 @@ func TestExecutionList_fail(t *testing.T) {
 func testGateExecutionListSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/executions/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(executionListJson))
+		fmt.Fprintln(w, strings.TrimSpace(executionListJSON))
 	}))
 	return httptest.NewServer(mux)
 }
 
-const executionListJson = `
+const executionListJSON = `
 [
  {
   "application": "myapp",

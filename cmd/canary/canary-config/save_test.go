@@ -35,7 +35,7 @@ func TestCanaryConfigSave_createjson(t *testing.T) {
 	ts := testGateCanaryConfigSaveSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempCanaryConfigFile(testCanaryConfigJsonStr)
+	tempFile := tempCanaryConfigFile(testCanaryConfigJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp canary config file.")
 	}
@@ -53,9 +53,9 @@ func TestCanaryConfigSave_createjson(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testCanaryConfigJsonStr)
+	expected := strings.TrimSpace(testCanaryConfigJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestCanaryConfigSave_createyaml(t *testing.T) {
@@ -81,9 +81,9 @@ func TestCanaryConfigSave_createyaml(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testCanaryConfigJsonStr)
+	expected := strings.TrimSpace(testCanaryConfigJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestCanaryConfigSave_update(t *testing.T) {
@@ -91,7 +91,7 @@ func TestCanaryConfigSave_update(t *testing.T) {
 	ts := testGateCanaryConfigUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempCanaryConfigFile(testCanaryConfigJsonStr)
+	tempFile := tempCanaryConfigFile(testCanaryConfigJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp canary config file.")
 	}
@@ -109,9 +109,9 @@ func TestCanaryConfigSave_update(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testCanaryConfigJsonStr)
+	expected := strings.TrimSpace(testCanaryConfigJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestCanaryConfigSave_stdin(t *testing.T) {
@@ -119,7 +119,7 @@ func TestCanaryConfigSave_stdin(t *testing.T) {
 	ts := testGateCanaryConfigUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempCanaryConfigFile(testCanaryConfigJsonStr)
+	tempFile := tempCanaryConfigFile(testCanaryConfigJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp canary config file.")
 	}
@@ -143,16 +143,16 @@ func TestCanaryConfigSave_stdin(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testCanaryConfigJsonStr)
+	expected := strings.TrimSpace(testCanaryConfigJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestCanaryConfigSave_fail(t *testing.T) {
 	ts := testGateFail()
 	defer ts.Close()
 
-	tempFile := tempCanaryConfigFile(testCanaryConfigJsonStr)
+	tempFile := tempCanaryConfigFile(testCanaryConfigJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp canary config file.")
 	}
@@ -201,7 +201,7 @@ func TestCanaryConfigSave_missingid(t *testing.T) {
 	ts := testGateCanaryConfigUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempCanaryConfigFile(missingIdJsonStr)
+	tempFile := tempCanaryConfigFile(missingIDJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp canary config file.")
 	}
@@ -253,7 +253,7 @@ func testGateCanaryConfigUpdateSuccess(buffer io.Writer) *httptest.Server {
 			}
 			buffer.Write(body)
 
-			w.Write([]byte(responseJson))
+			w.Write([]byte(responseJSON))
 		} else {
 			w.WriteHeader(http.StatusOK)
 		}
@@ -276,7 +276,7 @@ func testGateCanaryConfigSaveSuccess(buffer io.Writer) *httptest.Server {
 		}
 		buffer.Write(body)
 
-		w.Write([]byte(responseJson))
+		w.Write([]byte(responseJSON))
 	}))
 	// Return that we found no CC to signal a create.
 	mux.Handle("/v2/canaryConfig/exampleCanaryConfigId", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -285,13 +285,13 @@ func testGateCanaryConfigSaveSuccess(buffer io.Writer) *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-const responseJson = `
+const responseJSON = `
 {
   "id": "exampleCanaryConfigId"
 }
 `
 
-const missingIdJsonStr = `
+const missingIDJSONStr = `
 {
    "applications": [
       "canaryconfigs"
@@ -343,7 +343,7 @@ const missingIdJsonStr = `
 }
 `
 
-const testCanaryConfigJsonStr = `
+const testCanaryConfigJSONStr = `
 {
  "applications": [
   "canaryconfigs"

@@ -91,7 +91,7 @@ func TestPipelineTemplateList_fail(t *testing.T) {
 func testGatePipelineTemplateListSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/v2/pipelineTemplates/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(pipelineTemplateListJson))
+		fmt.Fprintln(w, strings.TrimSpace(pipelineTemplateListJSON))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -101,7 +101,7 @@ func testGatePipelineTemplateListSuccess() *httptest.Server {
 func testGateScopedPipelineTemplateListSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/v2/pipelineTemplates/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(scopedPipelineTemplateListJson))
+		fmt.Fprintln(w, strings.TrimSpace(scopedPipelineTemplateListJSON))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -110,12 +110,12 @@ func testGateScopedPipelineTemplateListSuccess() *httptest.Server {
 func testGatePipelineTemplateListMalformed() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/v2/pipelineTemplates/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineTemplateListJson))
+		fmt.Fprintln(w, strings.TrimSpace(malformedPipelineTemplateListJSON))
 	}))
 	return httptest.NewServer(mux)
 }
 
-const malformedPipelineTemplateListJson = `
+const malformedPipelineTemplateListJSON = `
   {
    "id": "newSpelTemplate",
    "lastModifiedBy": "anonymous",
@@ -172,7 +172,7 @@ const malformedPipelineTemplateListJson = `
 ]
 `
 
-const pipelineTemplateListJson = `
+const pipelineTemplateListJSON = `
 [
   {
    "id": "newSpelTemplate",
@@ -283,7 +283,7 @@ const pipelineTemplateListJson = `
 ]
 `
 
-const scopedPipelineTemplateListJson = `
+const scopedPipelineTemplateListJSON = `
 [
   {
    "id": "newSpelTemplate",

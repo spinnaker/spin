@@ -85,7 +85,7 @@ func testGateCanaryConfigListSuccess() *httptest.Server {
 	mux.Handle(
 		"/v2/canaryConfig",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintln(w, strings.TrimSpace(canaryConfigListJson))
+			fmt.Fprintln(w, strings.TrimSpace(canaryConfigListJSON))
 		}))
 	return httptest.NewServer(mux)
 }
@@ -96,7 +96,7 @@ func testGateCanaryConfigListMalformed() *httptest.Server {
 	mux.Handle(
 		"/v2/canaryConfig",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintln(w, strings.TrimSpace(malformedCanaryConfigListJson))
+			fmt.Fprintln(w, strings.TrimSpace(malformedCanaryConfigListJSON))
 		}))
 	return httptest.NewServer(mux)
 }
@@ -109,7 +109,7 @@ func testGateFail() *httptest.Server {
 	}))
 }
 
-const malformedCanaryConfigListJson = `
+const malformedCanaryConfigListJSON = `
  {
   "applications": [
    "canaryconfigs"
@@ -122,7 +122,7 @@ const malformedCanaryConfigListJson = `
 ]
 `
 
-const canaryConfigListJson = `
+const canaryConfigListJSON = `
 [
  {
   "applications": [

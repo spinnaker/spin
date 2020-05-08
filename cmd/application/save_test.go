@@ -55,9 +55,9 @@ func TestApplicationSave_basic(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testAppTaskJsonStr)
+	expected := strings.TrimSpace(testAppTaskJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestApplicationSave_fail(t *testing.T) {
@@ -192,7 +192,7 @@ func TestApplicationSave_filejson(t *testing.T) {
 	ts := testGateAppSaveSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempAppFile(testAppJsonStr)
+	tempFile := tempAppFile(testAppJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp app file.")
 	}
@@ -212,9 +212,9 @@ func TestApplicationSave_filejson(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testAppTaskJsonStr)
+	expected := strings.TrimSpace(testAppTaskJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestApplicationSave_fileyaml(t *testing.T) {
@@ -242,9 +242,9 @@ func TestApplicationSave_fileyaml(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testAppTaskJsonStr)
+	expected := strings.TrimSpace(testAppTaskJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestApplicationSave_stdinjson(t *testing.T) {
@@ -252,7 +252,7 @@ func TestApplicationSave_stdinjson(t *testing.T) {
 	ts := testGateAppSaveSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempAppFile(testAppJsonStr)
+	tempFile := tempAppFile(testAppJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp app file.")
 	}
@@ -277,9 +277,9 @@ func TestApplicationSave_stdinjson(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testAppTaskJsonStr)
+	expected := strings.TrimSpace(testAppTaskJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestApplicationSave_stdinyaml(t *testing.T) {
@@ -312,9 +312,9 @@ func TestApplicationSave_stdinyaml(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testAppTaskJsonStr)
+	expected := strings.TrimSpace(testAppTaskJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 // testGateFail spins up a local http server that we will configure the GateClient
@@ -333,10 +333,10 @@ func testGateAppSaveSuccess(buffer io.Writer) *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle(
 		"/tasks",
-		util.NewTestBufferHandlerFunc(http.MethodPost, buffer, http.StatusOK, strings.TrimSpace(testAppTaskRefJsonStr)),
+		util.NewTestBufferHandlerFunc(http.MethodPost, buffer, http.StatusOK, strings.TrimSpace(testAppTaskRefJSONStr)),
 	)
 	mux.Handle("/tasks/id", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(testAppTaskStatusJsonStr))
+		fmt.Fprintln(w, strings.TrimSpace(testAppTaskStatusJSONStr))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -351,19 +351,19 @@ func tempAppFile(appContent string) *os.File {
 	return tempFile
 }
 
-const testAppTaskRefJsonStr = `
+const testAppTaskRefJSONStr = `
 {
  "ref": "/tasks/id"
 }
 `
 
-const testAppTaskStatusJsonStr = `
+const testAppTaskStatusJSONStr = `
 {
  "status": "SUCCEEDED"
 }
 `
 
-const testAppJsonStr = `
+const testAppJSONStr = `
 {
    "email" : "appowner@spinnaker-test.net",
    "cloudProviders" : "gce,kubernetes",
@@ -379,7 +379,7 @@ name: app
 instancePort: 80
 `
 
-const testAppTaskJsonStr = `
+const testAppTaskJSONStr = `
 {
  "application": "app",
  "description": "Create Application: app",

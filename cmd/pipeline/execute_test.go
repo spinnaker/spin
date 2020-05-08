@@ -35,7 +35,7 @@ func TestPipelineExecute_basic(t *testing.T) {
 	ts := testGatePipelineExecuteSuccess()
 	defer ts.Close()
 
-	tempFile := tempPipelineFile(testPipelineJsonStr)
+	tempFile := tempPipelineFile(testPipelineJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline file.")
 	}
@@ -57,7 +57,7 @@ func TestPipelineExecute_fail(t *testing.T) {
 	ts := testGateFail()
 	defer ts.Close()
 
-	tempFile := tempPipelineFile(testPipelineJsonStr)
+	tempFile := tempPipelineFile(testPipelineJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline file.")
 	}
@@ -95,7 +95,7 @@ func TestPipelineExecute_missingname(t *testing.T) {
 	ts := testGateSuccess()
 	defer ts.Close()
 
-	tempFile := tempPipelineFile(missingNameJsonStr)
+	tempFile := tempPipelineFile(missingNameJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline file.")
 	}
@@ -117,7 +117,7 @@ func TestPipelineExecute_missingapp(t *testing.T) {
 	ts := testGateSuccess()
 	defer ts.Close()
 
-	tempFile := tempPipelineFile(missingAppJsonStr)
+	tempFile := tempPipelineFile(missingAppJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline file.")
 	}

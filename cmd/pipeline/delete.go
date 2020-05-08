@@ -67,6 +67,6 @@ func deletePipeline(options *deleteOptions) error {
 		return fmt.Errorf("Encountered an error deleting pipeline, status code: %d\n", resp.StatusCode)
 	}
 
-	options.Ui.Success("Pipeline deleted")
+	options.UI.Success("Pipeline deleted")
 	return nil
 }

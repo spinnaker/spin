@@ -79,10 +79,10 @@ func getApplication(options *getOptions, args []string) error {
 	if options.expand {
 		// NOTE: expand returns the actual attributes as well as the app's cluster details, nested in
 		// their own fields. This means that the expanded output can't be submitted as input to `save`.
-		options.Ui.JsonOutput(app)
+		options.UI.JSONOutput(app)
 	} else {
 		// NOTE: app GET wraps the actual app attributes in an 'attributes' field.
-		options.Ui.JsonOutput(app["attributes"])
+		options.UI.JSONOutput(app["attributes"])
 	}
 
 	return nil

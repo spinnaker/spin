@@ -19,6 +19,6 @@ import (
 )
 
 //open the application with parameters
-func OpenUrl(url string) error {
+func OpenURL(url string) error {
 	return exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Run()
 }

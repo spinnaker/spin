@@ -53,20 +53,20 @@ func NewSaveCmd(canaryConfigOptions *canaryConfigOptions) *cobra.Command {
 }
 
 func saveCanaryConfig(options *saveOptions) error {
-	templateJson, err := util.ParseJsonFromFileOrStdin(options.templateFile, false)
+	templateJSON, err := util.ParseJSONFromFileOrStdin(options.templateFile, false)
 	if err != nil {
 		return err
 	}
 
-	if _, exists := templateJson["id"]; !exists {
-		options.Ui.Error("Required canary config key 'id' missing...\n")
-		return fmt.Errorf("Submitted canary config is invalid: %s\n", templateJson)
+	if _, exists := templateJSON["id"]; !exists {
+		options.UI.Error("Required canary config key 'id' missing...\n")
+		return fmt.Errorf("Submitted canary config is invalid: %s\n", templateJSON)
 	}
 
-	templateId := templateJson["id"].(string)
+	templateID := templateJSON["id"].(string)
 
 	_, resp, queryErr := options.GateClient.V2CanaryConfigControllerApi.GetCanaryConfigUsingGET(
-		options.GateClient.Context, templateId, map[string]interface{}{})
+		options.GateClient.Context, templateID, map[string]interface{}{})
 	if queryErr != nil {
 		return queryErr
 	}
@@ -75,14 +75,14 @@ func saveCanaryConfig(options *saveOptions) error {
 	switch {
 	case resp.StatusCode == http.StatusOK:
 		_, saveResp, saveErr = options.GateClient.V2CanaryConfigControllerApi.UpdateCanaryConfigUsingPUT(
-			options.GateClient.Context, templateJson, templateId, map[string]interface{}{})
+			options.GateClient.Context, templateJSON, templateID, map[string]interface{}{})
 	case resp.StatusCode == http.StatusNotFound:
 		_, saveResp, saveErr = options.GateClient.V2CanaryConfigControllerApi.CreateCanaryConfigUsingPOST(
-			options.GateClient.Context, templateJson, map[string]interface{}{})
+			options.GateClient.Context, templateJSON, map[string]interface{}{})
 	default:
 		return fmt.Errorf(
 			"Encountered an unexpected status code %d querying canary config with id %s\n",
-			resp.StatusCode, templateId)
+			resp.StatusCode, templateID)
 	}
 	if saveErr != nil {
 		return saveErr
@@ -91,9 +91,9 @@ func saveCanaryConfig(options *saveOptions) error {
 	if saveResp.StatusCode != http.StatusOK {
 		return fmt.Errorf(
 			"Encountered an error saving canary config %v, status code: %d\n",
-			templateJson, saveResp.StatusCode)
+			templateJSON, saveResp.StatusCode)
 	}
 
-	options.Ui.Success("Canary config save succeeded")
+	options.UI.Success("Canary config save succeeded")
 	return nil
 }

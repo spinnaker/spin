@@ -58,6 +58,6 @@ func listApplication(options *listOptions) error {
 		return fmt.Errorf("Encountered an error saving application, status code: %d\n", resp.StatusCode)
 	}
 
-	options.Ui.JsonOutput(appList)
+	options.UI.JSONOutput(appList)
 	return nil
 }

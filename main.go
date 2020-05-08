@@ -27,8 +27,8 @@ func main() {
 	assembler.AddSubCommands(command, options)
 
 	if err := command.Execute(); err != nil {
-		if options.Ui != nil {
-			options.Ui.Error(err.Error())
+		if options.UI != nil {
+			options.UI.Error(err.Error())
 		} else {
 			fmt.Fprintf(os.Stderr, "\n%v\n", err)
 		}

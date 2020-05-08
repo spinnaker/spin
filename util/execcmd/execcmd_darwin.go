@@ -18,7 +18,7 @@ import (
 	"os/exec"
 )
 
-// OpenUrl will open the url using the open command
-func OpenUrl(url string) error {
+// OpenURL will open the url using the open command
+func OpenURL(url string) error {
 	return exec.Command("open", url).Run()
 }

@@ -56,32 +56,32 @@ func NewSaveCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command
 }
 
 func savePipelineTemplate(options *saveOptions) error {
-	templateJson, err := util.ParseJsonFromFileOrStdin(options.templateFile, false)
+	templateJSON, err := util.ParseJSONFromFileOrStdin(options.templateFile, false)
 	if err != nil {
 		return err
 	}
 
 	valid := true
-	if _, exists := templateJson["id"]; !exists {
-		options.Ui.Error("Required pipeline template key 'id' missing...\n")
+	if _, exists := templateJSON["id"]; !exists {
+		options.UI.Error("Required pipeline template key 'id' missing...\n")
 		valid = false
 	}
-	if _, exists := templateJson["schema"]; !exists {
-		options.Ui.Error("Required pipeline template key 'schema' missing...\n")
+	if _, exists := templateJSON["schema"]; !exists {
+		options.UI.Error("Required pipeline template key 'schema' missing...\n")
 		valid = false
 	}
 	if !valid {
-		return fmt.Errorf("Submitted pipeline is invalid: %s\n", templateJson)
+		return fmt.Errorf("Submitted pipeline is invalid: %s\n", templateJSON)
 	}
 
-	templateId := templateJson["id"].(string)
+	templateID := templateJSON["id"].(string)
 
 	queryParams := map[string]interface{}{}
 	if options.tag != "" {
 		queryParams["tag"] = options.tag
 	}
 
-	_, resp, queryErr := options.GateClient.V2PipelineTemplatesControllerApi.GetUsingGET2(options.GateClient.Context, templateId, queryParams)
+	_, resp, queryErr := options.GateClient.V2PipelineTemplatesControllerApi.GetUsingGET2(options.GateClient.Context, templateID, queryParams)
 	if queryErr != nil {
 		return queryErr
 	}
@@ -89,12 +89,12 @@ func savePipelineTemplate(options *saveOptions) error {
 	var saveErr error
 	switch {
 	case resp.StatusCode == http.StatusOK:
-		saveResp, saveErr = options.GateClient.V2PipelineTemplatesControllerApi.UpdateUsingPOST1(options.GateClient.Context, templateId, templateJson, queryParams)
+		saveResp, saveErr = options.GateClient.V2PipelineTemplatesControllerApi.UpdateUsingPOST1(options.GateClient.Context, templateID, templateJSON, queryParams)
 	case resp.StatusCode == http.StatusNotFound:
-		saveResp, saveErr = options.GateClient.V2PipelineTemplatesControllerApi.CreateUsingPOST1(options.GateClient.Context, templateJson, queryParams)
+		saveResp, saveErr = options.GateClient.V2PipelineTemplatesControllerApi.CreateUsingPOST1(options.GateClient.Context, templateJSON, queryParams)
 	default:
 		return fmt.Errorf("Encountered an unexpected status code %d querying pipeline template with id %s\n",
-			resp.StatusCode, templateId)
+			resp.StatusCode, templateID)
 	}
 	if saveErr != nil {
 		return saveErr
@@ -102,10 +102,10 @@ func savePipelineTemplate(options *saveOptions) error {
 
 	if saveResp.StatusCode != http.StatusAccepted {
 		return fmt.Errorf("Encountered an error saving pipeline template %v, status code: %d\n",
-			templateJson,
+			templateJSON,
 			saveResp.StatusCode)
 	}
 
-	options.Ui.Success("Pipeline template save succeeded")
+	options.UI.Success("Pipeline template save succeeded")
 	return nil
 }

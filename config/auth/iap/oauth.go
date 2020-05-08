@@ -59,7 +59,7 @@ type oauthReceiver struct {
 	mainClient   string
 	doneChan     chan error
 	callback     func(*oauth2.Token, *oauth2.Config, string) (string, error)
-	clientId     string
+	clientID     string
 	clientSecret string
 }
 
@@ -74,7 +74,7 @@ func (o *oauthReceiver) killWhenReady(n net.Conn, s http.ConnState) {
 func (o *oauthReceiver) NewOAuthConfig() *oauth2.Config {
 
 	return &oauth2.Config{
-		ClientID:     o.clientId,
+		ClientID:     o.clientID,
 		ClientSecret: o.clientSecret,
 		RedirectURL:  fmt.Sprintf("http://localhost:%d", o.port),
 		Scopes:       oauthScopes,
@@ -159,13 +159,13 @@ func (o *oauthReceiver) WebOutput(w http.ResponseWriter, header string, msg stri
 
 // RequestIapIDToken implements the audience parameter required for accessing
 // IAP, see for more https://cloud.google.com/iap/docs/authentication-howto
-func RequestIapIDToken(token string, clientId string, clientSecret string, iapClientId string) (string, error) {
+func RequestIapIDToken(token string, clientID string, clientSecret string, iapClientID string) (string, error) {
 	body := url.Values{}
-	body.Set("client_id", clientId)
+	body.Set("client_id", clientID)
 	body.Add("client_secret", clientSecret)
 	body.Add("refresh_token", token)
 	body.Add("grant_type", "refresh_token")
-	body.Add("audience", iapClientId)
+	body.Add("audience", iapClientID)
 
 	// Create request to google
 	req, err := http.NewRequest("POST", googleTokenURL, bytes.NewBufferString(body.Encode()))

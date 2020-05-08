@@ -63,13 +63,13 @@ func executePipeline(options *executeOptions) error {
 		return errors.New("one of required parameters 'application' or 'name' not set")
 	}
 
-	parameters, err := util.ParseJsonFromFile(options.parameterFile, true)
+	parameters, err := util.ParseJSONFromFile(options.parameterFile, true)
 	if err != nil {
 		return fmt.Errorf("Could not parse supplied pipeline parameters: %v.\n", err)
 	}
 
 	var artifactsFile map[string]interface{}
-	artifactsFile, err = util.ParseJsonFromFile(options.artifactsFile, true)
+	artifactsFile, err = util.ParseJSONFromFile(options.artifactsFile, true)
 	if err != nil {
 		return fmt.Errorf("Could not parse supplied artifacts: %v.\n", err)
 	}
@@ -99,7 +99,7 @@ func executePipeline(options *executeOptions) error {
 		return fmt.Errorf("Encountered an error executing pipeline, status code: %d\n", resp.StatusCode)
 	}
 
-	options.Ui.Success("Pipeline execution started")
+	options.UI.Success("Pipeline execution started")
 
 	return nil
 }

@@ -67,7 +67,7 @@ func GetIDTokenWithServiceAccount(config Config) (string, error) {
 		Iat: now,
 		Exp: now + expirationSecs,
 		PrivateClaims: map[string]interface{}{
-			"target_audience": config.IapClientId,
+			"target_audience": config.IapClientID,
 		},
 	}
 

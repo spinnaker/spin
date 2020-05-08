@@ -74,7 +74,7 @@ func TestAccountList_fail(t *testing.T) {
 func testGateAccountListSuccess() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/credentials/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(accountListJson))
+		fmt.Fprintln(w, strings.TrimSpace(accountListJSON))
 	}))
 	return httptest.NewServer(mux)
 }
@@ -82,12 +82,12 @@ func testGateAccountListSuccess() *httptest.Server {
 func testGateAccountListMalformed() *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
 	mux.Handle("/credentials/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(malformedAccountListJson))
+		fmt.Fprintln(w, strings.TrimSpace(malformedAccountListJSON))
 	}))
 	return httptest.NewServer(mux)
 }
 
-const malformedAccountListJson = `
+const malformedAccountListJSON = `
 	{
 	  "type": "kubernetes",
 	  "skin": "v2",
@@ -103,7 +103,7 @@ const malformedAccountListJson = `
 ]
 `
 
-const accountListJson = `[
+const accountListJSON = `[
 {
   "type": "kubernetes",
   "skin": "v2",

@@ -34,7 +34,7 @@ func TestPipelineTemplateSave_createjson(t *testing.T) {
 	ts := testGatePipelineTemplateCreateSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
+	tempFile := tempPipelineTemplateFile(testPipelineTemplateJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline template file.")
 	}
@@ -50,9 +50,9 @@ func TestPipelineTemplateSave_createjson(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testPipelineTemplateJsonStr)
+	expected := strings.TrimSpace(testPipelineTemplateJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineTemplateSave_createyaml(t *testing.T) {
@@ -76,9 +76,9 @@ func TestPipelineTemplateSave_createyaml(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testPipelineTemplateJsonStr)
+	expected := strings.TrimSpace(testPipelineTemplateJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineTemplateSave_createtag(t *testing.T) {
@@ -86,7 +86,7 @@ func TestPipelineTemplateSave_createtag(t *testing.T) {
 	ts := testGatePipelineTemplateCreateSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
+	tempFile := tempPipelineTemplateFile(testPipelineTemplateJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline template file.")
 	}
@@ -102,9 +102,9 @@ func TestPipelineTemplateSave_createtag(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testPipelineTemplateJsonStr)
+	expected := strings.TrimSpace(testPipelineTemplateJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineTemplateSave_update(t *testing.T) {
@@ -112,7 +112,7 @@ func TestPipelineTemplateSave_update(t *testing.T) {
 	ts := testGatePipelineTemplateUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
+	tempFile := tempPipelineTemplateFile(testPipelineTemplateJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline template file.")
 	}
@@ -128,9 +128,9 @@ func TestPipelineTemplateSave_update(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testPipelineTemplateJsonStr)
+	expected := strings.TrimSpace(testPipelineTemplateJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineTemplateSave_updatetag(t *testing.T) {
@@ -138,7 +138,7 @@ func TestPipelineTemplateSave_updatetag(t *testing.T) {
 	ts := testGatePipelineTemplateUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
+	tempFile := tempPipelineTemplateFile(testPipelineTemplateJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline template file.")
 	}
@@ -154,9 +154,9 @@ func TestPipelineTemplateSave_updatetag(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testPipelineTemplateJsonStr)
+	expected := strings.TrimSpace(testPipelineTemplateJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineTemplateSave_stdin(t *testing.T) {
@@ -164,7 +164,7 @@ func TestPipelineTemplateSave_stdin(t *testing.T) {
 	ts := testGatePipelineTemplateUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
+	tempFile := tempPipelineTemplateFile(testPipelineTemplateJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline template file.")
 	}
@@ -186,16 +186,16 @@ func TestPipelineTemplateSave_stdin(t *testing.T) {
 		t.Fatalf("Command failed with: %s", err)
 	}
 
-	expected := strings.TrimSpace(testPipelineTemplateJsonStr)
+	expected := strings.TrimSpace(testPipelineTemplateJSONStr)
 	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "save request body", expected, recieved)
+	util.TestPrettyJSONDiff(t, "save request body", expected, recieved)
 }
 
 func TestPipelineTemplateSave_fail(t *testing.T) {
 	ts := testGateFail()
 	defer ts.Close()
 
-	tempFile := tempPipelineTemplateFile(testPipelineTemplateJsonStr)
+	tempFile := tempPipelineTemplateFile(testPipelineTemplateJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline template file.")
 	}
@@ -240,7 +240,7 @@ func TestPipelineTemplateSave_missingid(t *testing.T) {
 	ts := testGatePipelineTemplateUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempPipelineTemplateFile(missingIdJsonStr)
+	tempFile := tempPipelineTemplateFile(missingIDJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline file.")
 	}
@@ -268,7 +268,7 @@ func TestPipelineTemplateSave_missingschema(t *testing.T) {
 	ts := testGatePipelineTemplateUpdateSuccess(saveBuffer)
 	defer ts.Close()
 
-	tempFile := tempPipelineTemplateFile(missingSchemaJsonStr)
+	tempFile := tempPipelineTemplateFile(missingSchemaJSONStr)
 	if tempFile == nil {
 		t.Fatal("Could not create temp pipeline file.")
 	}
@@ -335,7 +335,7 @@ func testGatePipelineTemplateCreateSuccess(buffer io.Writer) *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
-const missingSchemaJsonStr = `
+const missingSchemaJSONStr = `
 {
  "id": "testSpelTemplate",
  "lastModifiedBy": "anonymous",
@@ -390,7 +390,7 @@ const missingSchemaJsonStr = `
 }
 `
 
-const missingIdJsonStr = `
+const missingIDJSONStr = `
 {
  "lastModifiedBy": "anonymous",
  "metadata": {
@@ -445,7 +445,7 @@ const missingIdJsonStr = `
 }
 `
 
-const testPipelineTemplateJsonStr = `
+const testPipelineTemplateJSONStr = `
 {
  "id": "testSpelTemplate",
  "lastModifiedBy": "anonymous",
