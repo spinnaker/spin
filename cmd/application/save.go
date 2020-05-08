@@ -66,7 +66,7 @@ func saveApplication(cmd *cobra.Command, options *saveOptions) error {
 	}
 
 	var app map[string]interface{}
-	if initialApp != nil && len(initialApp) > 0 {
+	if len(initialApp) > 0 {
 		app = initialApp
 		if len(*options.cloudProviders) != 0 {
 			options.Ui.Warn("Overriding application cloud providers with explicit flag values.\n")

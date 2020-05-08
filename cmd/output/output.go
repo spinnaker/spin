@@ -17,7 +17,6 @@ package output
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -40,11 +39,11 @@ func ParseOutputFormat(outputFormat string) (OutputFormater, error) {
 	case strings.HasPrefix(outputFormat, "jsonpath=") && outputFormat != "jsonpath=":
 		toks := strings.Split(outputFormat, "=")
 		if len(toks) != 2 {
-			return nil, errors.New(fmt.Sprintf("Failed to parse output format flag value: %s", outputFormat))
+			return nil, fmt.Errorf("Failed to parse output format flag value: %s", outputFormat)
 		}
 		return MarshalToJsonPathWrapper(toks[1]), nil
 	default:
-		return nil, errors.New(fmt.Sprintf("Failed to parse output format flag value: %s", outputFormat))
+		return nil, fmt.Errorf("Failed to parse output format flag value: %s", outputFormat)
 	}
 }
 
@@ -75,8 +74,8 @@ func MarshalToJsonPathWrapper(expression string) OutputFormater {
 			return nil, fmt.Errorf("Failed to execute jsonpath %s on input %s: %v ", expr, input, err)
 		}
 
-		if values == nil || len(values) == 0 || len(values[0]) == 0 {
-			return nil, errors.New(fmt.Sprintf("Error parsing value from input %v using template %s: %v ", input, expr, err))
+		if len(values) == 0 || len(values[0]) == 0 {
+			return nil, fmt.Errorf("Error parsing value from input %v using template %s: %v ", input, expr, err)
 		}
 
 		json, err := MarshalToJson(values[0][0].Interface())
