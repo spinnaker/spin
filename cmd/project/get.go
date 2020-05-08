@@ -46,14 +46,14 @@ func NewGetCmd(prjOptions *projectOptions) *cobra.Command {
 		Long:    getProjectLong,
 		Example: getProjectExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return getProject(cmd, options, args)
+			return getProject(options, args)
 		},
 	}
 
 	return cmd
 }
 
-func getProject(cmd *cobra.Command, options *getOptions, args []string) error {
+func getProject(options *getOptions, args []string) error {
 	projectName, err := util.ReadArgsOrStdin(args)
 	if err != nil {
 		return err

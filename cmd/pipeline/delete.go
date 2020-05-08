@@ -43,7 +43,7 @@ func NewDeleteCmd(pipelineOptions *PipelineOptions) *cobra.Command {
 		Short:   deletePipelineShort,
 		Long:    deletePipelineLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return deletePipeline(cmd, options)
+			return deletePipeline(options)
 		},
 	}
 
@@ -53,7 +53,7 @@ func NewDeleteCmd(pipelineOptions *PipelineOptions) *cobra.Command {
 	return cmd
 }
 
-func deletePipeline(cmd *cobra.Command, options *deleteOptions) error {
+func deletePipeline(options *deleteOptions) error {
 	if options.application == "" || options.name == "" {
 		return errors.New("one of required parameters 'application' or 'name' not set")
 	}

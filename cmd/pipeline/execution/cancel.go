@@ -41,14 +41,14 @@ func NewCancelCmd(executionOptions *executionOptions) *cobra.Command {
 		Short: cancelExecutionShort,
 		Long:  cancelExecutionLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return cancelExecution(cmd, options, args)
+			return cancelExecution(options, args)
 		},
 	}
 
 	return cmd
 }
 
-func cancelExecution(cmd *cobra.Command, options *cancelOptions, args []string) error {
+func cancelExecution(options *cancelOptions, args []string) error {
 	executionId, err := util.ReadArgsOrStdin(args)
 	if executionId == "" {
 		return errors.New("no execution id supplied, exiting")

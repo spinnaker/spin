@@ -54,7 +54,7 @@ func NewUseCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command 
 		Short: usePipelineTemplateShort,
 		Long:  usePipelineTemplateLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return usePipelineTemplate(cmd, options, args)
+			return usePipelineTemplate(options, args)
 		},
 	}
 
@@ -71,7 +71,7 @@ func NewUseCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command 
 	return cmd
 }
 
-func usePipelineTemplate(cmd *cobra.Command, options *useOptions, args []string) error {
+func usePipelineTemplate(options *useOptions, args []string) error {
 	id, errID := getTemplateID(options, args)
 	if errID != nil {
 		return errID

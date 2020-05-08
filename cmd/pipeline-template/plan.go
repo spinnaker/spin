@@ -42,7 +42,7 @@ func NewPlanCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command
 		Short: planPipelineTemplateShort,
 		Long:  planPipelineTemplateLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return planPipelineTemplate(cmd, options)
+			return planPipelineTemplate(options)
 		},
 	}
 
@@ -51,7 +51,7 @@ func NewPlanCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command
 	return cmd
 }
 
-func planPipelineTemplate(cmd *cobra.Command, options *planOptions) error {
+func planPipelineTemplate(options *planOptions) error {
 	configJson, err := util.ParseJsonFromFileOrStdin(options.configPath, false)
 	if err != nil {
 		return err

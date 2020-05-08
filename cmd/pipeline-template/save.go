@@ -43,7 +43,7 @@ func NewSaveCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command
 		Short:   saveTemplateShort,
 		Long:    saveTemplateLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return savePipelineTemplate(cmd, options)
+			return savePipelineTemplate(options)
 		},
 	}
 
@@ -55,7 +55,7 @@ func NewSaveCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command
 	return cmd
 }
 
-func savePipelineTemplate(cmd *cobra.Command, options *saveOptions) error {
+func savePipelineTemplate(options *saveOptions) error {
 	templateJson, err := util.ParseJsonFromFileOrStdin(options.templateFile, false)
 	if err != nil {
 		return err

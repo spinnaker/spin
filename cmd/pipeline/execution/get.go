@@ -40,13 +40,13 @@ func NewGetCmd(executionOptions *executionOptions) *cobra.Command {
 		Short: getExecutionShort,
 		Long:  getExecutionLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return getExecution(cmd, options, args)
+			return getExecution(options, args)
 		},
 	}
 	return cmd
 }
 
-func getExecution(cmd *cobra.Command, options *getOptions, args []string) error {
+func getExecution(options *getOptions, args []string) error {
 	id, err := util.ReadArgsOrStdin(args)
 	if err != nil {
 		return err

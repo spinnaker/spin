@@ -42,7 +42,7 @@ func NewListCmd(pipelineOptions *PipelineOptions) *cobra.Command {
 		Short:   listPipelineShort,
 		Long:    listPipelineLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listPipeline(cmd, options)
+			return listPipeline(options)
 		},
 	}
 
@@ -51,7 +51,7 @@ func NewListCmd(pipelineOptions *PipelineOptions) *cobra.Command {
 	return cmd
 }
 
-func listPipeline(cmd *cobra.Command, options *listOptions) error {
+func listPipeline(options *listOptions) error {
 	if options.application == "" {
 		return errors.New("required parameter 'application' not set")
 	}

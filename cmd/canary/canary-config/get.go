@@ -42,7 +42,7 @@ func NewGetCmd(canaryConfigOptions *canaryConfigOptions) *cobra.Command {
 		Short: getCanaryConfigShort,
 		Long:  getCanaryConfigLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return getCanaryConfig(cmd, options, args)
+			return getCanaryConfig(options, args)
 		},
 	}
 
@@ -51,7 +51,7 @@ func NewGetCmd(canaryConfigOptions *canaryConfigOptions) *cobra.Command {
 	return cmd
 }
 
-func getCanaryConfig(cmd *cobra.Command, options *getOptions, args []string) error {
+func getCanaryConfig(options *getOptions, args []string) error {
 	var err error
 	id := options.id
 	if id == "" {

@@ -42,13 +42,13 @@ func NewListCmd(appOptions *applicationOptions) *cobra.Command {
 		Long:    listApplicationLong,
 		Example: listApplicationExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listApplication(cmd, options, args)
+			return listApplication(options)
 		},
 	}
 	return cmd
 }
 
-func listApplication(cmd *cobra.Command, options *listOptions, args []string) error {
+func listApplication(options *listOptions) error {
 	appList, resp, err := options.GateClient.ApplicationControllerApi.GetAllApplicationsUsingGET(options.GateClient.Context, map[string]interface{}{})
 	if err != nil {
 		return err

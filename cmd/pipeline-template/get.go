@@ -43,7 +43,7 @@ func NewGetCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command 
 		Short: getPipelineTemplateShort,
 		Long:  getPipelineTemplateLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return getPipelineTemplate(cmd, options, args)
+			return getPipelineTemplate(options, args)
 		},
 	}
 
@@ -54,7 +54,7 @@ func NewGetCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command 
 	return cmd
 }
 
-func getPipelineTemplate(cmd *cobra.Command, options *getOptions, args []string) error {
+func getPipelineTemplate(options *getOptions, args []string) error {
 	var err error
 	id := options.id
 	if id == "" {

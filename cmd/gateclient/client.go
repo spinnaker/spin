@@ -49,13 +49,6 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
-const (
-	// defaultConfigFileMode is the default file mode used for config files. This corresponds to
-	// the Unix file permissions u=rw,g=,o= so that config files with cached tokens, at least by
-	// default, are only readable by the user that owns the config file.
-	defaultConfigFileMode os.FileMode = 0600 // u=rw,g=,o=
-)
-
 // GatewayClient is the wrapper with authentication
 type GatewayClient struct {
 	// The exported fields below should be set by anyone using a command
@@ -466,14 +459,14 @@ func (m *GatewayClient) authenticateLdap() error {
 func (m *GatewayClient) writeYAMLConfig() error {
 	// Write updated config file with u=rw,g=,o= permissions by default.
 	// The default permissions should only be used if the file no longer exists.
-	err := writeYAML(&m.Config, m.configLocation, defaultConfigFileMode)
+	err := writeYAML(&m.Config, m.configLocation)
 	if err != nil {
 		m.ui.Warn(fmt.Sprintf("Error caching oauth2 token: %v", err))
 	}
 	return err
 }
 
-func writeYAML(v interface{}, dest string, defaultMode os.FileMode) error {
+func writeYAML(v interface{}, dest string) error {
 	// Write config with cached token
 	buf, err := yaml.Marshal(v)
 	if err != nil {

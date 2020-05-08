@@ -45,13 +45,13 @@ func NewListCmd(accOptions *accountOptions) *cobra.Command {
 		Long:    listAccountLong,
 		Example: listAccountExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listAccount(cmd, options, args)
+			return listAccount(options)
 		},
 	}
 	return cmd
 }
 
-func listAccount(cmd *cobra.Command, options *listOptions, args []string) error {
+func listAccount(options *listOptions) error {
 	accountList, resp, err := options.GateClient.CredentialsControllerApi.GetAccountsUsingGET(options.GateClient.Context, map[string]interface{}{"expand": options.expand})
 	if err != nil {
 		return err

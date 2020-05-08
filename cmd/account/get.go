@@ -43,14 +43,14 @@ func NewGetCmd(accOptions *accountOptions) *cobra.Command {
 		Long:    getAccountLong,
 		Example: getAccountExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return getAccount(cmd, options, args)
+			return getAccount(options, args)
 		},
 	}
 
 	return cmd
 }
 
-func getAccount(cmd *cobra.Command, options *getOptions, args []string) error {
+func getAccount(options *getOptions, args []string) error {
 	accountName, err := util.ReadArgsOrStdin(args)
 	if err != nil {
 		return err

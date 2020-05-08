@@ -42,7 +42,7 @@ func NewSaveCmd(canaryConfigOptions *canaryConfigOptions) *cobra.Command {
 		Short:   saveTemplateShort,
 		Long:    saveTemplateLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return saveCanaryConfig(cmd, options)
+			return saveCanaryConfig(options)
 		},
 	}
 
@@ -52,7 +52,7 @@ func NewSaveCmd(canaryConfigOptions *canaryConfigOptions) *cobra.Command {
 	return cmd
 }
 
-func saveCanaryConfig(cmd *cobra.Command, options *saveOptions) error {
+func saveCanaryConfig(options *saveOptions) error {
 	templateJson, err := util.ParseJsonFromFileOrStdin(options.templateFile, false)
 	if err != nil {
 		return err

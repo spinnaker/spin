@@ -43,7 +43,7 @@ func NewSaveCmd(pipelineOptions *PipelineOptions) *cobra.Command {
 		Short:   savePipelineShort,
 		Long:    savePipelineLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return savePipeline(cmd, options)
+			return savePipeline(options)
 		},
 	}
 
@@ -52,7 +52,7 @@ func NewSaveCmd(pipelineOptions *PipelineOptions) *cobra.Command {
 	return cmd
 }
 
-func savePipeline(cmd *cobra.Command, options *saveOptions) error {
+func savePipeline(options *saveOptions) error {
 	pipelineJson, err := util.ParseJsonFromFileOrStdin(options.pipelineFile, false)
 	if err != nil {
 		return err

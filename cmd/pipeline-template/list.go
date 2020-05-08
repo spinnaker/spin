@@ -41,7 +41,7 @@ func NewListCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command
 		Short:   listPipelineTemplateShort,
 		Long:    listPipelineTemplateLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listPipelineTemplate(cmd, options)
+			return listPipelineTemplate(options)
 		},
 	}
 
@@ -51,7 +51,7 @@ func NewListCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command
 	return cmd
 }
 
-func listPipelineTemplate(cmd *cobra.Command, options *listOptions) error {
+func listPipelineTemplate(options *listOptions) error {
 	successPayload, resp, err := options.GateClient.V2PipelineTemplatesControllerApi.ListUsingGET1(options.GateClient.Context,
 		map[string]interface{}{"scopes": options.scopes})
 

@@ -48,7 +48,7 @@ func NewListCmd(executionOptions *executionOptions) *cobra.Command {
 		Short:   listExecutionShort,
 		Long:    listExecutionLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listExecution(cmd, options)
+			return listExecution(options)
 		},
 	}
 
@@ -62,7 +62,7 @@ func NewListCmd(executionOptions *executionOptions) *cobra.Command {
 	return cmd
 }
 
-func listExecution(cmd *cobra.Command, options *listOptions) error {
+func listExecution(options *listOptions) error {
 	if options.pipelineConfigId == "" {
 		return errors.New("required parameter 'pipeline-id' not set")
 	}

@@ -47,7 +47,7 @@ func NewGetCmd(appOptions *applicationOptions) *cobra.Command {
 		Long:    getApplicationLong,
 		Example: getApplicationExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return getApplication(cmd, options, args)
+			return getApplication(options, args)
 		},
 	}
 
@@ -57,7 +57,7 @@ func NewGetCmd(appOptions *applicationOptions) *cobra.Command {
 	return cmd
 }
 
-func getApplication(cmd *cobra.Command, options *getOptions, args []string) error {
+func getApplication(options *getOptions, args []string) error {
 	applicationName, err := util.ReadArgsOrStdin(args)
 	if err != nil {
 		return err

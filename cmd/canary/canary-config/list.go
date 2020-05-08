@@ -41,7 +41,7 @@ func NewListCmd(canaryConfigOptions *canaryConfigOptions) *cobra.Command {
 		Short:   listCanaryConfigShort,
 		Long:    listCanaryConfigLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listCanaryConfig(cmd, options)
+			return listCanaryConfig(options)
 		},
 	}
 
@@ -51,7 +51,7 @@ func NewListCmd(canaryConfigOptions *canaryConfigOptions) *cobra.Command {
 	return cmd
 }
 
-func listCanaryConfig(cmd *cobra.Command, options *listOptions) error {
+func listCanaryConfig(options *listOptions) error {
 	successPayload, resp, err := options.GateClient.V2CanaryConfigControllerApi.GetCanaryConfigsUsingGET(
 		options.GateClient.Context, map[string]interface{}{"application": options.application})
 

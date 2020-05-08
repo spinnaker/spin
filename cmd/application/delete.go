@@ -45,13 +45,13 @@ func NewDeleteCmd(appOptions *applicationOptions) *cobra.Command {
 		Long:    deleteApplicationLong,
 		Example: deleteApplicationExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return deleteApplication(cmd, options, args)
+			return deleteApplication(options, args)
 		},
 	}
 	return cmd
 }
 
-func deleteApplication(cmd *cobra.Command, options *deleteOptions, args []string) error {
+func deleteApplication(options *deleteOptions, args []string) error {
 	applicationName, err := util.ReadArgsOrStdin(args)
 	if err != nil {
 		return err

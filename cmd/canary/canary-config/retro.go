@@ -62,7 +62,7 @@ func NewRetroCmd(canaryConfigOptions *canaryConfigOptions) *cobra.Command {
 		Short:   retroTemplateShort,
 		Long:    retroTemplateLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return retroCanaryConfig(cmd, options)
+			return retroCanaryConfig(options)
 		},
 	}
 
@@ -87,7 +87,7 @@ func NewRetroCmd(canaryConfigOptions *canaryConfigOptions) *cobra.Command {
 	return cmd
 }
 
-func retroCanaryConfig(cmd *cobra.Command, options *retroOptions) error {
+func retroCanaryConfig(options *retroOptions) error {
 	canaryConfigJson, err := util.ParseJsonFromFileOrStdin(options.canaryConfigFile, false)
 	if err != nil {
 		return err

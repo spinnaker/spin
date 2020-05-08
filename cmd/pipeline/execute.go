@@ -46,7 +46,7 @@ func NewExecuteCmd(pipelineOptions *PipelineOptions) *cobra.Command {
 		Short:   executePipelineShort,
 		Long:    executePipelineLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return executePipeline(cmd, options)
+			return executePipeline(options)
 		},
 	}
 
@@ -58,7 +58,7 @@ func NewExecuteCmd(pipelineOptions *PipelineOptions) *cobra.Command {
 	return cmd
 }
 
-func executePipeline(cmd *cobra.Command, options *executeOptions) error {
+func executePipeline(options *executeOptions) error {
 	if options.application == "" || options.name == "" {
 		return errors.New("one of required parameters 'application' or 'name' not set")
 	}

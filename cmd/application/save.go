@@ -46,7 +46,7 @@ func NewSaveCmd(appOptions *applicationOptions) *cobra.Command {
 		Short: saveApplicationShort,
 		Long:  saveApplicationLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return saveApplication(cmd, options)
+			return saveApplication(options)
 		},
 	}
 	cmd.PersistentFlags().StringVarP(&options.applicationFile, "file", "f", "", "path to the application file")
@@ -57,7 +57,7 @@ func NewSaveCmd(appOptions *applicationOptions) *cobra.Command {
 	return cmd
 }
 
-func saveApplication(cmd *cobra.Command, options *saveOptions) error {
+func saveApplication(options *saveOptions) error {
 	// TODO(jacobkiefer): Should we check for an existing application of the same name?
 
 	initialApp, err := util.ParseJsonFromFileOrStdin(options.applicationFile, true)

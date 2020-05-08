@@ -41,14 +41,14 @@ func NewDeleteCmd(canaryConfigOptions *canaryConfigOptions) *cobra.Command {
 		Short:   deleteCanaryConfigShort,
 		Long:    deleteCanaryConfigLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return deleteCanaryConfig(cmd, options, args)
+			return deleteCanaryConfig(options, args)
 		},
 	}
 
 	return cmd
 }
 
-func deleteCanaryConfig(cmd *cobra.Command, options *deleteOptions, args []string) error {
+func deleteCanaryConfig(options *deleteOptions, args []string) error {
 	id, err := util.ReadArgsOrStdin(args)
 	if err != nil {
 		return err

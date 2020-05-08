@@ -43,7 +43,7 @@ func NewDeleteCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Comma
 		Short:   deletePipelineTemplateShort,
 		Long:    deletePipelineTemplateLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return deletePipelineTemplate(cmd, options, args)
+			return deletePipelineTemplate(options, args)
 		},
 	}
 
@@ -53,7 +53,7 @@ func NewDeleteCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Comma
 	return cmd
 }
 
-func deletePipelineTemplate(cmd *cobra.Command, options *deleteOptions, args []string) error {
+func deletePipelineTemplate(options *deleteOptions, args []string) error {
 	id, err := util.ReadArgsOrStdin(args)
 	if err != nil {
 		return err
