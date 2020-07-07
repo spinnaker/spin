@@ -84,16 +84,13 @@ func savePipeline(cmd *cobra.Command, options *saveOptions) error {
 	pipelineName := pipelineJson["name"].(string)
 
 	foundPipeline, queryResp, _ := options.GateClient.ApplicationControllerApi.GetPipelineConfigUsingGET(options.GateClient.Context, application, pipelineName)
-
-	if queryResp.StatusCode != http.StatusOK {
-		return fmt.Errorf("Encountered an error querying pipeline, status code: %d\n", queryResp.StatusCode)
-	}
-
-	_, exists := pipelineJson["id"].(string)
+	
 	var foundPipelineId string
-	if len(foundPipeline) > 0 {
+	if (queryResp.StatusCode != http.StatusOK) && (len(foundPipeline) > 0) {
 		foundPipelineId = foundPipeline["id"].(string)
 	}
+	
+	_, exists := pipelineJson["id"].(string)
 	if !exists && foundPipelineId != "" {
 		pipelineJson["id"] = foundPipelineId
 	}
