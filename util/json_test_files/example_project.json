@@ -1,6 +1,7 @@
 {
    "name":"example project",
    "email":"user@spinnaker.com",
+   "user":"user@spinnaker.com",
    "config":{
       "pipelineConfigs":[
       ],

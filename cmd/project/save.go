@@ -70,8 +70,9 @@ func saveProject(cmd *cobra.Command, options *saveOptions) error {
     }
 
     createProjectTask := map[string]interface{}{
-        "job":          []interface{}{map[string]interface{}{"type": "upsertProject", "project": project}},
+        "job":          []interface{}{map[string]interface{}{"type": "upsertProject", "project": project, "user":  project["email"]}},
         "application":  "spinnaker",
+        "project":  project["name"],
         "description":  fmt.Sprintf("Create Project: %s", project["name"]),
     }
 
