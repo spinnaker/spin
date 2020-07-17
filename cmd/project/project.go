@@ -29,5 +29,6 @@ func NewProjectCmd(rootOptions *cmd.RootOptions) *cobra.Command {
 
 	// create subcommands
 	cmd.AddCommand(NewGetPipelinesCmd(options))
+	cmd.AddCommand(NewGetCmd(options))
 	return cmd
 }
