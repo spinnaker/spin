@@ -1,0 +1,12 @@
+{
+   "name":"example project",
+   "email":"user@spinnaker.com",
+   "config":{
+      "pipelineConfigs":[
+      ],
+      "applications":[
+      ],
+      "clusters":[
+      ]
+   }
+}
