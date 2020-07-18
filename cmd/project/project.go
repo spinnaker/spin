@@ -1,4 +1,4 @@
-// Copyright (c) 2020, Google, Inc.
+// Copyright (c) 2020, Anosua "Chini" Mukhopadhyay
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,8 +42,9 @@ func NewProjectCmd(rootOptions *cmd.RootOptions) *cobra.Command {
 	}
 
 	// create subcommands
+  cmd.AddCommand(NewListCmd(options))
 	cmd.AddCommand(NewGetCmd(options))
-	cmd.AddCommand(NewSaveCmd(options))
-	cmd.AddCommand(NewListCmd(options))
+  cmd.AddCommand(NewGetPipelinesCmd(options))
+  cmd.AddCommand(NewSaveCmd(options))
 	return cmd
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2020, Anosua Chini Mukhopadhyay
+// Copyright (c) 2019, Kevin Reynolds.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,41 +23,43 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type getProjectOptions struct {
+type getProjectPipelinesOptions struct {
 	*projectOptions
+	expand bool
 }
 
 var (
-	getProjectShort   = "Get the config for the specified project"
-	getProjectLong    = "Get the config for the specified project"
-	getProjectExample = "usage: spin project [options] project-name"
+	getPipelinesProjectShort   = "Get the pipelines for the specified project"
+	getPipelinesProjectLong    = "Get the pipelines for the specified project"
+	getPipelinesProjectExample = "usage: spin project get-pipelines [options] project-name"
 )
 
-func NewGetCmd(prjOptions *projectOptions) *cobra.Command {
-	options := &getProjectOptions{
+func NewGetPipelinesCmd(prjOptions *projectOptions) *cobra.Command {
+	options := &getProjectPipelinesOptions{
 		projectOptions: prjOptions,
+		expand:         false,
 	}
 
 	cmd := &cobra.Command{
-		Use:     "get",
-		Short:   getProjectShort,
-		Long:    getProjectLong,
-		Example: getProjectExample,
+		Use:     "get-pipelines",
+		Short:   getPipelinesProjectShort,
+		Long:    getPipelinesProjectLong,
+		Example: getPipelinesProjectExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return getProject(cmd, options, args)
+			return getProjectPipelines(cmd, options, args)
 		},
 	}
 
 	return cmd
 }
 
-func getProject(cmd *cobra.Command, options *getProjectOptions, args []string) error {
+func getProjectPipelines(cmd *cobra.Command, options *getProjectPipelinesOptions, args []string) error {
 	projectName, err := util.ReadArgsOrStdin(args)
 	if err != nil {
 		return err
 	}
 
-	project, resp, err := options.GateClient.ProjectControllerApi.GetUsingGET1(options.GateClient.Context, projectName)
+	project, resp, err := options.GateClient.ProjectControllerApi.AllPipelinesForProjectUsingGET(options.GateClient.Context, projectName, map[string]interface{}{"expand": options.expand})
 	if resp != nil {
 		if resp.StatusCode == http.StatusNotFound {
 			return fmt.Errorf("Project '%s' not found\n", projectName)
