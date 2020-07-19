@@ -87,7 +87,7 @@ func executePipeline(cmd *cobra.Command, options *executeOptions) error {
 		}
 	}
 
-	resp, err := options.GateClient.PipelineControllerApi.InvokePipelineConfigUsingPOST1(options.GateClient.Context,
+	successPayload, resp, err := options.GateClient.PipelineControllerApi.InvokePipelineConfigUsingPOST1(options.GateClient.Context,
 		options.application,
 		options.name,
 		map[string]interface{}{"trigger": trigger})
@@ -100,7 +100,7 @@ func executePipeline(cmd *cobra.Command, options *executeOptions) error {
 		return fmt.Errorf("Encountered an error executing pipeline, status code: %d\n", resp.StatusCode)
 	}
 
-	options.Ui.Success("Pipeline execution started")
+	options.Ui.JsonOutput(successPayload)
 
 	return nil
 }
