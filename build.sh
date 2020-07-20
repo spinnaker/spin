@@ -8,7 +8,6 @@ RELEASE_PHASE=
 go_os=
 go_arch=
 
-
 function process_args() {
   while [[ $# -gt 0 ]]
   do
@@ -42,7 +41,6 @@ function process_args() {
   done
 }
 
-
 function print_usage() {
     cat <<EOF
 usage: $0 --version <version>
@@ -59,7 +57,6 @@ usage: $0 --version <version>
     --version <arg>              Version to build the 'spin' binaries with.
 EOF
 }
-
 
 process_args "$@"
 
