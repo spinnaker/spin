@@ -76,8 +76,11 @@ if [[ ! -z "$go_os" ]]; then
     export GOOS="$go_os"
 fi
 
-LD_FLAGS="-X github.com/spinnaker/spin/version.Version=${VERSION} \
+LD_FLAGS=<<EOF
+-X github.com/spinnaker/spin/version.Version=${VERSION} \
 -X github.com/spinnaker/spin/version.ReleasePhase=${RELEASE_PHASE}"
+EOF
+
 go clean
 go get -d -v
 CGO_ENABLED=0 go build -ldflags "${LD_FLAGS}" .
