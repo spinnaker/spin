@@ -155,11 +155,9 @@ func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation st
 		_ = gateClient.writeYAMLConfig()
 	}
 
-	if gateClient.Config.Auth.Ldap != nil {
-		if err = authenticateLdap(ui.Output, httpClient, gateClient.GateEndpoint(), gateClient.Config.Auth); err != nil {
-			ui.Error("LDAP Authentication Failed")
-			return nil, unwrapErr(ui, err)
-		}
+	if err = authenticateLdap(ui.Output, httpClient, gateClient.GateEndpoint(), gateClient.Config.Auth); err != nil {
+		ui.Error("LDAP Authentication Failed")
+		return nil, unwrapErr(ui, err)
 	}
 
 	m := make(map[string]string)
