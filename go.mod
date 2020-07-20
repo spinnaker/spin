@@ -5,7 +5,6 @@ go 1.12
 require (
 	cloud.google.com/go v0.45.1 // indirect
 	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883
-	github.com/antihax/optional v1.0.0
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/mattn/go-isatty v0.0.9 // indirect
@@ -22,6 +21,7 @@ require (
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/sys v0.0.0-20190910064555-bbd175535a8b // indirect
 	google.golang.org/appengine v1.6.2 // indirect
+	gopkg.in/yaml.v2 v2.2.8
 	k8s.io/client-go v11.0.0+incompatible
 	sigs.k8s.io/yaml v1.2.0
 )

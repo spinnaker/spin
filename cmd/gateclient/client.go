@@ -46,7 +46,7 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
-	"sigs.k8s.io/yaml"
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -221,7 +221,7 @@ func userConfig(gateClient *GatewayClient, configLocation string) error {
 
 	yamlFile, err := ioutil.ReadFile(gateClient.configLocation)
 	if yamlFile != nil {
-		err = yaml.UnmarshalStrict([]byte(os.ExpandEnv(string(yamlFile))), &gateClient.Config)
+		err = yaml.Unmarshal([]byte(os.ExpandEnv(string(yamlFile))), &gateClient.Config)
 		if err != nil {
 			gateClient.ui.Error(fmt.Sprintf("Could not deserialize config file with contents: %s, failing.", yamlFile))
 			return err
@@ -229,6 +229,8 @@ func userConfig(gateClient *GatewayClient, configLocation string) error {
 	} else {
 		gateClient.Config = config.Config{}
 	}
+
+	fmt.Println(gateClient.Config)
 	return nil
 }
 
