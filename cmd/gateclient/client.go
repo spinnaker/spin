@@ -132,23 +132,19 @@ func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation st
 	updatedConfig := false
 	updatedMessage := ""
 
-	if gateClient.Config.Auth.OAuth2 != nil {
-		updatedConfig, err = authenticateOAuth2(ui.Output, httpClient, gateClient.GateEndpoint(), gateClient.Config.Auth)
-		if err != nil {
-			ui.Error("OAuth2 Authentication failed.")
-			return nil, unwrapErr(ui, err)
-		}
-		updatedMessage = "Caching oauth2 token."
+	updatedConfig, err = authenticateOAuth2(ui.Output, httpClient, gateClient.GateEndpoint(), gateClient.Config.Auth)
+	if err != nil {
+		ui.Error("OAuth2 Authentication failed.")
+		return nil, unwrapErr(ui, err)
 	}
+	updatedMessage = "Caching oauth2 token."
 
-	if gateClient.Config.Auth.GoogleServiceAccount != nil {
-		updatedConfig, err = authenticateGoogleServiceAccount(httpClient, gateClient.GateEndpoint(), gateClient.Config.Auth)
-		if err != nil {
-			ui.Error(fmt.Sprintf("Google service account authentication failed: %v", err))
-			return nil, unwrapErr(ui, err)
-		}
-		updatedMessage = "Caching gsa token."
+	updatedConfig, err = authenticateGoogleServiceAccount(httpClient, gateClient.GateEndpoint(), gateClient.Config.Auth)
+	if err != nil {
+		ui.Error(fmt.Sprintf("Google service account authentication failed: %v", err))
+		return nil, unwrapErr(ui, err)
 	}
+	updatedMessage = "Caching gsa token."
 
 	if updatedConfig {
 		ui.Info(updatedMessage)
