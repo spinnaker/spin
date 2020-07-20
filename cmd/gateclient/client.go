@@ -132,7 +132,7 @@ func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation st
 
 	updatedConfig, err := authenticateOAuth2(ui.Output, httpClient, gateEndpoint, gateClient.Config.Auth)
 	if err != nil {
-		ui.Error("OAuth2 Authentication failed.")
+		ui.Error(fmt.Sprintf("OAuth2 Authentication failed: %v", err))
 		return nil, unwrapErr(ui, err)
 	}
 
@@ -152,7 +152,7 @@ func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation st
 	}
 
 	if err = authenticateLdap(ui.Output, httpClient, gateEndpoint, gateClient.Config.Auth); err != nil {
-		ui.Error("LDAP Authentication Failed")
+		ui.Error(fmt.Sprintf("LDAP Authentication failed: %v", err))
 		return nil, unwrapErr(ui, err)
 	}
 
