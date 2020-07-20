@@ -141,7 +141,7 @@ func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation st
 		_ = gateClient.writeYAMLConfig()
 	}
 
-	updatedConfig, err = authenticateGoogleServiceAccount(httpClient, gateEndpoint, gateClient.Config.Auth)
+	updatedConfig, err = authenticateGoogleServiceAccount(httpClient, gateClient.GateEndpoint(), gateClient.Config.Auth)
 	if err != nil {
 		ui.Error(fmt.Sprintf("Google service account authentication failed: %v", err))
 		return nil, unwrapErr(ui, err)
