@@ -35,7 +35,7 @@ func NewProjectCmd(rootOptions *cmd.RootOptions) *cobra.Command {
 	}
 	cmd := &cobra.Command{
 		Use:     "project",
-		Aliases: []string{"project", "prj"},
+		Aliases: []string{"prj"},
 		Short:   projectShort,
 		Long:    projectLong,
 		Example: projectExample,
