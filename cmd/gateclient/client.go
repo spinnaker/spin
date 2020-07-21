@@ -129,31 +129,37 @@ func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation st
 	}
 
 	gateClient.httpClient = httpClient
+	updatedConfig := false
+	updatedMessage := ""
 
-	updatedConfig, err := authenticateOAuth2(ui.Output, httpClient, gateEndpoint, gateClient.Config.Auth)
-	if err != nil {
-		ui.Error("OAuth2 Authentication failed.")
-		return nil, unwrapErr(ui, err)
+	if gateClient.Config.Auth != nil && gateClient.Config.Auth.OAuth2 != nil {
+		updatedConfig, err = authenticateOAuth2(ui.Output, httpClient, gateClient.GateEndpoint(), gateClient.Config.Auth)
+		if err != nil {
+			ui.Error("OAuth2 Authentication failed.")
+			return nil, unwrapErr(ui, err)
+		}
+		updatedMessage = "Caching oauth2 token."
+	}
+
+	if gateClient.Config.Auth != nil && gateClient.Config.Auth.GoogleServiceAccount != nil {
+		updatedConfig, err = authenticateGoogleServiceAccount(httpClient, gateClient.GateEndpoint(), gateClient.Config.Auth)
+		if err != nil {
+			ui.Error(fmt.Sprintf("Google service account authentication failed: %v", err))
+			return nil, unwrapErr(ui, err)
+		}
+		updatedMessage = "Caching gsa token."
 	}
 
 	if updatedConfig {
-		ui.Info("Caching oauth2 token.")
+		ui.Info(updatedMessage)
 		_ = gateClient.writeYAMLConfig()
 	}
 
-	updatedConfig, err = authenticateGoogleServiceAccount(httpClient, gateEndpoint, gateClient.Config.Auth)
-	if err != nil {
-		ui.Error(fmt.Sprintf("Google service account authentication failed: %v", err))
-		return nil, unwrapErr(ui, err)
-	}
-
-	if updatedConfig {
-		_ = gateClient.writeYAMLConfig()
-	}
-
-	if err = authenticateLdap(ui.Output, httpClient, gateEndpoint, gateClient.Config.Auth); err != nil {
-		ui.Error("LDAP Authentication Failed")
-		return nil, unwrapErr(ui, err)
+	if gateClient.Config.Auth != nil && gateClient.Config.Auth.Ldap != nil {
+		if err = authenticateLdap(ui.Output, httpClient, gateClient.GateEndpoint(), gateClient.Config.Auth); err != nil {
+			ui.Error("LDAP Authentication Failed")
+			return nil, unwrapErr(ui, err)
+		}
 	}
 
 	m := make(map[string]string)
@@ -220,6 +226,11 @@ func userConfig(gateClient *GatewayClient, configLocation string) error {
 	}
 
 	yamlFile, err := ioutil.ReadFile(gateClient.configLocation)
+	// Please note that https://github.com/spinnaker/spin/pull/243 introduced better coding standards and
+	// as a result, your auth config needs to match the struct tags through all the config structs
+	// e.g. the struct tags for oauth in the config are set in the local oauth package here
+	// but unmarshal to an upstream oauth package, so the cached token needs to match
+	// https://godoc.org/golang.org/x/oauth2#Token
 	if yamlFile != nil {
 		err = yaml.UnmarshalStrict([]byte(os.ExpandEnv(string(yamlFile))), &gateClient.Config)
 		if err != nil {
@@ -535,7 +546,7 @@ func authenticateLdap(output func(string), httpClient *http.Client, endpoint str
 	return nil
 }
 
-// writeYAMLConfig writes an updated YAML configuration file to the reciever's config file location.
+// writeYAMLConfig writes an updated YAML configuration file to the receiver's config file location.
 // It returns an error, but the error may be ignored.
 func (m *GatewayClient) writeYAMLConfig() error {
 	// Write updated config file with u=rw,g=,o= permissions by default.
