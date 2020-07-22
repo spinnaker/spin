@@ -18,44 +18,39 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/spinnaker/spin/util"
-
 	"github.com/spf13/cobra"
+	orca_tasks "github.com/spinnaker/spin/cmd/orca-tasks"
 )
 
-type getProjectOptions struct {
+type deleteOptions struct {
 	*projectOptions
+	projectName string
 }
 
-const (
-	getProjectShort   = "Get the config for the specified project"
-	getProjectLong    = "Get the config for the specified project"
-	getProjectExample = "usage: spin project [options] project-name"
+var (
+	deleteProjectShort = "Delete the provided project"
+	deleteProjectLong  = "Delete the specified project"
 )
 
-func NewGetCmd(prjOptions *projectOptions) *cobra.Command {
-	options := &getProjectOptions{
+func NewDeleteCmd(prjOptions *projectOptions) *cobra.Command {
+	options := &saveOptions{
 		projectOptions: prjOptions,
 	}
-
 	cmd := &cobra.Command{
-		Use:     "get",
-		Short:   getProjectShort,
-		Long:    getProjectLong,
-		Example: getProjectExample,
+		Use:   "delete",
+		Short: deleteProjectShort,
+		Long:  deleteProjectLong,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return getProject(cmd, options, args)
+			return deleteProject(cmd, options)
 		},
 	}
-
+	cmd.PersistentFlags().StringVarP(&options.projectName, "name", "n", "", "name of the project")
+	cobra.MarkFlagRequired(cmd.PersistentFlags(), "name")
 	return cmd
 }
 
-func getProject(cmd *cobra.Command, options *getProjectOptions, args []string) error {
-	projectName, err := util.ReadArgsOrStdin(args)
-	if err != nil {
-		return err
-	}
+func deleteProject(cmd *cobra.Command, options *saveOptions) error {
+	projectName := options.projectName
 
 	project, resp, err := options.GateClient.ProjectControllerApi.GetUsingGET1(options.GateClient.Context, projectName)
 	if resp != nil {
@@ -66,10 +61,23 @@ func getProject(cmd *cobra.Command, options *getProjectOptions, args []string) e
 		}
 	}
 
+	deleteProjectTask := map[string]interface{}{
+		"job":         []interface{}{map[string]interface{}{"type": "deleteProject", "project": project, "user": project["email"]}},
+		"application": "spinnaker",
+		"project":     projectName,
+		"description": fmt.Sprintf("Delete Project: %s", projectName),
+	}
+
+	ref, _, err := options.GateClient.TaskControllerApi.TaskUsingPOST1(options.GateClient.Context, deleteProjectTask)
 	if err != nil {
 		return err
 	}
-	options.Ui.JsonOutput(project)
 
+	err = orca_tasks.WaitForSuccessfulTask(options.GateClient, ref, 5)
+	if err != nil {
+		return err
+	}
+
+	options.Ui.Success("Project delete succeeded")
 	return nil
 }
