@@ -11,12 +11,13 @@ package swagger
 
 import (
 	"fmt"
-	"golang.org/x/net/context"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
+
+	"golang.org/x/net/context"
 )
 
 // Linger please

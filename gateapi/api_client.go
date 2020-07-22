@@ -15,8 +15,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"golang.org/x/net/context"
-	"golang.org/x/oauth2"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -29,6 +27,9 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
+
+	"golang.org/x/net/context"
+	"golang.org/x/oauth2"
 )
 
 var (

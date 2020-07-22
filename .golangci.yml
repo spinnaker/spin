@@ -2,10 +2,10 @@ run:
   modules-download-mode: readonly
 linters:
   enable:
-    - gofmt
-    - goimports
-    - golint
-    - govet
+    # - gofmt
+    # - goimports
+    # - golint
+    # - govet
 linters-settings:
   goimports:
     local-prefixes: github.com/spinnaker/spin
