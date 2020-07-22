@@ -29,14 +29,14 @@ type OutputFormater func(interface{}) ([]byte, error)
 
 // ParseOutputFormat returns an OutputFormater based on the specified format.
 // Accepted values include 'json', 'yaml', and 'jsonpath=PATH'.
-// Empty string defaults to 'json'.
+// Empty string defaults to 'yaml'.
 // For more about JSONPath, see https://goessner.net/articles/JsonPath/
 func ParseOutputFormat(outputFormat string) (OutputFormater, error) {
 	switch {
-	case outputFormat == "" || outputFormat == "json":
-		return MarshalToJson, nil
-	case outputFormat == "yaml":
+	case outputFormat == "" || outputFormat == "yaml":
 		return MarshalToYaml, nil
+	case outputFormat == "json":
+		return MarshalToJson, nil
 	case strings.HasPrefix(outputFormat, "jsonpath=") && outputFormat != "jsonpath=":
 		toks := strings.Split(outputFormat, "=")
 		if len(toks) != 2 {
