@@ -131,19 +131,16 @@ func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation st
 	gateClient.httpClient = httpClient
 	updatedConfig := false
 	updatedMessage := ""
-	
-  if gateClient.Config.Auth != nil && gateClient.Config.Auth.OAuth2 != nil {
+
+	if gateClient.Config.Auth != nil && gateClient.Config.Auth.OAuth2 != nil {
 		updatedConfig, err = authenticateOAuth2(ui.Output, httpClient, gateClient.GateEndpoint(), gateClient.Config.Auth)
 		if err != nil {
 			ui.Error(fmt.Sprintf("OAuth2 Authentication failed: %v", err))
 			return nil, unwrapErr(ui, err)
 		}
-  }
-	
-  if updatedConfig {
-		ui.Info(updatedMessage)
-		_ = gateClient.writeYAMLConfig()
-  }
+
+		updatedMessage = "Caching oauth2 token."
+	}
 
 	if gateClient.Config.Auth != nil && gateClient.Config.Auth.GoogleServiceAccount != nil {
 		updatedConfig, err = authenticateGoogleServiceAccount(httpClient, gateClient.GateEndpoint(), gateClient.Config.Auth)
