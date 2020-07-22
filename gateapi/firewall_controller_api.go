@@ -10,13 +10,13 @@
 package swagger
 
 import (
-	"io/ioutil"
-	"net/url"
-	"net/http"
-	"strings"
-	"golang.org/x/net/context"
 	"encoding/json"
 	"fmt"
+	"golang.org/x/net/context"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
 )
 
 // Linger please
@@ -26,22 +26,21 @@ var (
 
 type FirewallControllerApiService service
 
-
 /* FirewallControllerApiService Retrieve a list of firewalls for a given account and region
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @param account account
- @param region region
- @param optional (nil or map[string]interface{}) with one or more of:
-     @param "xRateLimitApp" (string) X-RateLimit-App
-     @param "provider" (string) provider
- @return []interface{}*/
-func (a *FirewallControllerApiService) AllByAccountAndRegionUsingGET(ctx context.Context, account string, region string, localVarOptionals map[string]interface{}) ([]interface{},  *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param account account
+@param region region
+@param optional (nil or map[string]interface{}) with one or more of:
+    @param "xRateLimitApp" (string) X-RateLimit-App
+    @param "provider" (string) provider
+@return []interface{}*/
+func (a *FirewallControllerApiService) AllByAccountAndRegionUsingGET(ctx context.Context, account string, region string, localVarOptionals map[string]interface{}) ([]interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
-	 	successPayload  []interface{}
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		successPayload     []interface{}
 	)
 
 	// create path and map variables
@@ -64,7 +63,7 @@ func (a *FirewallControllerApiService) AllByAccountAndRegionUsingGET(ctx context
 		localVarQueryParams.Add("provider", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{  }
+	localVarHttpContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -75,7 +74,7 @@ func (a *FirewallControllerApiService) AllByAccountAndRegionUsingGET(ctx context
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -104,24 +103,23 @@ func (a *FirewallControllerApiService) AllByAccountAndRegionUsingGET(ctx context
 		return successPayload, localVarHttpResponse, err
 	}
 
-
 	return successPayload, localVarHttpResponse, err
 }
 
 /* FirewallControllerApiService Retrieve a list of firewalls for a given account, grouped by region
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @param account account
- @param optional (nil or map[string]interface{}) with one or more of:
-     @param "xRateLimitApp" (string) X-RateLimit-App
-     @param "provider" (string) provider
- @return interface{}*/
-func (a *FirewallControllerApiService) AllByAccountUsingGET(ctx context.Context, account string, localVarOptionals map[string]interface{}) (interface{},  *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param account account
+@param optional (nil or map[string]interface{}) with one or more of:
+    @param "xRateLimitApp" (string) X-RateLimit-App
+    @param "provider" (string) provider
+@return interface{}*/
+func (a *FirewallControllerApiService) AllByAccountUsingGET(ctx context.Context, account string, localVarOptionals map[string]interface{}) (interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
-	 	successPayload  interface{}
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		successPayload     interface{}
 	)
 
 	// create path and map variables
@@ -143,7 +141,7 @@ func (a *FirewallControllerApiService) AllByAccountUsingGET(ctx context.Context,
 		localVarQueryParams.Add("provider", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{  }
+	localVarHttpContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -154,7 +152,7 @@ func (a *FirewallControllerApiService) AllByAccountUsingGET(ctx context.Context,
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -183,23 +181,22 @@ func (a *FirewallControllerApiService) AllByAccountUsingGET(ctx context.Context,
 		return successPayload, localVarHttpResponse, err
 	}
 
-
 	return successPayload, localVarHttpResponse, err
 }
 
 /* FirewallControllerApiService Retrieve a list of firewalls, grouped by account, cloud provider, and region
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @param optional (nil or map[string]interface{}) with one or more of:
-     @param "xRateLimitApp" (string) X-RateLimit-App
-     @param "id" (string) id
- @return interface{}*/
-func (a *FirewallControllerApiService) AllUsingGET1(ctx context.Context, localVarOptionals map[string]interface{}) (interface{},  *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param optional (nil or map[string]interface{}) with one or more of:
+    @param "xRateLimitApp" (string) X-RateLimit-App
+    @param "id" (string) id
+@return interface{}*/
+func (a *FirewallControllerApiService) AllUsingGET1(ctx context.Context, localVarOptionals map[string]interface{}) (interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
-	 	successPayload  interface{}
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		successPayload     interface{}
 	)
 
 	// create path and map variables
@@ -220,7 +217,7 @@ func (a *FirewallControllerApiService) AllUsingGET1(ctx context.Context, localVa
 		localVarQueryParams.Add("id", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{  }
+	localVarHttpContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -231,7 +228,7 @@ func (a *FirewallControllerApiService) AllUsingGET1(ctx context.Context, localVa
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -260,27 +257,26 @@ func (a *FirewallControllerApiService) AllUsingGET1(ctx context.Context, localVa
 		return successPayload, localVarHttpResponse, err
 	}
 
-
 	return successPayload, localVarHttpResponse, err
 }
 
 /* FirewallControllerApiService Retrieve a firewall&#39;s details
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @param account account
- @param name name
- @param region region
- @param optional (nil or map[string]interface{}) with one or more of:
-     @param "xRateLimitApp" (string) X-RateLimit-App
-     @param "provider" (string) provider
-     @param "vpcId" (string) vpcId
- @return interface{}*/
-func (a *FirewallControllerApiService) GetSecurityGroupUsingGET(ctx context.Context, account string, name string, region string, localVarOptionals map[string]interface{}) (interface{},  *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param account account
+@param name name
+@param region region
+@param optional (nil or map[string]interface{}) with one or more of:
+    @param "xRateLimitApp" (string) X-RateLimit-App
+    @param "provider" (string) provider
+    @param "vpcId" (string) vpcId
+@return interface{}*/
+func (a *FirewallControllerApiService) GetSecurityGroupUsingGET(ctx context.Context, account string, name string, region string, localVarOptionals map[string]interface{}) (interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
-	 	successPayload  interface{}
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		successPayload     interface{}
 	)
 
 	// create path and map variables
@@ -310,7 +306,7 @@ func (a *FirewallControllerApiService) GetSecurityGroupUsingGET(ctx context.Cont
 		localVarQueryParams.Add("vpcId", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{  }
+	localVarHttpContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -321,7 +317,7 @@ func (a *FirewallControllerApiService) GetSecurityGroupUsingGET(ctx context.Cont
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -350,7 +346,5 @@ func (a *FirewallControllerApiService) GetSecurityGroupUsingGET(ctx context.Cont
 		return successPayload, localVarHttpResponse, err
 	}
 
-
 	return successPayload, localVarHttpResponse, err
 }
-

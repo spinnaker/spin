@@ -10,13 +10,13 @@
 package swagger
 
 import (
-	"io/ioutil"
-	"net/url"
-	"net/http"
-	"strings"
-	"golang.org/x/net/context"
 	"encoding/json"
 	"fmt"
+	"golang.org/x/net/context"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
 )
 
 // Linger please
@@ -26,24 +26,23 @@ var (
 
 type ServerGroupControllerApiService service
 
-
 /* ServerGroupControllerApiService Retrieve a server group&#39;s details
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @param account account
- @param applicationName applicationName
- @param region region
- @param serverGroupName serverGroupName
- @param optional (nil or map[string]interface{}) with one or more of:
-     @param "xRateLimitApp" (string) X-RateLimit-App
-     @param "includeDetails" (string) includeDetails
- @return interface{}*/
-func (a *ServerGroupControllerApiService) GetServerGroupDetailsUsingGET(ctx context.Context, account string, applicationName string, region string, serverGroupName string, localVarOptionals map[string]interface{}) (interface{},  *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param account account
+@param applicationName applicationName
+@param region region
+@param serverGroupName serverGroupName
+@param optional (nil or map[string]interface{}) with one or more of:
+    @param "xRateLimitApp" (string) X-RateLimit-App
+    @param "includeDetails" (string) includeDetails
+@return interface{}*/
+func (a *ServerGroupControllerApiService) GetServerGroupDetailsUsingGET(ctx context.Context, account string, applicationName string, region string, serverGroupName string, localVarOptionals map[string]interface{}) (interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
-	 	successPayload  interface{}
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		successPayload     interface{}
 	)
 
 	// create path and map variables
@@ -68,7 +67,7 @@ func (a *ServerGroupControllerApiService) GetServerGroupDetailsUsingGET(ctx cont
 		localVarQueryParams.Add("includeDetails", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{  }
+	localVarHttpContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -79,7 +78,7 @@ func (a *ServerGroupControllerApiService) GetServerGroupDetailsUsingGET(ctx cont
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -108,26 +107,25 @@ func (a *ServerGroupControllerApiService) GetServerGroupDetailsUsingGET(ctx cont
 		return successPayload, localVarHttpResponse, err
 	}
 
-
 	return successPayload, localVarHttpResponse, err
 }
 
 /* ServerGroupControllerApiService Retrieve a list of server groups for a given application
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @param applicationName applicationName
- @param optional (nil or map[string]interface{}) with one or more of:
-     @param "xRateLimitApp" (string) X-RateLimit-App
-     @param "cloudProvider" (string) cloudProvider
-     @param "clusters" (string) clusters
-     @param "expand" (string) expand
- @return []interface{}*/
-func (a *ServerGroupControllerApiService) GetServerGroupsForApplicationUsingGET(ctx context.Context, applicationName string, localVarOptionals map[string]interface{}) ([]interface{},  *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param applicationName applicationName
+@param optional (nil or map[string]interface{}) with one or more of:
+    @param "xRateLimitApp" (string) X-RateLimit-App
+    @param "cloudProvider" (string) cloudProvider
+    @param "clusters" (string) clusters
+    @param "expand" (string) expand
+@return []interface{}*/
+func (a *ServerGroupControllerApiService) GetServerGroupsForApplicationUsingGET(ctx context.Context, applicationName string, localVarOptionals map[string]interface{}) ([]interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
-	 	successPayload  []interface{}
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		successPayload     []interface{}
 	)
 
 	// create path and map variables
@@ -161,7 +159,7 @@ func (a *ServerGroupControllerApiService) GetServerGroupsForApplicationUsingGET(
 		localVarQueryParams.Add("expand", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{  }
+	localVarHttpContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -172,7 +170,7 @@ func (a *ServerGroupControllerApiService) GetServerGroupsForApplicationUsingGET(
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -201,7 +199,5 @@ func (a *ServerGroupControllerApiService) GetServerGroupsForApplicationUsingGET(
 		return successPayload, localVarHttpResponse, err
 	}
 
-
 	return successPayload, localVarHttpResponse, err
 }
-

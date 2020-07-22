@@ -10,12 +10,12 @@
 package swagger
 
 import (
-	"io/ioutil"
-	"net/url"
-	"net/http"
-	"strings"
-	"golang.org/x/net/context"
 	"encoding/json"
+	"golang.org/x/net/context"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
 )
 
 // Linger please
@@ -25,17 +25,16 @@ var (
 
 type VersionControllerApiService service
 
-
 /* VersionControllerApiService Fetch Gate&#39;s current version
  * @param ctx context.Context for authentication, logging, tracing, etc.
  @return Version*/
-func (a *VersionControllerApiService) GetVersionUsingGET(ctx context.Context) (Version,  *http.Response, error) {
+func (a *VersionControllerApiService) GetVersionUsingGET(ctx context.Context) (Version, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
-	 	successPayload  Version
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		successPayload     Version
 	)
 
 	// create path and map variables
@@ -45,9 +44,8 @@ func (a *VersionControllerApiService) GetVersionUsingGET(ctx context.Context) (V
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{  }
+	localVarHttpContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -58,7 +56,7 @@ func (a *VersionControllerApiService) GetVersionUsingGET(ctx context.Context) (V
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -84,7 +82,5 @@ func (a *VersionControllerApiService) GetVersionUsingGET(ctx context.Context) (V
 		return successPayload, localVarHttpResponse, err
 	}
 
-
 	return successPayload, localVarHttpResponse, err
 }
-

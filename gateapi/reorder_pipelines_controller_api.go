@@ -10,12 +10,12 @@
 package swagger
 
 import (
-	"io/ioutil"
-	"net/url"
-	"net/http"
-	"strings"
-	"golang.org/x/net/context"
 	"encoding/json"
+	"golang.org/x/net/context"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
 )
 
 // Linger please
@@ -25,18 +25,17 @@ var (
 
 type ReorderPipelinesControllerApiService service
 
-
 /* ReorderPipelinesControllerApiService Re-order pipelines
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @param reorderPipelinesCommand reorderPipelinesCommand
- @return interface{}*/
-func (a *ReorderPipelinesControllerApiService) ReorderPipelinesUsingPOST(ctx context.Context, reorderPipelinesCommand ReorderPipelinesCommand) (interface{},  *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param reorderPipelinesCommand reorderPipelinesCommand
+@return interface{}*/
+func (a *ReorderPipelinesControllerApiService) ReorderPipelinesUsingPOST(ctx context.Context, reorderPipelinesCommand ReorderPipelinesCommand) (interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
-	 	successPayload  interface{}
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		successPayload     interface{}
 	)
 
 	// create path and map variables
@@ -46,9 +45,8 @@ func (a *ReorderPipelinesControllerApiService) ReorderPipelinesUsingPOST(ctx con
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -59,7 +57,7 @@ func (a *ReorderPipelinesControllerApiService) ReorderPipelinesUsingPOST(ctx con
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -87,7 +85,5 @@ func (a *ReorderPipelinesControllerApiService) ReorderPipelinesUsingPOST(ctx con
 		return successPayload, localVarHttpResponse, err
 	}
 
-
 	return successPayload, localVarHttpResponse, err
 }
-

@@ -10,13 +10,13 @@
 package swagger
 
 import (
-	"io/ioutil"
-	"net/url"
-	"net/http"
-	"strings"
-	"golang.org/x/net/context"
 	"encoding/json"
 	"fmt"
+	"golang.org/x/net/context"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
 )
 
 // Linger please
@@ -26,20 +26,19 @@ var (
 
 type NetworkControllerApiService service
 
-
 /* NetworkControllerApiService Retrieve a list of networks for a given cloud provider
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @param cloudProvider cloudProvider
- @param optional (nil or map[string]interface{}) with one or more of:
-     @param "xRateLimitApp" (string) X-RateLimit-App
- @return []interface{}*/
-func (a *NetworkControllerApiService) AllByCloudProviderUsingGET(ctx context.Context, cloudProvider string, localVarOptionals map[string]interface{}) ([]interface{},  *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param cloudProvider cloudProvider
+@param optional (nil or map[string]interface{}) with one or more of:
+    @param "xRateLimitApp" (string) X-RateLimit-App
+@return []interface{}*/
+func (a *NetworkControllerApiService) AllByCloudProviderUsingGET(ctx context.Context, cloudProvider string, localVarOptionals map[string]interface{}) ([]interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
-	 	successPayload  []interface{}
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		successPayload     []interface{}
 	)
 
 	// create path and map variables
@@ -55,7 +54,7 @@ func (a *NetworkControllerApiService) AllByCloudProviderUsingGET(ctx context.Con
 	}
 
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{  }
+	localVarHttpContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -66,7 +65,7 @@ func (a *NetworkControllerApiService) AllByCloudProviderUsingGET(ctx context.Con
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -95,22 +94,21 @@ func (a *NetworkControllerApiService) AllByCloudProviderUsingGET(ctx context.Con
 		return successPayload, localVarHttpResponse, err
 	}
 
-
 	return successPayload, localVarHttpResponse, err
 }
 
 /* NetworkControllerApiService Retrieve a list of networks, grouped by cloud provider
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @param optional (nil or map[string]interface{}) with one or more of:
-     @param "xRateLimitApp" (string) X-RateLimit-App
- @return map[string]interface{}*/
-func (a *NetworkControllerApiService) AllUsingGET2(ctx context.Context, localVarOptionals map[string]interface{}) (map[string]interface{},  *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param optional (nil or map[string]interface{}) with one or more of:
+    @param "xRateLimitApp" (string) X-RateLimit-App
+@return map[string]interface{}*/
+func (a *NetworkControllerApiService) AllUsingGET2(ctx context.Context, localVarOptionals map[string]interface{}) (map[string]interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
-	 	successPayload  map[string]interface{}
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		successPayload     map[string]interface{}
 	)
 
 	// create path and map variables
@@ -125,7 +123,7 @@ func (a *NetworkControllerApiService) AllUsingGET2(ctx context.Context, localVar
 	}
 
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{  }
+	localVarHttpContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -136,7 +134,7 @@ func (a *NetworkControllerApiService) AllUsingGET2(ctx context.Context, localVar
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -165,7 +163,5 @@ func (a *NetworkControllerApiService) AllUsingGET2(ctx context.Context, localVar
 		return successPayload, localVarHttpResponse, err
 	}
 
-
 	return successPayload, localVarHttpResponse, err
 }
-
