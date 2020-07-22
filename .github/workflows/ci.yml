@@ -28,3 +28,7 @@ jobs:
       run: go build -v
     - name: Test
       run: go test -v ./...
+    - name: Ensure code formatting and style is consistent
+      uses: golangci/golangci-lint-action@v1
+      with:
+        version: v1.27
