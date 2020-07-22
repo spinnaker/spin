@@ -2,8 +2,9 @@ run:
   modules-download-mode: readonly
 linters:
   enable:
-    # - gofmt
-    # - goimports
+    - gofmt
+    - goimports
+    # TODO(jan25): Enable these along with all violation fixes
     # - golint
     # - govet
 linters-settings:
