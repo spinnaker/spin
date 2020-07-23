@@ -15,9 +15,7 @@
 package project
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -28,165 +26,125 @@ import (
 	"github.com/spinnaker/spin/util"
 )
 
-// const (
-// 	NAME              = "prj"
-// 	EMAIL             = "user@spinnaker.com"
-// 	PROJECT_TEST_FILE = "../../util/json_test_files/example_project.json"
-// )
-
 func TestProjectList_basic(t *testing.T) {
-	saveBuffer := new(bytes.Buffer)
-	ts := testGateProjectListSuccess(saveBuffer)
+	ts := testGateProjectList(false)
 	defer ts.Close()
 
 	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
 	rootCmd.AddCommand(NewProjectCmd(options))
 
-	args := []string{
-		"project", "list",
-		"--gate-endpoint=" + ts.URL,
-	}
+	args := []string{"project", "list", "--gate-endpoint=" + ts.URL}
 	rootCmd.SetArgs(args)
 	err := rootCmd.Execute()
 	if err != nil {
 		t.Fatalf("Command failed with: %s", err)
 	}
-
-	expected := strings.TrimSpace(testProjectTaskJsonStr)
-	recieved := saveBuffer.Bytes()
-	util.TestPrettyJsonDiff(t, "list request body", expected, recieved)
 }
 
-// func TestProjectList_fail(t *testing.T) {
-// 	ts := testGateFail()
-// 	defer ts.Close()
+func TestProjectList_malformed(t *testing.T) {
+	ts := testGateProjectList(true)
+	defer ts.Close()
 
-// 	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
-// 	rootCmd.AddCommand(NewProjectCmd(options))
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewProjectCmd(options))
 
-// 	args := []string{
-// 		"project", "list",
-// 		"--gate-endpoint=" + ts.URL,
-// 	}
-// 	rootCmd.SetArgs(args)
-// 	err := rootCmd.Execute()
-// 	if err == nil {
-// 		t.Fatalf("Command failed with: %s", err)
-// 	}
-// }
+	args := []string{"project", "list", "--gate-endpoint=" + ts.URL}
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err == nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+}
 
-// func TestProjectList_flags(t *testing.T) {
-// 	saveBuffer := new(bytes.Buffer)
-// 	ts := testGateProjectListSuccess(saveBuffer)
-// 	defer ts.Close()
+func TestProjectList_fail(t *testing.T) {
+	ts := testGateFail()
+	defer ts.Close()
 
-// 	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
-// 	rootCmd.AddCommand(NewProjectCmd(options))
+	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
+	rootCmd.AddCommand(NewProjectCmd(options))
 
-// 	args := []string{
-// 		"project", "list",
-// 		"--gate-endpoint=" + ts.URL,
-// 	}
-// 	rootCmd.SetArgs(args)
-// 	err := rootCmd.Execute()
-// 	if err == nil {
-// 		t.Fatalf("Command failed with: %s", err)
-// 	}
+	args := []string{"project", "list", "--gate-endpoint=" + ts.URL}
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
+	if err == nil {
+		t.Fatalf("Command failed with: %s", err)
+	}
+}
 
-// 	expected := ""
-// 	recieved := strings.TrimSpace(saveBuffer.String())
-// 	if expected != recieved {
-// 		t.Fatalf("Unexpected list request body:\n%s", recieved)
-// 	}
-// }
-
-// func TestProjectList_filejson(t *testing.T) {
-// 	saveBuffer := new(bytes.Buffer)
-// 	ts := testGateProjectListSuccess(saveBuffer)
-// 	defer ts.Close()
-
-// 	rootCmd, options := cmd.NewCmdRoot(ioutil.Discard, ioutil.Discard)
-// 	rootCmd.AddCommand(NewProjectCmd(options))
-
-// 	args := []string{
-// 		"project", "list",
-// 		"--gate-endpoint", ts.URL,
-// 	}
-// 	rootCmd.SetArgs(args)
-// 	err := rootCmd.Execute()
-// 	if err != nil {
-// 		t.Fatalf("Command failed with: %s", err)
-// 	}
-
-// 	expected := strings.TrimSpace(testExpandedProjectTaskJsonStr)
-// 	recieved := saveBuffer.Bytes()
-// 	util.TestPrettyJsonDiff(t, "list request body", expected, recieved)
-// }
-
-// testGateProjectListSuccess spins up a local http server that we will configure the GateClient
-// to direct requests to. Responds with successful responses to pipeline execute API calls.
-// Writes request body to buffer for testing.
-func testGateProjectListSuccess(buffer io.Writer) *httptest.Server {
+// testGateProjectList spins up a local http server that we will configure the GateClient
+// to direct requests to. When 'returnMalformed' is false, responds with a 200 and a well-formed project list.
+// Returns a malformed list of project configs when 'returnMalformed' is true
+func testGateProjectList(returnMalformed bool) *httptest.Server {
 	mux := util.TestGateMuxWithVersionHandler()
-	mux.Handle(
-		"/tasks",
-		util.NewTestBufferHandlerFunc(http.MethodPost, buffer, http.StatusOK, strings.TrimSpace(testAppTaskRefJsonStr)),
-	)
-	mux.Handle("/tasks/id", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, strings.TrimSpace(testProjectTaskStatusJsonStr))
+	mux.Handle("/projects", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if returnMalformed {
+			fmt.Fprintln(w, strings.TrimSpace(malformedProjectListJson))
+		} else {
+			fmt.Fprintln(w, strings.TrimSpace(projectListJson))
+		}
 	}))
+
 	return httptest.NewServer(mux)
 }
 
-// const testAppTaskRefJsonStr = `
-// {
-//  "ref": "/tasks/id"
-// }
-// `
-// const testProjectTaskStatusJsonStr = `
-// {
-//  "status": "SUCCEEDED"
-// }
-// `
+const projectListJson = `
+[
+ {
+  "config": {
+   "applications": [
+    "app1"
+   ],
+   "clusters": [
+    {
+     "account": "spin-us-west-2",
+     "applications": null,
+     "detail": "*",
+     "stack": "*"
+    }
+   ],
+   "pipelineConfigs": [
+    {
+     "application": "app1",
+     "pipelineConfigId": "app1-dev"
+    }
+   ]
+  },
+  "createTs": 1595273917306,
+  "email": "user@spinnaker.com",
+  "id": "6406b5f9-819d-495d-b1a6-3928a2a72311",
+  "lastModifiedBy": "user@spinnaker.com",
+  "name": "project1",
+  "updateTs": 1595273918000
+ }
+]`
 
-// const testExpandedProjectTaskJsonStr = `
-// {
-//  "application": "spinnaker",
-//  "description": "Create Project: example project",
-//  "job": [
-//   {
-//    "project": {
-//     "config": {
-//      "applications": [],
-//      "clusters": [],
-//      "pipelineConfigs": []
-//     },
-//     "email": "user@spinnaker.com",
-//     "name": "example project",
-//     "user": "user@spinnaker.com"
-//    },
-//    "type": "upsertProject",
-//    "user": "user@spinnaker.com"
-//   }
-//  ],
-//  "project": "example project"
-// }
-// `
-
-// const testProjectTaskJsonStr = `
-// {
-//  "application": "spinnaker",
-//  "description": "Create Project: prj",
-//  "job": [
-//   {
-//    "project": {
-//     "email": "user@spinnaker.com",
-//     "name": "prj"
-//    },
-//    "type": "upsertProject",
-//    "user": "user@spinnaker.com"
-//   }
-//  ],
-//  "project": "prj"
-// }
-// `
+const malformedProjectListJson = `
+ {
+  "config": {
+   "applications": [
+    "app1"
+   ],
+   "clusters": [
+    {
+     "account": "spin-us-west-2",
+     "applications": null,
+     "detail": "*",
+     "stack": "*"
+    }
+   ],
+   "pipelineConfigs": [
+    {
+     "application": "app1",
+     "pipelineConfigId": "app1-dev"
+    }
+   ]
+  },
+  "createTs": 1595273917306,
+  "email": "user@spinnaker.com",
+  "id": "6406b5f9-819d-495d-b1a6-3928a2a72311",
+  "lastModifiedBy": "user@spinnaker.com",
+  "name": "project1",
+  "updateTs": 1595273918000
+ }
+]
+`
