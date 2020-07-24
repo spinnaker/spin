@@ -45,6 +45,7 @@ import (
 	"github.com/spinnaker/spin/config/auth"
 	iap "github.com/spinnaker/spin/config/auth/iap"
 	gate "github.com/spinnaker/spin/gateapi"
+	"github.com/spinnaker/spin/util"
 	"github.com/spinnaker/spin/version"
 )
 
@@ -255,11 +256,11 @@ func InitializeHTTPClient(auth *auth.Config) (*http.Client, error) {
 		}
 
 		if X509.CertPath != "" && X509.KeyPath != "" {
-			certPath, err := expandFilepath(X509.CertPath)
+			certPath, err := util.ExpandHomeDir(X509.CertPath)
 			if err != nil {
 				return nil, err
 			}
-			keyPath, err := expandFilepath(X509.KeyPath)
+			keyPath, err := util.ExpandHomeDir(X509.KeyPath)
 			if err != nil {
 				return nil, err
 			}
@@ -594,16 +595,4 @@ func securePrompt(output func(string), inputMsg string) string {
 	byteSecret, _ := terminal.ReadPassword(int(syscall.Stdin))
 	secret := string(byteSecret)
 	return strings.TrimSpace(secret)
-}
-
-func expandFilepath(path string) (string, error) {
-	if !strings.HasPrefix(path, "~") {
-		return path, nil
-	}
-
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
-	return home + strings.TrimPrefix(path, "~"), nil
 }
