@@ -88,9 +88,12 @@ func savePipeline(cmd *cobra.Command, options *saveOptions) error {
 	foundPipeline, queryResp, _ := options.GateClient.ApplicationControllerApi.GetPipelineConfigUsingGET(options.GateClient.Context, application, pipelineName)
 	if queryResp.StatusCode == http.StatusNotFound {
 		// must be a new pipeline, let's go ahead and create it
-		if pipelineIDExists {
-			delete(pipelineJson, "id")
-		}
+		// Users please note that when explictly setting pipeline IDs,
+		// then you're also needing to maually risk pipeline collisions
+		// and possible security issues based on environment RBAC setups
+		// if pipelineIDExists {
+		// 	delete(pipelineJson, "id")
+		// }
 	} else {
 		// it's exists already, make sure we're updating the same one
 		if queryResp.StatusCode == http.StatusOK && len(foundPipeline) > 0 {
