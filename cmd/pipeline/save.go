@@ -16,6 +16,7 @@ package pipeline
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -80,26 +81,27 @@ func savePipeline(cmd *cobra.Command, options *saveOptions) error {
 	if !valid {
 		return fmt.Errorf("Submitted pipeline is invalid: %s\n", pipelineJson)
 	}
+
 	application := pipelineJson["application"].(string)
 	pipelineName := pipelineJson["name"].(string)
 
 	foundPipeline, queryResp, _ := options.GateClient.ApplicationControllerApi.GetPipelineConfigUsingGET(options.GateClient.Context, application, pipelineName)
-
-	_, exists := pipelineJson["id"].(string)
-	var foundPipelineId string
-	if queryResp.StatusCode == http.StatusOK && len(foundPipeline) > 0 {
-		foundPipelineId = foundPipeline["id"].(string)
-	}
-	if !exists && foundPipelineId != "" {
-		pipelineJson["id"] = foundPipelineId
+	if queryResp.StatusCode == http.StatusOK {
+		// pipeline found, let's use Spinnaker's known Pipeline ID, otherwise we'll get one created for us
+		if len(foundPipeline) > 0 {
+			pipelineJson["id"] = foundPipeline["id"].(string)
+		}
+	} else if queryResp.StatusCode == http.StatusNotFound {
+		// pipeline doesn't exists, let's create a new one
+	} else {
+		b, _ := ioutil.ReadAll(queryResp.Body)
+		return fmt.Errorf("unhandled response %d: %s", queryResp.StatusCode, b)
 	}
 
 	saveResp, saveErr := options.GateClient.PipelineControllerApi.SavePipelineUsingPOST(options.GateClient.Context, pipelineJson)
-
 	if saveErr != nil {
 		return saveErr
-	}
-	if saveResp.StatusCode != http.StatusOK {
+	} else if saveResp.StatusCode != http.StatusOK {
 		return fmt.Errorf("Encountered an error saving pipeline, status code: %d\n", saveResp.StatusCode)
 	}
 
