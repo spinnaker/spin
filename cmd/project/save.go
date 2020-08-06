@@ -87,7 +87,7 @@ func saveProject(cmd *cobra.Command, options *saveOptions) error {
 
 	projectName := fmt.Sprintf("%s", project["name"])
 	id, err := doesProjectExist(projectName, options)
-	if id != "" {
+	if id != "" && project["id"] == nil {
 		project["id"] = id
 	}
 
