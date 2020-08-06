@@ -578,12 +578,13 @@ func (a *PipelineControllerApiService) GetPipelineUsingGET(ctx context.Context, 
  @param optional (nil or map[string]interface{}) with one or more of:
      @param "trigger" (interface{}) trigger
  @return */
-func (a *PipelineControllerApiService) InvokePipelineConfigUsingPOST1(ctx context.Context, application string, pipelineNameOrId string, localVarOptionals map[string]interface{}) ( *http.Response, error) {
+func (a *PipelineControllerApiService) InvokePipelineConfigUsingPOST1(ctx context.Context, application string, pipelineNameOrId string, localVarOptionals map[string]interface{}) (interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		successPayload     interface{}
 	)
 
 	// create path and map variables
@@ -595,9 +596,8 @@ func (a *PipelineControllerApiService) InvokePipelineConfigUsingPOST1(ctx contex
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -608,7 +608,7 @@ func (a *PipelineControllerApiService) InvokePipelineConfigUsingPOST1(ctx contex
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -621,20 +621,24 @@ func (a *PipelineControllerApiService) InvokePipelineConfigUsingPOST1(ctx contex
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return nil, err
+		return successPayload, nil, err
 	}
 
 	localVarHttpResponse, err := a.client.callAPI(r)
 	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
+		return successPayload, localVarHttpResponse, err
 	}
 	defer localVarHttpResponse.Body.Close()
 	if localVarHttpResponse.StatusCode >= 300 {
 		bodyBytes, _ := ioutil.ReadAll(localVarHttpResponse.Body)
-		return localVarHttpResponse, reportError("Status: %v, Body: %s", localVarHttpResponse.Status, bodyBytes)
+		return successPayload, localVarHttpResponse, reportError("Status: %v, Body: %s", localVarHttpResponse.Status, bodyBytes)
 	}
 
-	return localVarHttpResponse, err
+	if err = json.NewDecoder(localVarHttpResponse.Body).Decode(&successPayload); err != nil {
+		return successPayload, localVarHttpResponse, err
+	}
+
+	return successPayload, localVarHttpResponse, err
 }
 
 /* PipelineControllerApiService Trigger a pipeline execution
