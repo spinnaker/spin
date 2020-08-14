@@ -17,6 +17,7 @@ package canary_config
 import (
 	"errors"
 	"fmt"
+	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -66,7 +67,7 @@ func getCanaryConfig(cmd *cobra.Command, options *getOptions, args []string) err
 	}
 
 	successPayload, resp, err := options.GateClient.V2CanaryConfigControllerApi.GetCanaryConfigUsingGET(
-		options.GateClient.Context, id, map[string]interface{}{})
+		options.GateClient.Context, id, &gate.V2CanaryConfigControllerApiGetCanaryConfigUsingGETOpts{})
 	if err != nil {
 		return err
 	}

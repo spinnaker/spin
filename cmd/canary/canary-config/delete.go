@@ -16,6 +16,7 @@ package canary_config
 
 import (
 	"fmt"
+	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -56,7 +57,7 @@ func deleteCanaryConfig(cmd *cobra.Command, options *deleteOptions, args []strin
 	}
 
 	resp, err := options.GateClient.V2CanaryConfigControllerApi.DeleteCanaryConfigUsingDELETE(
-		options.GateClient.Context, id, map[string]interface{}{})
+		options.GateClient.Context, id, &gate.V2CanaryConfigControllerApiDeleteCanaryConfigUsingDELETEOpts{})
 	if err != nil {
 		return err
 	}

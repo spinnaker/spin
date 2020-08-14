@@ -17,6 +17,8 @@ package pipeline
 import (
 	"errors"
 	"fmt"
+	"github.com/antihax/optional"
+	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 	"strings"
 
@@ -106,7 +108,7 @@ func executePipeline(cmd *cobra.Command, options *executeOptions) error {
 	resp, err := options.GateClient.PipelineControllerApi.InvokePipelineConfigUsingPOST1(options.GateClient.Context,
 		options.application,
 		options.name,
-		map[string]interface{}{"trigger": trigger})
+		&gate.PipelineControllerApiInvokePipelineConfigUsingPOST1Opts{Trigger: optional.NewInterface(trigger)})
 	if err != nil {
 		return fmt.Errorf("Execute pipeline failed with response: %v and error: %s\n", resp, err)
 	}

@@ -16,6 +16,8 @@ package execution
 
 import (
 	"fmt"
+	"github.com/antihax/optional"
+	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -53,9 +55,9 @@ func getExecution(cmd *cobra.Command, options *getOptions, args []string) error 
 		return err
 	}
 
-	query := map[string]interface{}{
-		"executionIds": id, // Status filtering is ignored when executionId is supplied
-		"limit":        int32(1),
+	query := &gate.ExecutionsControllerApiGetLatestExecutionsByConfigIdsUsingGETOpts{
+		ExecutionIds: optional.NewString(id), // Status filtering is ignored when executionId is supplied
+		Limit:        optional.NewInt32(1),
 	}
 
 	successPayload, resp, err := options.GateClient.ExecutionsControllerApi.GetLatestExecutionsByConfigIdsUsingGET(

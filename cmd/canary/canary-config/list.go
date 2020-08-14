@@ -16,6 +16,8 @@ package canary_config
 
 import (
 	"fmt"
+	"github.com/antihax/optional"
+	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -53,7 +55,7 @@ func NewListCmd(canaryConfigOptions *canaryConfigOptions) *cobra.Command {
 
 func listCanaryConfig(cmd *cobra.Command, options *listOptions) error {
 	successPayload, resp, err := options.GateClient.V2CanaryConfigControllerApi.GetCanaryConfigsUsingGET(
-		options.GateClient.Context, map[string]interface{}{"application": options.application})
+		options.GateClient.Context, &gate.V2CanaryConfigControllerApiGetCanaryConfigsUsingGETOpts{Application: optional.NewString(options.application)})
 	if err != nil {
 		return err
 	}

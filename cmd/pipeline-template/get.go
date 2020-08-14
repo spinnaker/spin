@@ -17,6 +17,8 @@ package pipeline_template
 import (
 	"errors"
 	"fmt"
+	"github.com/antihax/optional"
+	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -68,9 +70,9 @@ func getPipelineTemplate(cmd *cobra.Command, options *getOptions, args []string)
 		}
 	}
 
-	queryParams := map[string]interface{}{}
+	queryParams := &gate.V2PipelineTemplatesControllerApiGetUsingGET2Opts{}
 	if options.tag != "" {
-		queryParams["tag"] = options.tag
+		queryParams.Tag = optional.NewString(options.tag)
 	}
 
 	successPayload, resp, err := options.GateClient.V2PipelineTemplatesControllerApi.GetUsingGET2(options.GateClient.Context,

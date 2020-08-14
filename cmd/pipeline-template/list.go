@@ -16,6 +16,8 @@ package pipeline_template
 
 import (
 	"fmt"
+	"github.com/antihax/optional"
+	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -53,7 +55,7 @@ func NewListCmd(pipelineTemplateOptions *pipelineTemplateOptions) *cobra.Command
 
 func listPipelineTemplate(cmd *cobra.Command, options *listOptions) error {
 	successPayload, resp, err := options.GateClient.V2PipelineTemplatesControllerApi.ListUsingGET1(options.GateClient.Context,
-		map[string]interface{}{"scopes": options.scopes})
+		&gate.V2PipelineTemplatesControllerApiListUsingGET1Opts{Scopes: optional.NewInterface(options.scopes)})
 	if err != nil {
 		return err
 	}

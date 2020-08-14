@@ -16,6 +16,8 @@ package account
 
 import (
 	"fmt"
+	"github.com/antihax/optional"
+	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -52,7 +54,7 @@ func NewListCmd(accOptions *accountOptions) *cobra.Command {
 }
 
 func listAccount(cmd *cobra.Command, options *listOptions, args []string) error {
-	accountList, resp, err := options.GateClient.CredentialsControllerApi.GetAccountsUsingGET(options.GateClient.Context, map[string]interface{}{"expand": options.expand})
+	accountList, resp, err := options.GateClient.CredentialsControllerApi.GetAccountsUsingGET(options.GateClient.Context, &gate.CredentialsControllerApiGetAccountsUsingGETOpts{Expand: optional.NewBool(options.expand)})
 	if err != nil {
 		return err
 	}

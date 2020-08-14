@@ -17,6 +17,7 @@ package execution
 import (
 	"errors"
 	"fmt"
+	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -57,7 +58,7 @@ func cancelExecution(cmd *cobra.Command, options *cancelOptions, args []string) 
 
 	resp, err := options.GateClient.PipelineControllerApi.CancelPipelineUsingPUT1(options.GateClient.Context,
 		executionId,
-		map[string]interface{}{})
+		&gate.PipelineControllerApiCancelPipelineUsingPUT1Opts{})
 	if err != nil {
 		return err
 	}

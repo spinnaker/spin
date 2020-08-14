@@ -16,6 +16,8 @@ package application
 
 import (
 	"fmt"
+	"github.com/antihax/optional"
+	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 
 	"github.com/spinnaker/spin/util"
@@ -63,7 +65,7 @@ func getApplication(cmd *cobra.Command, options *getOptions, args []string) erro
 		return err
 	}
 
-	app, resp, err := options.GateClient.ApplicationControllerApi.GetApplicationUsingGET(options.GateClient.Context, applicationName, map[string]interface{}{"expand": options.expand})
+	app, resp, err := options.GateClient.ApplicationControllerApi.GetApplicationUsingGET(options.GateClient.Context, applicationName, &gate.ApplicationControllerApiGetApplicationUsingGETOpts{Expand: optional.NewBool(options.expand)})
 	if resp != nil {
 		if resp.StatusCode == http.StatusNotFound {
 			return fmt.Errorf("Application '%s' not found\n", applicationName)
