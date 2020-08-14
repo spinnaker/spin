@@ -173,7 +173,6 @@ func retroCanaryConfig(cmd *cobra.Command, options *retroOptions) error {
 	}
 
 	canaryResult, canaryResultResp, canaryResultErr := options.GateClient.V2CanaryControllerApi.GetCanaryResultUsingGET1(options.GateClient.Context, canaryExecutionId, queryOptionalParams)
-
 	if canaryResultErr != nil {
 		return canaryResultErr
 	}
