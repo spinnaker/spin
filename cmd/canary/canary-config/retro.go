@@ -17,14 +17,14 @@ package canary_config
 import (
 	"errors"
 	"fmt"
-	"github.com/antihax/optional"
-	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 	"strings"
 	"time"
 
+	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 
+	gate "github.com/spinnaker/spin/gateapi"
 	"github.com/spinnaker/spin/util"
 )
 

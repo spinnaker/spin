@@ -16,9 +16,9 @@ package account
 
 import (
 	"fmt"
-	gate "github.com/spinnaker/spin/gateapi"
-
 	"net/http"
+
+	gate "github.com/spinnaker/spin/gateapi"
 
 	"github.com/spf13/cobra"
 

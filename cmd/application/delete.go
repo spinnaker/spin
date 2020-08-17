@@ -16,14 +16,13 @@ package application
 
 import (
 	"fmt"
-	"github.com/antihax/optional"
-	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 
-	orca_tasks "github.com/spinnaker/spin/cmd/orca-tasks"
-
+	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 
+	orca_tasks "github.com/spinnaker/spin/cmd/orca-tasks"
+	gate "github.com/spinnaker/spin/gateapi"
 	"github.com/spinnaker/spin/util"
 )
 

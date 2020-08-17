@@ -16,8 +16,9 @@ package project
 
 import (
 	"fmt"
-	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
+
+	gate "github.com/spinnaker/spin/gateapi"
 
 	"github.com/spinnaker/spin/util"
 

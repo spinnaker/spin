@@ -16,13 +16,13 @@ package application
 
 import (
 	"fmt"
-	"github.com/antihax/optional"
-	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 
-	"github.com/spinnaker/spin/util"
-
+	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
+
+	gate "github.com/spinnaker/spin/gateapi"
+	"github.com/spinnaker/spin/util"
 )
 
 type getOptions struct {

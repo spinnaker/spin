@@ -17,12 +17,13 @@ package execution
 import (
 	"errors"
 	"fmt"
-	"github.com/antihax/optional"
-	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 	"strings"
 
+	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
+
+	gate "github.com/spinnaker/spin/gateapi"
 )
 
 type listOptions struct {

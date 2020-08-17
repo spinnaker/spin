@@ -16,11 +16,12 @@ package canary_config
 
 import (
 	"fmt"
-	"github.com/antihax/optional"
-	gate "github.com/spinnaker/spin/gateapi"
 	"net/http"
 
+	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
+
+	gate "github.com/spinnaker/spin/gateapi"
 )
 
 type listOptions struct {
