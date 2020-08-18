@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 
 	gate "github.com/spinnaker/spin/gateapi"
+	orca_tasks "github.com/spinnaker/spin/cmd/orca-tasks"
 	"github.com/spinnaker/spin/util"
 )
 
@@ -122,8 +123,11 @@ func savePipelineTemplate(cmd *cobra.Command, options *saveOptions) error {
 			saveResp.StatusCode)
 	}
 
-	fmt.Println(saveRet)
-
-	options.Ui.Success("Pipeline template save succeeded")
-	return nil
+	taskSucceeded := orca_tasks.TaskSucceeded(saveRet)
+	if taskSucceeded {
+		options.Ui.Success("Pipeline template save succeeded")
+		return nil
+	} else {
+		return fmt.Errorf("Encountered an error with saving pipeline template %v", saveRet)
+	}
 }
