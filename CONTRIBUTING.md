@@ -72,6 +72,6 @@ To update the client library:
     && docker run -it \
         -v "${GATE_REPO_PATH}/swagger/:/tmp/gate" \
         -v "$PWD/gateapi/:/tmp/go/" \
-        "swaggerapi/swagger-codegen-cli:2.4.15" generate -i /tmp/gate/swagger.json -l go -o /tmp/go/
+        "swaggerapi/swagger-codegen-cli:${SWAGGER_CODEGEN_VERSION}" generate -i /tmp/gate/swagger.json -l go -o /tmp/go/
     ```
 - Commit the changes and open a PR.
