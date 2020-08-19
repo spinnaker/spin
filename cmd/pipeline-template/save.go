@@ -21,8 +21,8 @@ import (
 	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 
-	gate "github.com/spinnaker/spin/gateapi"
 	orca_tasks "github.com/spinnaker/spin/cmd/orca-tasks"
+	gate "github.com/spinnaker/spin/gateapi"
 	"github.com/spinnaker/spin/util"
 )
 
@@ -123,7 +123,7 @@ func savePipelineTemplate(cmd *cobra.Command, options *saveOptions) error {
 			saveResp.StatusCode)
 	}
 
-	if(len(saveRet) > 0) {
+	if len(saveRet) > 0 {
 		taskSucceeded := orca_tasks.TaskSucceeded(saveRet)
 		if !taskSucceeded {
 			return fmt.Errorf("Encountered an error with saving pipeline template %v", saveRet)
