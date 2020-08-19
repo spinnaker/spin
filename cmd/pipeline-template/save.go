@@ -123,11 +123,13 @@ func savePipelineTemplate(cmd *cobra.Command, options *saveOptions) error {
 			saveResp.StatusCode)
 	}
 
-	taskSucceeded := orca_tasks.TaskSucceeded(saveRet)
-	if taskSucceeded {
-		options.Ui.Success("Pipeline template save succeeded")
-		return nil
-	} else {
-		return fmt.Errorf("Encountered an error with saving pipeline template %v", saveRet)
+	if(len(saveRet) > 0) {
+		taskSucceeded := orca_tasks.TaskSucceeded(saveRet)
+		if !taskSucceeded {
+			return fmt.Errorf("Encountered an error with saving pipeline template %v", saveRet)
+		}
 	}
+
+	options.Ui.Success("Pipeline template save succeeded")
+	return nil
 }
