@@ -14,11 +14,10 @@ import (
 )
 
 type SpinnakerPluginRelease struct {
-	Requires string `json:"requires,omitempty"`
-	Version string `json:"version,omitempty"`
-	Url string `json:"url,omitempty"`
-	Date time.Time `json:"date,omitempty"`
-	Sha512sum string `json:"sha512sum,omitempty"`
-	Preferred bool `json:"preferred,omitempty"`
-	RemoteExtensions []RemoteExtension `json:"remoteExtensions,omitempty"`
+	Date      time.Time `json:"date,omitempty"`
+	Version   string    `json:"version,omitempty"`
+	Url       string    `json:"url,omitempty"`
+	Requires  string    `json:"requires,omitempty"`
+	Preferred bool      `json:"preferred,omitempty"`
+	Sha512sum string    `json:"sha512sum,omitempty"`
 }

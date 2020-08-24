@@ -37,7 +37,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **GetAllPluginInfoUsingGET**
-> []interface{} GetAllPluginInfoUsingGET(ctx, optional)
+> []Mapstringobject GetAllPluginInfoUsingGET(ctx, optional)
 Get all plugin info objects
 
 ### Required Parameters
@@ -56,7 +56,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**[]interface{}**](interface{}.md)
+[**[]Mapstringobject**](Map«string,object».md)
 
 ### Authorization
 
