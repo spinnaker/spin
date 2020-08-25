@@ -10,6 +10,6 @@
 package swagger
 
 type Http struct {
-	Url string `json:"url,omitempty"`
 	Config *interface{} `json:"config,omitempty"`
+	Url    string       `json:"url,omitempty"`
 }

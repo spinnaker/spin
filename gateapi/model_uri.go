@@ -10,21 +10,21 @@
 package swagger
 
 type Uri struct {
-	Fragment string `json:"fragment,omitempty"`
-	SchemeSpecificPart string `json:"schemeSpecificPart,omitempty"`
+	RawPath               string `json:"rawPath,omitempty"`
+	Scheme                string `json:"scheme,omitempty"`
+	Fragment              string `json:"fragment,omitempty"`
 	RawSchemeSpecificPart string `json:"rawSchemeSpecificPart,omitempty"`
-	Scheme string `json:"scheme,omitempty"`
-	Query string `json:"query,omitempty"`
-	RawUserInfo string `json:"rawUserInfo,omitempty"`
-	RawPath string `json:"rawPath,omitempty"`
-	Absolute bool `json:"absolute,omitempty"`
-	Path string `json:"path,omitempty"`
-	Host string `json:"host,omitempty"`
-	Authority string `json:"authority,omitempty"`
-	Port int32 `json:"port,omitempty"`
-	RawQuery string `json:"rawQuery,omitempty"`
-	RawAuthority string `json:"rawAuthority,omitempty"`
-	UserInfo string `json:"userInfo,omitempty"`
-	Opaque bool `json:"opaque,omitempty"`
-	RawFragment string `json:"rawFragment,omitempty"`
+	UserInfo              string `json:"userInfo,omitempty"`
+	Absolute              bool   `json:"absolute,omitempty"`
+	SchemeSpecificPart    string `json:"schemeSpecificPart,omitempty"`
+	RawFragment           string `json:"rawFragment,omitempty"`
+	Opaque                bool   `json:"opaque,omitempty"`
+	Port                  int32  `json:"port,omitempty"`
+	Host                  string `json:"host,omitempty"`
+	RawAuthority          string `json:"rawAuthority,omitempty"`
+	Query                 string `json:"query,omitempty"`
+	Authority             string `json:"authority,omitempty"`
+	RawQuery              string `json:"rawQuery,omitempty"`
+	Path                  string `json:"path,omitempty"`
+	RawUserInfo           string `json:"rawUserInfo,omitempty"`
 }
