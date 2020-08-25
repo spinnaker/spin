@@ -10,9 +10,9 @@
 package swagger
 
 type EnvironmentArtifactPin struct {
-	Reference string `json:"reference,omitempty"`
-	PinnedBy string `json:"pinnedBy,omitempty"`
-	Comment string `json:"comment,omitempty"`
-	Version string `json:"version,omitempty"`
+	Version           string `json:"version,omitempty"`
+	Reference         string `json:"reference,omitempty"`
+	Comment           string `json:"comment,omitempty"`
 	TargetEnvironment string `json:"targetEnvironment,omitempty"`
+	PinnedBy          string `json:"pinnedBy,omitempty"`
 }

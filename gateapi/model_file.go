@@ -14,23 +14,23 @@ import (
 )
 
 type File struct {
-	AbsolutePath string `json:"absolutePath,omitempty"`
-	Parent string `json:"parent,omitempty"`
-	UsableSpace int64 `json:"usableSpace,omitempty"`
-	Readable bool `json:"readable,omitempty"`
-	Path string `json:"path,omitempty"`
-	Executable bool `json:"executable,omitempty"`
-	TotalSpace int64 `json:"totalSpace,omitempty"`
-	CanonicalPath string `json:"canonicalPath,omitempty"`
-	LastModified int64 `json:"lastModified,omitempty"`
-	Name string `json:"name,omitempty"`
-	Directory bool `json:"directory,omitempty"`
-	ParentFile **os.File `json:"parentFile,omitempty"`
-	File bool `json:"file,omitempty"`
-	Hidden bool `json:"hidden,omitempty"`
-	AbsoluteFile **os.File `json:"absoluteFile,omitempty"`
-	Absolute bool `json:"absolute,omitempty"`
-	FreeSpace int64 `json:"freeSpace,omitempty"`
-	Writable bool `json:"writable,omitempty"`
+	File          bool      `json:"file,omitempty"`
+	Writable      bool      `json:"writable,omitempty"`
+	Executable    bool      `json:"executable,omitempty"`
+	Hidden        bool      `json:"hidden,omitempty"`
+	Path          string    `json:"path,omitempty"`
+	UsableSpace   int64     `json:"usableSpace,omitempty"`
+	Parent        string    `json:"parent,omitempty"`
+	Directory     bool      `json:"directory,omitempty"`
+	Absolute      bool      `json:"absolute,omitempty"`
 	CanonicalFile **os.File `json:"canonicalFile,omitempty"`
+	Readable      bool      `json:"readable,omitempty"`
+	ParentFile    **os.File `json:"parentFile,omitempty"`
+	Name          string    `json:"name,omitempty"`
+	TotalSpace    int64     `json:"totalSpace,omitempty"`
+	AbsolutePath  string    `json:"absolutePath,omitempty"`
+	FreeSpace     int64     `json:"freeSpace,omitempty"`
+	AbsoluteFile  **os.File `json:"absoluteFile,omitempty"`
+	CanonicalPath string    `json:"canonicalPath,omitempty"`
+	LastModified  int64     `json:"lastModified,omitempty"`
 }
