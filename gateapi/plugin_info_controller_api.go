@@ -10,13 +10,13 @@
 package swagger
 
 import (
-	"io/ioutil"
-	"net/url"
-	"net/http"
-	"strings"
-	"golang.org/x/net/context"
 	"encoding/json"
 	"fmt"
+	"golang.org/x/net/context"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
 )
 
 // Linger please
@@ -26,18 +26,17 @@ var (
 
 type PluginInfoControllerApiService service
 
-
 /* PluginInfoControllerApiService Delete plugin info with the provided Id
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @param id id
- @return interface{}*/
-func (a *PluginInfoControllerApiService) DeletePluginInfoUsingDELETE(ctx context.Context, id string) (interface{},  *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param id id
+@return interface{}*/
+func (a *PluginInfoControllerApiService) DeletePluginInfoUsingDELETE(ctx context.Context, id string) (interface{}, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Delete")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
-	 	successPayload  interface{}
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		successPayload     interface{}
 	)
 
 	// create path and map variables
@@ -48,9 +47,8 @@ func (a *PluginInfoControllerApiService) DeletePluginInfoUsingDELETE(ctx context
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{  }
+	localVarHttpContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -61,7 +59,7 @@ func (a *PluginInfoControllerApiService) DeletePluginInfoUsingDELETE(ctx context
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -87,22 +85,21 @@ func (a *PluginInfoControllerApiService) DeletePluginInfoUsingDELETE(ctx context
 		return successPayload, localVarHttpResponse, err
 	}
 
-
 	return successPayload, localVarHttpResponse, err
 }
 
 /* PluginInfoControllerApiService Get all plugin info objects
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @param optional (nil or map[string]interface{}) with one or more of:
-     @param "service" (string) service
- @return []Mapstringobject*/
-func (a *PluginInfoControllerApiService) GetAllPluginInfoUsingGET(ctx context.Context, localVarOptionals map[string]interface{}) ([]Mapstringobject,  *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param optional (nil or map[string]interface{}) with one or more of:
+    @param "service" (string) service
+@return []Mapstringobject*/
+func (a *PluginInfoControllerApiService) GetAllPluginInfoUsingGET(ctx context.Context, localVarOptionals map[string]interface{}) ([]Mapstringobject, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
-	 	successPayload  []Mapstringobject
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+		successPayload     []Mapstringobject
 	)
 
 	// create path and map variables
@@ -120,7 +117,7 @@ func (a *PluginInfoControllerApiService) GetAllPluginInfoUsingGET(ctx context.Co
 		localVarQueryParams.Add("service", parameterToString(localVarTempParam, ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{  }
+	localVarHttpContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -131,7 +128,7 @@ func (a *PluginInfoControllerApiService) GetAllPluginInfoUsingGET(ctx context.Co
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -157,20 +154,19 @@ func (a *PluginInfoControllerApiService) GetAllPluginInfoUsingGET(ctx context.Co
 		return successPayload, localVarHttpResponse, err
 	}
 
-
 	return successPayload, localVarHttpResponse, err
 }
 
 /* PluginInfoControllerApiService Persist plugin metadata information
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @param pluginInfo pluginInfo
- @return */
-func (a *PluginInfoControllerApiService) PersistPluginInfoUsingPOST(ctx context.Context, pluginInfo SpinnakerPluginInfo) ( *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param pluginInfo pluginInfo
+@return */
+func (a *PluginInfoControllerApiService) PersistPluginInfoUsingPOST(ctx context.Context, pluginInfo SpinnakerPluginInfo) (*http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 	)
 
 	// create path and map variables
@@ -180,9 +176,8 @@ func (a *PluginInfoControllerApiService) PersistPluginInfoUsingPOST(ctx context.
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -193,7 +188,7 @@ func (a *PluginInfoControllerApiService) PersistPluginInfoUsingPOST(ctx context.
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -221,15 +216,15 @@ func (a *PluginInfoControllerApiService) PersistPluginInfoUsingPOST(ctx context.
 }
 
 /* PluginInfoControllerApiService Persist plugin metadata information
- * @param ctx context.Context for authentication, logging, tracing, etc.
- @param pluginInfo pluginInfo
- @return */
-func (a *PluginInfoControllerApiService) PersistPluginInfoUsingPUT(ctx context.Context, pluginInfo SpinnakerPluginInfo) ( *http.Response, error) {
+* @param ctx context.Context for authentication, logging, tracing, etc.
+@param pluginInfo pluginInfo
+@return */
+func (a *PluginInfoControllerApiService) PersistPluginInfoUsingPUT(ctx context.Context, pluginInfo SpinnakerPluginInfo) (*http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Put")
-		localVarPostBody interface{}
-		localVarFileName string
-		localVarFileBytes []byte
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 	)
 
 	// create path and map variables
@@ -239,9 +234,8 @@ func (a *PluginInfoControllerApiService) PersistPluginInfoUsingPUT(ctx context.C
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
+	localVarHttpContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -252,7 +246,7 @@ func (a *PluginInfoControllerApiService) PersistPluginInfoUsingPUT(ctx context.C
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"*/*",
-		}
+	}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -278,4 +272,3 @@ func (a *PluginInfoControllerApiService) PersistPluginInfoUsingPUT(ctx context.C
 
 	return localVarHttpResponse, err
 }
-
