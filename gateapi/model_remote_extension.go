@@ -11,7 +11,7 @@ package swagger
 
 type RemoteExtension struct {
 	Transport *RemoteExtensionTransport `json:"transport,omitempty"`
-	Type_ string `json:"type,omitempty"`
-	Config *interface{} `json:"config,omitempty"`
-	Id string `json:"id,omitempty"`
+	Type_     string                    `json:"type,omitempty"`
+	Config    *interface{}              `json:"config,omitempty"`
+	Id        string                    `json:"id,omitempty"`
 }

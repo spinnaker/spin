@@ -1,4 +1,3 @@
-
 /*
  * Spinnaker API
  *
@@ -12,12 +11,12 @@ package swagger
 
 import (
 	"context"
+	"fmt"
+	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-	"fmt"
-	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -27,7 +26,7 @@ var (
 
 type V2CanaryConfigControllerApiService service
 
-/* 
+/*
 V2CanaryConfigControllerApiService Create a canary configuration
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param config config
@@ -37,16 +36,16 @@ V2CanaryConfigControllerApiService Create a canary configuration
 @return interface{}
 */
 
-type V2CanaryConfigControllerApiCreateCanaryConfigUsingPOSTOpts struct { 
+type V2CanaryConfigControllerApiCreateCanaryConfigUsingPOSTOpts struct {
 	ConfigurationAccountName optional.String
 }
 
 func (a *V2CanaryConfigControllerApiService) CreateCanaryConfigUsingPOST(ctx context.Context, config interface{}, localVarOptionals *V2CanaryConfigControllerApiCreateCanaryConfigUsingPOSTOpts) (interface{}, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue interface{}
 	)
 
@@ -97,36 +96,36 @@ func (a *V2CanaryConfigControllerApiService) CreateCanaryConfigUsingPOST(ctx con
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v interface{}
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		
+
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
 
-/* 
+/*
 V2CanaryConfigControllerApiService Delete a canary configuration
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param id id
@@ -136,7 +135,7 @@ V2CanaryConfigControllerApiService Delete a canary configuration
 
 */
 
-type V2CanaryConfigControllerApiDeleteCanaryConfigUsingDELETEOpts struct { 
+type V2CanaryConfigControllerApiDeleteCanaryConfigUsingDELETEOpts struct {
 	ConfigurationAccountName optional.String
 }
 
@@ -146,7 +145,6 @@ func (a *V2CanaryConfigControllerApiService) DeleteCanaryConfigUsingDELETE(ctx c
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
-		
 	)
 
 	// create path and map variables
@@ -193,20 +191,19 @@ func (a *V2CanaryConfigControllerApiService) DeleteCanaryConfigUsingDELETE(ctx c
 		return localVarHttpResponse, err
 	}
 
-
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		
+
 		return localVarHttpResponse, newErr
 	}
 
 	return localVarHttpResponse, nil
 }
 
-/* 
+/*
 V2CanaryConfigControllerApiService Retrieve a canary configuration by id
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param id id
@@ -216,16 +213,16 @@ V2CanaryConfigControllerApiService Retrieve a canary configuration by id
 @return interface{}
 */
 
-type V2CanaryConfigControllerApiGetCanaryConfigUsingGETOpts struct { 
+type V2CanaryConfigControllerApiGetCanaryConfigUsingGETOpts struct {
 	ConfigurationAccountName optional.String
 }
 
 func (a *V2CanaryConfigControllerApiService) GetCanaryConfigUsingGET(ctx context.Context, id string, localVarOptionals *V2CanaryConfigControllerApiGetCanaryConfigUsingGETOpts) (interface{}, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue interface{}
 	)
 
@@ -275,36 +272,36 @@ func (a *V2CanaryConfigControllerApiService) GetCanaryConfigUsingGET(ctx context
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v interface{}
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		
+
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
 
-/* 
+/*
 V2CanaryConfigControllerApiService Retrieve a list of canary configurations
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *V2CanaryConfigControllerApiGetCanaryConfigsUsingGETOpts - Optional Parameters:
@@ -314,17 +311,17 @@ V2CanaryConfigControllerApiService Retrieve a list of canary configurations
 @return []interface{}
 */
 
-type V2CanaryConfigControllerApiGetCanaryConfigsUsingGETOpts struct { 
-	Application optional.String
+type V2CanaryConfigControllerApiGetCanaryConfigsUsingGETOpts struct {
+	Application              optional.String
 	ConfigurationAccountName optional.String
 }
 
 func (a *V2CanaryConfigControllerApiService) GetCanaryConfigsUsingGET(ctx context.Context, localVarOptionals *V2CanaryConfigControllerApiGetCanaryConfigsUsingGETOpts) ([]interface{}, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue []interface{}
 	)
 
@@ -376,36 +373,36 @@ func (a *V2CanaryConfigControllerApiService) GetCanaryConfigsUsingGET(ctx contex
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v []interface{}
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		
+
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
 
-/* 
+/*
 V2CanaryConfigControllerApiService Update a canary configuration
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param config config
@@ -416,16 +413,16 @@ V2CanaryConfigControllerApiService Update a canary configuration
 @return interface{}
 */
 
-type V2CanaryConfigControllerApiUpdateCanaryConfigUsingPUTOpts struct { 
+type V2CanaryConfigControllerApiUpdateCanaryConfigUsingPUTOpts struct {
 	ConfigurationAccountName optional.String
 }
 
 func (a *V2CanaryConfigControllerApiService) UpdateCanaryConfigUsingPUT(ctx context.Context, config interface{}, id string, localVarOptionals *V2CanaryConfigControllerApiUpdateCanaryConfigUsingPUTOpts) (interface{}, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Put")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Put")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue interface{}
 	)
 
@@ -477,29 +474,29 @@ func (a *V2CanaryConfigControllerApiService) UpdateCanaryConfigUsingPUT(ctx cont
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v interface{}
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		
+
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 

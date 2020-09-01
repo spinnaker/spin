@@ -11,6 +11,6 @@ package swagger
 
 type PluginDependency struct {
 	PluginVersionSupport string `json:"pluginVersionSupport,omitempty"`
-	Optional bool `json:"optional,omitempty"`
-	PluginId string `json:"pluginId,omitempty"`
+	Optional             bool   `json:"optional,omitempty"`
+	PluginId             string `json:"pluginId,omitempty"`
 }

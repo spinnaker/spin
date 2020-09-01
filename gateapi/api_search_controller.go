@@ -1,4 +1,3 @@
-
 /*
  * Spinnaker API
  *
@@ -12,11 +11,11 @@ package swagger
 
 import (
 	"context"
+	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -26,7 +25,7 @@ var (
 
 type SearchControllerApiService service
 
-/* 
+/*
 SearchControllerApiService Search infrastructure
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param type_ type
@@ -41,21 +40,21 @@ SearchControllerApiService Search infrastructure
 @return []interface{}
 */
 
-type SearchControllerApiSearchUsingGETOpts struct { 
-	XRateLimitApp optional.String
+type SearchControllerApiSearchUsingGETOpts struct {
+	XRateLimitApp   optional.String
 	AllowShortQuery optional.Bool
-	Page optional.Int32
-	PageSize optional.Int32
-	Platform optional.String
-	Q optional.String
+	Page            optional.Int32
+	PageSize        optional.Int32
+	Platform        optional.String
+	Q               optional.String
 }
 
 func (a *SearchControllerApiService) SearchUsingGET(ctx context.Context, type_ string, localVarOptionals *SearchControllerApiSearchUsingGETOpts) ([]interface{}, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue []interface{}
 	)
 
@@ -120,29 +119,29 @@ func (a *SearchControllerApiService) SearchUsingGET(ctx context.Context, type_ s
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v []interface{}
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		
+
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 

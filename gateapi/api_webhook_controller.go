@@ -1,4 +1,3 @@
-
 /*
  * Spinnaker API
  *
@@ -12,12 +11,12 @@ package swagger
 
 import (
 	"context"
+	"fmt"
+	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-	"fmt"
-	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -27,7 +26,7 @@ var (
 
 type WebhookControllerApiService service
 
-/* 
+/*
 WebhookControllerApiService Retrieve a list of preconfigured webhooks in Orca
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
@@ -35,10 +34,10 @@ WebhookControllerApiService Retrieve a list of preconfigured webhooks in Orca
 */
 func (a *WebhookControllerApiService) PreconfiguredWebhooksUsingGET(ctx context.Context) ([]interface{}, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue []interface{}
 	)
 
@@ -84,36 +83,36 @@ func (a *WebhookControllerApiService) PreconfiguredWebhooksUsingGET(ctx context.
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v []interface{}
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		
+
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
 
-/* 
+/*
 WebhookControllerApiService Endpoint for posting webhooks to Spinnaker&#39;s webhook service
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param source source
@@ -126,18 +125,18 @@ WebhookControllerApiService Endpoint for posting webhooks to Spinnaker&#39;s web
 @return interface{}
 */
 
-type WebhookControllerApiWebhooksUsingPOSTOpts struct { 
-	XEventKey optional.String
+type WebhookControllerApiWebhooksUsingPOSTOpts struct {
+	XEventKey     optional.String
 	XHubSignature optional.String
-	Event optional.Interface
+	Event         optional.Interface
 }
 
 func (a *WebhookControllerApiService) WebhooksUsingPOST(ctx context.Context, source string, type_ string, localVarOptionals *WebhookControllerApiWebhooksUsingPOSTOpts) (interface{}, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue interface{}
 	)
 
@@ -175,10 +174,10 @@ func (a *WebhookControllerApiService) WebhooksUsingPOST(ctx context.Context, sou
 	}
 	// body params
 	if localVarOptionals != nil && localVarOptionals.Event.IsSet() {
-		
+
 		localVarOptionalEvent, localVarOptionalEventok := localVarOptionals.Event.Value().(interface{})
 		if !localVarOptionalEventok {
-				return localVarReturnValue, nil, reportError("event should be interface{}")
+			return localVarReturnValue, nil, reportError("event should be interface{}")
 		}
 		localVarPostBody = &localVarOptionalEvent
 	}
@@ -200,29 +199,29 @@ func (a *WebhookControllerApiService) WebhooksUsingPOST(ctx context.Context, sou
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v interface{}
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		
+
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 

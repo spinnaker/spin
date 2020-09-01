@@ -1,4 +1,3 @@
-
 /*
  * Spinnaker API
  *
@@ -12,12 +11,12 @@ package swagger
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strings"
-	"fmt"
 	"os"
+	"strings"
 )
 
 // Linger please
@@ -27,7 +26,7 @@ var (
 
 type PluginPublishControllerApiService service
 
-/* 
+/*
 PluginPublishControllerApiService Publish a plugin binary and the plugin info metadata.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param plugin plugin
@@ -43,7 +42,6 @@ func (a *PluginPublishControllerApiService) PublishPluginUsingPOST(ctx context.C
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
-		
 	)
 
 	// create path and map variables
@@ -72,7 +70,7 @@ func (a *PluginPublishControllerApiService) PublishPluginUsingPOST(ctx context.C
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
-    localVarFile := plugin
+	localVarFile := plugin
 	if localVarFile != nil {
 		fbs, _ := ioutil.ReadAll(localVarFile)
 		localVarFileBytes = fbs
@@ -96,13 +94,12 @@ func (a *PluginPublishControllerApiService) PublishPluginUsingPOST(ctx context.C
 		return localVarHttpResponse, err
 	}
 
-
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		
+
 		return localVarHttpResponse, newErr
 	}
 

@@ -1,4 +1,3 @@
-
 /*
  * Spinnaker API
  *
@@ -12,12 +11,12 @@ package swagger
 
 import (
 	"context"
+	"fmt"
+	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-	"fmt"
-	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -27,50 +26,50 @@ var (
 
 type CredentialsControllerApiService service
 
-/* 
+/*
 CredentialsControllerApiService Retrieve an account&#39;s details
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param account account
  * @param optional nil or *CredentialsControllerApiGetAccountUsingGETOpts - Optional Parameters:
      * @param "XRateLimitApp" (optional.String) -  X-RateLimit-App
-     * @param "AccountNonExpired" (optional.Bool) - 
-     * @param "AccountNonLocked" (optional.Bool) - 
-     * @param "AllowedAccounts" (optional.Interface of []string) - 
-     * @param "Authorities0Authority" (optional.String) - 
-     * @param "CredentialsNonExpired" (optional.Bool) - 
-     * @param "Email" (optional.String) - 
-     * @param "Enabled" (optional.Bool) - 
-     * @param "FirstName" (optional.String) - 
-     * @param "LastName" (optional.String) - 
-     * @param "Password" (optional.String) - 
-     * @param "Roles" (optional.Interface of []string) - 
-     * @param "Username" (optional.String) - 
+     * @param "AccountNonExpired" (optional.Bool) -
+     * @param "AccountNonLocked" (optional.Bool) -
+     * @param "AllowedAccounts" (optional.Interface of []string) -
+     * @param "Authorities0Authority" (optional.String) -
+     * @param "CredentialsNonExpired" (optional.Bool) -
+     * @param "Email" (optional.String) -
+     * @param "Enabled" (optional.Bool) -
+     * @param "FirstName" (optional.String) -
+     * @param "LastName" (optional.String) -
+     * @param "Password" (optional.String) -
+     * @param "Roles" (optional.Interface of []string) -
+     * @param "Username" (optional.String) -
 
 @return AccountDetails
 */
 
-type CredentialsControllerApiGetAccountUsingGETOpts struct { 
-	XRateLimitApp optional.String
-	AccountNonExpired optional.Bool
-	AccountNonLocked optional.Bool
-	AllowedAccounts optional.Interface
+type CredentialsControllerApiGetAccountUsingGETOpts struct {
+	XRateLimitApp         optional.String
+	AccountNonExpired     optional.Bool
+	AccountNonLocked      optional.Bool
+	AllowedAccounts       optional.Interface
 	Authorities0Authority optional.String
 	CredentialsNonExpired optional.Bool
-	Email optional.String
-	Enabled optional.Bool
-	FirstName optional.String
-	LastName optional.String
-	Password optional.String
-	Roles optional.Interface
-	Username optional.String
+	Email                 optional.String
+	Enabled               optional.Bool
+	FirstName             optional.String
+	LastName              optional.String
+	Password              optional.String
+	Roles                 optional.Interface
+	Username              optional.String
 }
 
 func (a *CredentialsControllerApiService) GetAccountUsingGET(ctx context.Context, account string, localVarOptionals *CredentialsControllerApiGetAccountUsingGETOpts) (AccountDetails, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue AccountDetails
 	)
 
@@ -156,78 +155,78 @@ func (a *CredentialsControllerApiService) GetAccountUsingGET(ctx context.Context
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v AccountDetails
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		
+
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
 
-/* 
+/*
 CredentialsControllerApiService Retrieve a list of accounts
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *CredentialsControllerApiGetAccountsUsingGETOpts - Optional Parameters:
-     * @param "AccountNonExpired" (optional.Bool) - 
-     * @param "AccountNonLocked" (optional.Bool) - 
-     * @param "AllowedAccounts" (optional.Interface of []string) - 
-     * @param "Authorities0Authority" (optional.String) - 
-     * @param "CredentialsNonExpired" (optional.Bool) - 
-     * @param "Email" (optional.String) - 
-     * @param "Enabled" (optional.Bool) - 
+     * @param "AccountNonExpired" (optional.Bool) -
+     * @param "AccountNonLocked" (optional.Bool) -
+     * @param "AllowedAccounts" (optional.Interface of []string) -
+     * @param "Authorities0Authority" (optional.String) -
+     * @param "CredentialsNonExpired" (optional.Bool) -
+     * @param "Email" (optional.String) -
+     * @param "Enabled" (optional.Bool) -
      * @param "Expand" (optional.Bool) -  expand
-     * @param "FirstName" (optional.String) - 
-     * @param "LastName" (optional.String) - 
-     * @param "Password" (optional.String) - 
-     * @param "Roles" (optional.Interface of []string) - 
-     * @param "Username" (optional.String) - 
+     * @param "FirstName" (optional.String) -
+     * @param "LastName" (optional.String) -
+     * @param "Password" (optional.String) -
+     * @param "Roles" (optional.Interface of []string) -
+     * @param "Username" (optional.String) -
 
 @return []Account
 */
 
-type CredentialsControllerApiGetAccountsUsingGETOpts struct { 
-	AccountNonExpired optional.Bool
-	AccountNonLocked optional.Bool
-	AllowedAccounts optional.Interface
+type CredentialsControllerApiGetAccountsUsingGETOpts struct {
+	AccountNonExpired     optional.Bool
+	AccountNonLocked      optional.Bool
+	AllowedAccounts       optional.Interface
 	Authorities0Authority optional.String
 	CredentialsNonExpired optional.Bool
-	Email optional.String
-	Enabled optional.Bool
-	Expand optional.Bool
-	FirstName optional.String
-	LastName optional.String
-	Password optional.String
-	Roles optional.Interface
-	Username optional.String
+	Email                 optional.String
+	Enabled               optional.Bool
+	Expand                optional.Bool
+	FirstName             optional.String
+	LastName              optional.String
+	Password              optional.String
+	Roles                 optional.Interface
+	Username              optional.String
 }
 
 func (a *CredentialsControllerApiService) GetAccountsUsingGET(ctx context.Context, localVarOptionals *CredentialsControllerApiGetAccountsUsingGETOpts) ([]Account, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue []Account
 	)
 
@@ -312,29 +311,29 @@ func (a *CredentialsControllerApiService) GetAccountsUsingGET(ctx context.Contex
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v []Account
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		
+
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 

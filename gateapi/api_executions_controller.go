@@ -1,4 +1,3 @@
-
 /*
  * Spinnaker API
  *
@@ -12,12 +11,12 @@ package swagger
 
 import (
 	"context"
+	"fmt"
+	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-	"fmt"
-	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -27,7 +26,7 @@ var (
 
 type ExecutionsControllerApiService service
 
-/* 
+/*
 ExecutionsControllerApiService Retrieves an ad-hoc collection of executions based on a number of user-supplied parameters. Either executionIds or pipelineConfigIds must be supplied in order to return any results. If both are supplied, an exception will be thrown.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *ExecutionsControllerApiGetLatestExecutionsByConfigIdsUsingGETOpts - Optional Parameters:
@@ -40,20 +39,20 @@ ExecutionsControllerApiService Retrieves an ad-hoc collection of executions base
 @return []interface{}
 */
 
-type ExecutionsControllerApiGetLatestExecutionsByConfigIdsUsingGETOpts struct { 
-	ExecutionIds optional.String
-	Expand optional.Bool
-	Limit optional.Int32
+type ExecutionsControllerApiGetLatestExecutionsByConfigIdsUsingGETOpts struct {
+	ExecutionIds      optional.String
+	Expand            optional.Bool
+	Limit             optional.Int32
 	PipelineConfigIds optional.String
-	Statuses optional.String
+	Statuses          optional.String
 }
 
 func (a *ExecutionsControllerApiService) GetLatestExecutionsByConfigIdsUsingGET(ctx context.Context, localVarOptionals *ExecutionsControllerApiGetLatestExecutionsByConfigIdsUsingGETOpts) ([]interface{}, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue []interface{}
 	)
 
@@ -114,36 +113,36 @@ func (a *ExecutionsControllerApiService) GetLatestExecutionsByConfigIdsUsingGET(
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v []interface{}
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		
+
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
 
-/* 
+/*
 ExecutionsControllerApiService Search for pipeline executions using a combination of criteria. The returned list is sorted by buildTime (trigger time) in reverse order so that newer executions are first in the list.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param application Only includes executions that are part of this application. If this value is \&quot;*\&quot;, results will include executions of all applications.
@@ -163,26 +162,26 @@ ExecutionsControllerApiService Search for pipeline executions using a combinatio
 @return []interface{}
 */
 
-type ExecutionsControllerApiSearchForPipelineExecutionsByTriggerUsingGETOpts struct { 
-	EventId optional.String
-	Expand optional.Bool
-	PipelineName optional.String
-	Reverse optional.Bool
-	Size optional.Int32
-	StartIndex optional.Int32
-	Statuses optional.String
-	Trigger optional.String
-	TriggerTimeEndBoundary optional.Int64
+type ExecutionsControllerApiSearchForPipelineExecutionsByTriggerUsingGETOpts struct {
+	EventId                  optional.String
+	Expand                   optional.Bool
+	PipelineName             optional.String
+	Reverse                  optional.Bool
+	Size                     optional.Int32
+	StartIndex               optional.Int32
+	Statuses                 optional.String
+	Trigger                  optional.String
+	TriggerTimeEndBoundary   optional.Int64
 	TriggerTimeStartBoundary optional.Int64
-	TriggerTypes optional.String
+	TriggerTypes             optional.String
 }
 
 func (a *ExecutionsControllerApiService) SearchForPipelineExecutionsByTriggerUsingGET(ctx context.Context, application string, localVarOptionals *ExecutionsControllerApiSearchForPipelineExecutionsByTriggerUsingGETOpts) ([]interface{}, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue []interface{}
 	)
 
@@ -262,29 +261,29 @@ func (a *ExecutionsControllerApiService) SearchForPipelineExecutionsByTriggerUsi
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v []interface{}
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		
+
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 

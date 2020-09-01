@@ -10,7 +10,7 @@
 package swagger
 
 type Notification struct {
-	Address string `json:"address,omitempty"`
+	Address   string `json:"address,omitempty"`
 	Frequency string `json:"frequency,omitempty"`
-	Type_ string `json:"type,omitempty"`
+	Type_     string `json:"type,omitempty"`
 }
