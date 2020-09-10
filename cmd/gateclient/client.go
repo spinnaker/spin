@@ -30,12 +30,15 @@ import (
 	_ "net/http/pprof"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"syscall"
 
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/net/publicsuffix"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"sigs.k8s.io/yaml"
@@ -187,7 +190,7 @@ func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation st
 	// TODO: Verify version compatibility between Spin CLI and Gate.
 	_, _, err = gateClient.VersionControllerApi.GetVersionUsingGET(gateClient.Context)
 	if err != nil {
-		ui.Error("Could not reach Gate, please ensure it is running. Failing.")
+		ui.Error(fmt.Sprintf("Could not reach Gate, please ensure it is running. Failing. %s", err))
 		return nil, err
 	}
 
@@ -238,7 +241,7 @@ func userConfig(gateClient *GatewayClient, configLocation string) error {
 // InitializeHTTPClient will return an *http.Client configured with
 // optional TLS keys as specified in the auth.Config
 func InitializeHTTPClient(auth *auth.Config) (*http.Client, error) {
-	cookieJar, _ := cookiejar.New(nil)
+	cookieJar, _ := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
 	client := http.Client{
 		Jar:       cookieJar,
 		Transport: http.DefaultTransport.(*http.Transport).Clone(),
@@ -406,31 +409,51 @@ func authenticateOAuth2(output func(string), httpClient *http.Client, endpoint s
 				return false, errors.Wrapf(err, "Could not refresh token from source: %v", tokenSource)
 			}
 		} else {
+			done := make(chan bool)
+			verifier, verifierCode, err := generateCodeVerifier()
+			codeVerifier := oauth2.SetAuthURLParam("code_verifier", verifier)
+			if err != nil {
+				return false, err
+			}
+
 			// Do roundtrip.
 			http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				code := r.FormValue("code")
-				fmt.Fprintln(w, code)
+				newToken, err = config.Exchange(context.Background(), code, codeVerifier)
+				if err != nil {
+					errors.Wrapf(err, "Could not get the authentication token: %s", err)
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				} else {
+					done <- true
+				}
 			}))
 			go http.ListenAndServe(":8085", nil)
 			// Note: leaving server connection open for scope of request, will be reaped on exit.
 
-			verifier, verifierCode, err := generateCodeVerifier()
-			if err != nil {
-				return false, err
-			}
-
-			codeVerifier := oauth2.SetAuthURLParam("code_verifier", verifier)
+			//AuthCodeOption can be overriden from the config file.
+			opts := make([]oauth2.AuthCodeOption, 0)
 			codeChallenge := oauth2.SetAuthURLParam("code_challenge", verifierCode)
-			challengeMethod := oauth2.SetAuthURLParam("code_challenge_method", "S256")
+			codeChallengeMethod := oauth2.SetAuthURLParam("code_challenge_method", "S256")
+			opts = append(opts, codeChallenge, codeChallengeMethod)
 
-			authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline, oauth2.ApprovalForce, challengeMethod, codeChallenge)
-			output(fmt.Sprintf("Navigate to %s and authenticate", authURL))
-			code := prompt(output, "Paste authorization code:")
-
-			newToken, err = config.Exchange(context.Background(), code, codeVerifier)
-			if err != nil {
-				return false, err
+			if _, found := auth.OAuth2.AuthCodeOptions["access_type"]; !found {
+				auth.OAuth2.AuthCodeOptions["access_type"] = "offline"
 			}
+			if _, found := auth.OAuth2.AuthCodeOptions["prompt"]; !found {
+				auth.OAuth2.AuthCodeOptions["prompt"] = "consent"
+			}
+
+			//Add all the authCodeOptions from config.
+			for key, element := range auth.OAuth2.AuthCodeOptions {
+				opts = append(opts, oauth2.SetAuthURLParam(key, element))
+			}
+			authURL := config.AuthCodeURL("state-token", opts...)
+
+			err = open(authURL)
+			if err != nil {
+				output(fmt.Sprintf("Navigate to %s and authenticate", authURL))
+			}
+			<-done
 		}
 		OAuth2.CachedToken = newToken
 		err = login(httpClient, endpoint, newToken.AccessToken)
@@ -496,10 +519,9 @@ func login(httpClient *http.Client, endpoint string, accessToken string) error {
 		return err
 	}
 	loginReq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
-
 	_, err = httpClient.Do(loginReq) // Login to establish session.
 	if err != nil {
-		return errors.New("login failed")
+		return errors.Errorf("login failed %s", err)
 	}
 	return nil
 }
@@ -595,4 +617,22 @@ func securePrompt(output func(string), inputMsg string) string {
 	byteSecret, _ := terminal.ReadPassword(int(syscall.Stdin))
 	secret := string(byteSecret)
 	return strings.TrimSpace(secret)
+}
+
+// open opens the specified URL in the default browser of the user.
+func open(url string) error {
+	var cmd string
+	var args []string
+
+	switch runtime.GOOS {
+	case "windows":
+		cmd = "cmd"
+		args = []string{"/c", "start"}
+	case "darwin":
+		cmd = "open"
+	default: // "linux", "freebsd", "openbsd", "netbsd"
+		cmd = "xdg-open"
+	}
+	args = append(args, url)
+	return exec.Command(cmd, args...).Start()
 }
