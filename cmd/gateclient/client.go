@@ -519,10 +519,15 @@ func login(httpClient *http.Client, endpoint string, accessToken string) error {
 		return err
 	}
 	loginReq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
-	_, err = httpClient.Do(loginReq) // Login to establish session.
+	resp, err := httpClient.Do(loginReq) // Login to establish session.
 	if err != nil {
 		return errors.Errorf("login failed %s", err)
 	}
+
+	if resp.StatusCode != 200 {
+		return errors.Errorf("login failed %s", resp.Status)
+	}
+
 	return nil
 }
 
