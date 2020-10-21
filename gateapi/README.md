@@ -104,18 +104,20 @@ Class | Method | HTTP request | Description
 *ManagedControllerApi* | [**DiffResourceUsingPOST**](docs/ManagedControllerApi.md#diffresourceusingpost) | **Post** /managed/resources/diff | Ad-hoc validate and diff a resource
 *ManagedControllerApi* | [**ExportResourceUsingGET**](docs/ManagedControllerApi.md#exportresourceusingget) | **Get** /managed/resources/export/artifact/{cloudProvider}/{account}/{clusterName} | Generates an artifact definition based on the artifact used in a running cluster
 *ManagedControllerApi* | [**ExportResourceUsingGET1**](docs/ManagedControllerApi.md#exportresourceusingget1) | **Get** /managed/resources/export/{cloudProvider}/{account}/{type}/{name} | Generate a keel resource definition for a deployed cloud resource
-*ManagedControllerApi* | [**GetApiDocsUsingGET**](docs/ManagedControllerApi.md#getapidocsusingget) | **Get** /managed/api-docs | getApiDocs
 *ManagedControllerApi* | [**GetApplicationDetailsUsingGET**](docs/ManagedControllerApi.md#getapplicationdetailsusingget) | **Get** /managed/application/{application} | Get managed details about an application
 *ManagedControllerApi* | [**GetConfigByUsingGET**](docs/ManagedControllerApi.md#getconfigbyusingget) | **Get** /managed/application/{application}/config | Get the delivery config associated with an application
 *ManagedControllerApi* | [**GetConstraintStateUsingGET**](docs/ManagedControllerApi.md#getconstraintstateusingget) | **Get** /managed/application/{application}/environment/{environment}/constraints | List up-to {limit} current constraint states for an environment
 *ManagedControllerApi* | [**GetManifestArtifactsUsingGET**](docs/ManagedControllerApi.md#getmanifestartifactsusingget) | **Get** /managed/delivery-configs/{name}/artifacts | Get the status of each version of each artifact in each environment
 *ManagedControllerApi* | [**GetManifestUsingGET**](docs/ManagedControllerApi.md#getmanifestusingget) | **Get** /managed/delivery-configs/{name} | Get a delivery config manifest
+*ManagedControllerApi* | [**GetManifestYamlUsingGET**](docs/ManagedControllerApi.md#getmanifestyamlusingget) | **Get** /managed/delivery-configs/{name}.yml | Get a delivery config manifest
 *ManagedControllerApi* | [**GetResourceStatusUsingGET**](docs/ManagedControllerApi.md#getresourcestatususingget) | **Get** /managed/resources/{resourceId}/status | Get status of a resource
 *ManagedControllerApi* | [**GetResourceUsingGET**](docs/ManagedControllerApi.md#getresourceusingget) | **Get** /managed/resources/{resourceId} | Get a resource
+*ManagedControllerApi* | [**GetResourceYamlUsingGET**](docs/ManagedControllerApi.md#getresourceyamlusingget) | **Get** /managed/resources/{resourceId}.yml | Get a resource
 *ManagedControllerApi* | [**PauseApplicationUsingPOST**](docs/ManagedControllerApi.md#pauseapplicationusingpost) | **Post** /managed/application/{application}/pause | Pause management of an entire application
 *ManagedControllerApi* | [**PauseResourceUsingPOST**](docs/ManagedControllerApi.md#pauseresourceusingpost) | **Post** /managed/resources/{resourceId}/pause | Pause management of a resource
 *ManagedControllerApi* | [**ResumeApplicationUsingDELETE**](docs/ManagedControllerApi.md#resumeapplicationusingdelete) | **Delete** /managed/application/{application}/pause | Resume management of an entire application
 *ManagedControllerApi* | [**ResumeResourceUsingDELETE**](docs/ManagedControllerApi.md#resumeresourceusingdelete) | **Delete** /managed/resources/{resourceId}/pause | Resume management of a resource
+*ManagedControllerApi* | [**SchemaUsingGET**](docs/ManagedControllerApi.md#schemausingget) | **Get** /managed/delivery-configs/schema | Ad-hoc validate and diff a config manifest
 *ManagedControllerApi* | [**UpdateConstraintStatusUsingPOST**](docs/ManagedControllerApi.md#updateconstraintstatususingpost) | **Post** /managed/application/{application}/environment/{environment}/constraint | Update the status of an environment constraint
 *ManagedControllerApi* | [**UpsertManifestUsingPOST**](docs/ManagedControllerApi.md#upsertmanifestusingpost) | **Post** /managed/delivery-configs | Create or update a delivery config manifest
 *ManagedControllerApi* | [**ValidateManifestUsingPOST**](docs/ManagedControllerApi.md#validatemanifestusingpost) | **Post** /managed/delivery-configs/validate | Validate a delivery config manifest
@@ -130,7 +132,7 @@ Class | Method | HTTP request | Description
 *PipelineControllerApi* | [**DeletePipelineUsingDELETE1**](docs/PipelineControllerApi.md#deletepipelineusingdelete1) | **Delete** /pipelines/{id} | Delete a pipeline execution
 *PipelineControllerApi* | [**EvaluateExpressionForExecutionAtStageUsingGET**](docs/PipelineControllerApi.md#evaluateexpressionforexecutionatstageusingget) | **Get** /pipelines/{id}/{stageId}/evaluateExpression | Evaluate a pipeline expression at a specific stage using the provided execution as context
 *PipelineControllerApi* | [**EvaluateExpressionForExecutionUsingGET**](docs/PipelineControllerApi.md#evaluateexpressionforexecutionusingget) | **Get** /pipelines/{id}/evaluateExpression | Evaluate a pipeline expression using the provided execution as context
-*PipelineControllerApi* | [**EvaluateExpressionForExecutionViaPOSTUsingPOST**](docs/PipelineControllerApi.md#evaluateexpressionforexecutionviapostusingpost) | **Post** /pipelines/{id}/evaluateExpression | Evaluate a pipeline expression using the provided execution as context
+*PipelineControllerApi* | [**EvaluateExpressionForExecutionViaPOSTUsingPOST1**](docs/PipelineControllerApi.md#evaluateexpressionforexecutionviapostusingpost1) | **Post** /pipelines/{id}/evaluateExpression | Evaluate a pipeline expression using the provided execution as context
 *PipelineControllerApi* | [**EvaluateVariablesUsingPOST**](docs/PipelineControllerApi.md#evaluatevariablesusingpost) | **Post** /pipelines/{id}/evaluateVariables | Evaluate variables same as Evaluate Variables stage using the provided execution as context
 *PipelineControllerApi* | [**GetPipelineUsingGET**](docs/PipelineControllerApi.md#getpipelineusingget) | **Get** /pipelines/{id} | Retrieve a pipeline execution
 *PipelineControllerApi* | [**InvokePipelineConfigUsingPOST1**](docs/PipelineControllerApi.md#invokepipelineconfigusingpost1) | **Post** /pipelines/{application}/{pipelineNameOrId} | Trigger a pipeline execution
@@ -219,6 +221,7 @@ Class | Method | HTTP request | Description
  - [File](docs/File.md)
  - [GrantedAuthority](docs/GrantedAuthority.md)
  - [HashMapstringobject](docs/HashMapstringobject.md)
+ - [Headers](docs/Headers.md)
  - [Http](docs/Http.md)
  - [HttpEntity](docs/HttpEntity.md)
  - [InputStream](docs/InputStream.md)
@@ -227,8 +230,8 @@ Class | Method | HTTP request | Description
  - [Notification](docs/Notification.md)
  - [PipelineTemplateDependent](docs/PipelineTemplateDependent.md)
  - [PluginDependency](docs/PluginDependency.md)
- - [RemoteExtension](docs/RemoteExtension.md)
- - [RemoteExtensionTransport](docs/RemoteExtensionTransport.md)
+ - [RemoteExtensionConfig](docs/RemoteExtensionConfig.md)
+ - [RemoteExtensionTransportConfig](docs/RemoteExtensionTransportConfig.md)
  - [ReorderPipelinesCommand](docs/ReorderPipelinesCommand.md)
  - [Resource](docs/Resource.md)
  - [ResponseEntity](docs/ResponseEntity.md)

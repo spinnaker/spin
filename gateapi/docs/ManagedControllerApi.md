@@ -13,18 +13,20 @@ Method | HTTP request | Description
 [**DiffResourceUsingPOST**](ManagedControllerApi.md#DiffResourceUsingPOST) | **Post** /managed/resources/diff | Ad-hoc validate and diff a resource
 [**ExportResourceUsingGET**](ManagedControllerApi.md#ExportResourceUsingGET) | **Get** /managed/resources/export/artifact/{cloudProvider}/{account}/{clusterName} | Generates an artifact definition based on the artifact used in a running cluster
 [**ExportResourceUsingGET1**](ManagedControllerApi.md#ExportResourceUsingGET1) | **Get** /managed/resources/export/{cloudProvider}/{account}/{type}/{name} | Generate a keel resource definition for a deployed cloud resource
-[**GetApiDocsUsingGET**](ManagedControllerApi.md#GetApiDocsUsingGET) | **Get** /managed/api-docs | getApiDocs
 [**GetApplicationDetailsUsingGET**](ManagedControllerApi.md#GetApplicationDetailsUsingGET) | **Get** /managed/application/{application} | Get managed details about an application
 [**GetConfigByUsingGET**](ManagedControllerApi.md#GetConfigByUsingGET) | **Get** /managed/application/{application}/config | Get the delivery config associated with an application
 [**GetConstraintStateUsingGET**](ManagedControllerApi.md#GetConstraintStateUsingGET) | **Get** /managed/application/{application}/environment/{environment}/constraints | List up-to {limit} current constraint states for an environment
 [**GetManifestArtifactsUsingGET**](ManagedControllerApi.md#GetManifestArtifactsUsingGET) | **Get** /managed/delivery-configs/{name}/artifacts | Get the status of each version of each artifact in each environment
 [**GetManifestUsingGET**](ManagedControllerApi.md#GetManifestUsingGET) | **Get** /managed/delivery-configs/{name} | Get a delivery config manifest
+[**GetManifestYamlUsingGET**](ManagedControllerApi.md#GetManifestYamlUsingGET) | **Get** /managed/delivery-configs/{name}.yml | Get a delivery config manifest
 [**GetResourceStatusUsingGET**](ManagedControllerApi.md#GetResourceStatusUsingGET) | **Get** /managed/resources/{resourceId}/status | Get status of a resource
 [**GetResourceUsingGET**](ManagedControllerApi.md#GetResourceUsingGET) | **Get** /managed/resources/{resourceId} | Get a resource
+[**GetResourceYamlUsingGET**](ManagedControllerApi.md#GetResourceYamlUsingGET) | **Get** /managed/resources/{resourceId}.yml | Get a resource
 [**PauseApplicationUsingPOST**](ManagedControllerApi.md#PauseApplicationUsingPOST) | **Post** /managed/application/{application}/pause | Pause management of an entire application
 [**PauseResourceUsingPOST**](ManagedControllerApi.md#PauseResourceUsingPOST) | **Post** /managed/resources/{resourceId}/pause | Pause management of a resource
 [**ResumeApplicationUsingDELETE**](ManagedControllerApi.md#ResumeApplicationUsingDELETE) | **Delete** /managed/application/{application}/pause | Resume management of an entire application
 [**ResumeResourceUsingDELETE**](ManagedControllerApi.md#ResumeResourceUsingDELETE) | **Delete** /managed/resources/{resourceId}/pause | Resume management of a resource
+[**SchemaUsingGET**](ManagedControllerApi.md#SchemaUsingGET) | **Get** /managed/delivery-configs/schema | Ad-hoc validate and diff a config manifest
 [**UpdateConstraintStatusUsingPOST**](ManagedControllerApi.md#UpdateConstraintStatusUsingPOST) | **Post** /managed/application/{application}/environment/{environment}/constraint | Update the status of an environment constraint
 [**UpsertManifestUsingPOST**](ManagedControllerApi.md#UpsertManifestUsingPOST) | **Post** /managed/delivery-configs | Create or update a delivery config manifest
 [**ValidateManifestUsingPOST**](ManagedControllerApi.md#ValidateManifestUsingPOST) | **Post** /managed/delivery-configs/validate | Validate a delivery config manifest
@@ -286,28 +288,6 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **GetApiDocsUsingGET**
-> interface{} GetApiDocsUsingGET(ctx, )
-getApiDocs
-
-### Required Parameters
-This endpoint does not need any parameter.
-
-### Return type
-
-[**interface{}**](interface{}.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: */*
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
 # **GetApplicationDetailsUsingGET**
 > interface{} GetApplicationDetailsUsingGET(ctx, application, optional)
 Get managed details about an application
@@ -328,6 +308,7 @@ Name | Type | Description  | Notes
 
  **entities** | [**optional.Interface of []string**](string.md)| entities | 
  **includeDetails** | **optional.Bool**| includeDetails | [default to false]
+ **maxArtifactVersions** | **optional.Int32**| maxArtifactVersions | 
 
 ### Return type
 
@@ -459,6 +440,32 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **GetManifestYamlUsingGET**
+> DeliveryConfig GetManifestYamlUsingGET(ctx, name)
+Get a delivery config manifest
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **name** | **string**| name | 
+
+### Return type
+
+[**DeliveryConfig**](DeliveryConfig.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/x-yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **GetResourceStatusUsingGET**
 > interface{} GetResourceStatusUsingGET(ctx, resourceId)
 Get status of a resource
@@ -508,6 +515,32 @@ No authorization required
 
  - **Content-Type**: Not defined
  - **Accept**: */*
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **GetResourceYamlUsingGET**
+> Resource GetResourceYamlUsingGET(ctx, resourceId)
+Get a resource
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **resourceId** | **string**| resourceId | 
+
+### Return type
+
+[**Resource**](Resource.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/x-yaml
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -612,6 +645,28 @@ No authorization required
 
  - **Content-Type**: Not defined
  - **Accept**: */*
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **SchemaUsingGET**
+> interface{} SchemaUsingGET(ctx, )
+Ad-hoc validate and diff a config manifest
+
+### Required Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**interface{}**](interface{}.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, application/x-yaml
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

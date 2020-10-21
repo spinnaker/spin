@@ -10,6 +10,8 @@
 package swagger
 
 type Http struct {
+	QueryParams map[string]string `json:"queryParams,omitempty"`
 	Url string `json:"url,omitempty"`
-	Config *interface{} `json:"config,omitempty"`
+	Headers *Headers `json:"headers,omitempty"`
+	Config map[string]string `json:"config,omitempty"`
 }

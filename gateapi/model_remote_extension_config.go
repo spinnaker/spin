@@ -9,9 +9,9 @@
 
 package swagger
 
-type RemoteExtension struct {
-	Transport *RemoteExtensionTransport `json:"transport,omitempty"`
+type RemoteExtensionConfig struct {
 	Type_ string `json:"type,omitempty"`
 	Config *interface{} `json:"config,omitempty"`
+	Transport *RemoteExtensionTransportConfig `json:"transport,omitempty"`
 	Id string `json:"id,omitempty"`
 }

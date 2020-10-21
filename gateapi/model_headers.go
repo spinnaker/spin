@@ -9,9 +9,8 @@
 
 package swagger
 
-type EnvironmentArtifactVeto struct {
-	Reference string `json:"reference,omitempty"`
-	TargetEnvironment string `json:"targetEnvironment,omitempty"`
-	Version string `json:"version,omitempty"`
-	Comment string `json:"comment,omitempty"`
+type Headers struct {
+	WriteHeaders map[string]string `json:"writeHeaders,omitempty"`
+	InvokeHeaders map[string]string `json:"invokeHeaders,omitempty"`
+	ReadHeaders map[string]string `json:"readHeaders,omitempty"`
 }
