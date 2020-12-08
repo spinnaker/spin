@@ -78,9 +78,12 @@ func getPipelines(cmd *cobra.Command, options *getPipelinesOptions, args []strin
 
 	app, resp, err := options.GateClient.ApplicationControllerApi.GetPipelinesUsingGET(options.GateClient.Context, options.applicationName, &gate.ApplicationControllerApiGetPipelinesUsingGETOpts{Expand: optional.NewBool(options.expand), Statuses: optional.NewString(options.status)})
 	if resp != nil {
-		if resp.StatusCode == http.StatusNotFound {
+		switch resp.StatusCode {
+		case http.StatusOK:
+			// pass
+		case http.StatusNotFound:
 			return nil, fmt.Errorf("Application '%s' not found\n", options.applicationName)
-		} else if resp.StatusCode != http.StatusOK {
+		default:
 			return nil, fmt.Errorf("Encountered an error getting application, status code: %d\n", resp.StatusCode)
 		}
 	}
