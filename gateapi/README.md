@@ -62,6 +62,7 @@ Class | Method | HTTP request | Description
 *BuildControllerApi* | [**V3GetBuildsUsingGET**](docs/BuildControllerApi.md#v3getbuildsusingget) | **Get** /v3/builds/{buildMaster}/builds | Get builds for build master
 *BuildControllerApi* | [**V3GetJobConfigUsingGET**](docs/BuildControllerApi.md#v3getjobconfigusingget) | **Get** /v3/builds/{buildMaster}/job | Get job config
 *BuildControllerApi* | [**V3GetJobsForBuildMasterUsingGET**](docs/BuildControllerApi.md#v3getjobsforbuildmasterusingget) | **Get** /v3/builds/{buildMaster}/jobs | Get jobs for build master
+*CiControllerApi* | [**GetBuildOutputByIdUsingGET**](docs/CiControllerApi.md#getbuildoutputbyidusingget) | **Get** /ci/builds/{buildId}/output | getBuildOutputById
 *CiControllerApi* | [**GetBuildsUsingGET1**](docs/CiControllerApi.md#getbuildsusingget1) | **Get** /ci/builds | getBuilds
 *ClusterControllerApi* | [**GetClusterLoadBalancersUsingGET**](docs/ClusterControllerApi.md#getclusterloadbalancersusingget) | **Get** /applications/{application}/clusters/{account}/{clusterName}/{type}/loadBalancers | Retrieve a cluster&#39;s loadbalancers
 *ClusterControllerApi* | [**GetClustersUsingGET**](docs/ClusterControllerApi.md#getclustersusingget) | **Get** /applications/{application}/clusters/{account}/{clusterName} | Retrieve a cluster&#39;s details
@@ -104,18 +105,20 @@ Class | Method | HTTP request | Description
 *ManagedControllerApi* | [**DiffResourceUsingPOST**](docs/ManagedControllerApi.md#diffresourceusingpost) | **Post** /managed/resources/diff | Ad-hoc validate and diff a resource
 *ManagedControllerApi* | [**ExportResourceUsingGET**](docs/ManagedControllerApi.md#exportresourceusingget) | **Get** /managed/resources/export/artifact/{cloudProvider}/{account}/{clusterName} | Generates an artifact definition based on the artifact used in a running cluster
 *ManagedControllerApi* | [**ExportResourceUsingGET1**](docs/ManagedControllerApi.md#exportresourceusingget1) | **Get** /managed/resources/export/{cloudProvider}/{account}/{type}/{name} | Generate a keel resource definition for a deployed cloud resource
-*ManagedControllerApi* | [**GetApiDocsUsingGET**](docs/ManagedControllerApi.md#getapidocsusingget) | **Get** /managed/api-docs | getApiDocs
 *ManagedControllerApi* | [**GetApplicationDetailsUsingGET**](docs/ManagedControllerApi.md#getapplicationdetailsusingget) | **Get** /managed/application/{application} | Get managed details about an application
 *ManagedControllerApi* | [**GetConfigByUsingGET**](docs/ManagedControllerApi.md#getconfigbyusingget) | **Get** /managed/application/{application}/config | Get the delivery config associated with an application
 *ManagedControllerApi* | [**GetConstraintStateUsingGET**](docs/ManagedControllerApi.md#getconstraintstateusingget) | **Get** /managed/application/{application}/environment/{environment}/constraints | List up-to {limit} current constraint states for an environment
 *ManagedControllerApi* | [**GetManifestArtifactsUsingGET**](docs/ManagedControllerApi.md#getmanifestartifactsusingget) | **Get** /managed/delivery-configs/{name}/artifacts | Get the status of each version of each artifact in each environment
 *ManagedControllerApi* | [**GetManifestUsingGET**](docs/ManagedControllerApi.md#getmanifestusingget) | **Get** /managed/delivery-configs/{name} | Get a delivery config manifest
+*ManagedControllerApi* | [**GetManifestYamlUsingGET**](docs/ManagedControllerApi.md#getmanifestyamlusingget) | **Get** /managed/delivery-configs/{name}.yml | Get a delivery config manifest
 *ManagedControllerApi* | [**GetResourceStatusUsingGET**](docs/ManagedControllerApi.md#getresourcestatususingget) | **Get** /managed/resources/{resourceId}/status | Get status of a resource
 *ManagedControllerApi* | [**GetResourceUsingGET**](docs/ManagedControllerApi.md#getresourceusingget) | **Get** /managed/resources/{resourceId} | Get a resource
+*ManagedControllerApi* | [**GetResourceYamlUsingGET**](docs/ManagedControllerApi.md#getresourceyamlusingget) | **Get** /managed/resources/{resourceId}.yml | Get a resource
 *ManagedControllerApi* | [**PauseApplicationUsingPOST**](docs/ManagedControllerApi.md#pauseapplicationusingpost) | **Post** /managed/application/{application}/pause | Pause management of an entire application
 *ManagedControllerApi* | [**PauseResourceUsingPOST**](docs/ManagedControllerApi.md#pauseresourceusingpost) | **Post** /managed/resources/{resourceId}/pause | Pause management of a resource
 *ManagedControllerApi* | [**ResumeApplicationUsingDELETE**](docs/ManagedControllerApi.md#resumeapplicationusingdelete) | **Delete** /managed/application/{application}/pause | Resume management of an entire application
 *ManagedControllerApi* | [**ResumeResourceUsingDELETE**](docs/ManagedControllerApi.md#resumeresourceusingdelete) | **Delete** /managed/resources/{resourceId}/pause | Resume management of a resource
+*ManagedControllerApi* | [**SchemaUsingGET**](docs/ManagedControllerApi.md#schemausingget) | **Get** /managed/delivery-configs/schema | Ad-hoc validate and diff a config manifest
 *ManagedControllerApi* | [**UpdateConstraintStatusUsingPOST**](docs/ManagedControllerApi.md#updateconstraintstatususingpost) | **Post** /managed/application/{application}/environment/{environment}/constraint | Update the status of an environment constraint
 *ManagedControllerApi* | [**UpsertManifestUsingPOST**](docs/ManagedControllerApi.md#upsertmanifestusingpost) | **Post** /managed/delivery-configs | Create or update a delivery config manifest
 *ManagedControllerApi* | [**ValidateManifestUsingPOST**](docs/ManagedControllerApi.md#validatemanifestusingpost) | **Post** /managed/delivery-configs/validate | Validate a delivery config manifest
@@ -161,6 +164,7 @@ Class | Method | HTTP request | Description
 *ProjectControllerApi* | [**GetClustersUsingGET3**](docs/ProjectControllerApi.md#getclustersusingget3) | **Get** /projects/{id}/clusters | Get a project&#39;s clusters
 *ProjectControllerApi* | [**GetUsingGET1**](docs/ProjectControllerApi.md#getusingget1) | **Get** /projects/{id} | Get a project
 *PubsubSubscriptionControllerApi* | [**AllUsingGET4**](docs/PubsubSubscriptionControllerApi.md#allusingget4) | **Get** /pubsub/subscriptions | Retrieve the list of pub/sub subscriptions configured in Echo.
+*RawResourceControllerApi* | [**GetApplicationRawResourcesUsingGET**](docs/RawResourceControllerApi.md#getapplicationrawresourcesusingget) | **Get** /applications/{application}/rawResources | Retrieve a list of raw resources for a given application
 *ReorderPipelinesControllerApi* | [**ReorderPipelinesUsingPOST**](docs/ReorderPipelinesControllerApi.md#reorderpipelinesusingpost) | **Post** /actions/pipelines/reorder | Re-order pipelines
 *SearchControllerApi* | [**SearchUsingGET**](docs/SearchControllerApi.md#searchusingget) | **Get** /search | Search infrastructure
 *SecurityGroupControllerApi* | [**AllByAccountUsingGET1**](docs/SecurityGroupControllerApi.md#allbyaccountusingget1) | **Get** /securityGroups/{account} | Retrieve a list of security groups for a given account, grouped by region
@@ -219,6 +223,7 @@ Class | Method | HTTP request | Description
  - [File](docs/File.md)
  - [GrantedAuthority](docs/GrantedAuthority.md)
  - [HashMapstringobject](docs/HashMapstringobject.md)
+ - [Headers](docs/Headers.md)
  - [Http](docs/Http.md)
  - [HttpEntity](docs/HttpEntity.md)
  - [InputStream](docs/InputStream.md)
@@ -227,8 +232,8 @@ Class | Method | HTTP request | Description
  - [Notification](docs/Notification.md)
  - [PipelineTemplateDependent](docs/PipelineTemplateDependent.md)
  - [PluginDependency](docs/PluginDependency.md)
- - [RemoteExtension](docs/RemoteExtension.md)
- - [RemoteExtensionTransport](docs/RemoteExtensionTransport.md)
+ - [RemoteExtensionConfig](docs/RemoteExtensionConfig.md)
+ - [RemoteExtensionTransportConfig](docs/RemoteExtensionTransportConfig.md)
  - [ReorderPipelinesCommand](docs/ReorderPipelinesCommand.md)
  - [Resource](docs/Resource.md)
  - [ResponseEntity](docs/ResponseEntity.md)

@@ -1,4 +1,4 @@
-# RemoteExtensionTransport
+# RemoteExtensionTransportConfig
 
 ## Properties
 Name | Type | Description | Notes

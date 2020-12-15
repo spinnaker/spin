@@ -9,9 +9,8 @@
 
 package swagger
 
-type RemoteExtension struct {
-	Transport *RemoteExtensionTransport `json:"transport,omitempty"`
-	Type_ string `json:"type,omitempty"`
-	Config *interface{} `json:"config,omitempty"`
-	Id string `json:"id,omitempty"`
+type Headers struct {
+	InvokeHeaders map[string]string `json:"invokeHeaders,omitempty"`
+	ReadHeaders map[string]string `json:"readHeaders,omitempty"`
+	WriteHeaders map[string]string `json:"writeHeaders,omitempty"`
 }
