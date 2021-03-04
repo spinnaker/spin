@@ -35,6 +35,11 @@ auth:
     scopes:
       - scope1
       - scope2
+    # To set Oauth AuthCodeOptions, follow the following format. Auzre Oauth2 API needs this
+    # see https://pkg.go.dev/golang.org/x/oauth2#AuthCodeOption
+    AuthCodeOptions:
+      access_type: online
+      prompt: none
 
     # To set a cached token, follow the following format:
     # note that these yaml keys must match the golang struct tags exactly because of yaml.UnmarshalStrict
