@@ -9,9 +9,8 @@
 
 package swagger
 
-type Http struct {
-	Url string `json:"url,omitempty"`
-	QueryParams map[string]string `json:"queryParams,omitempty"`
-	Config map[string]string `json:"config,omitempty"`
-	Headers *Headers `json:"headers,omitempty"`
+type Headers struct {
+	WriteHeaders map[string]string `json:"writeHeaders,omitempty"`
+	InvokeHeaders map[string]string `json:"invokeHeaders,omitempty"`
+	ReadHeaders map[string]string `json:"readHeaders,omitempty"`
 }
