@@ -14,23 +14,23 @@ import (
 )
 
 type File struct {
-	CanonicalFile **os.File `json:"canonicalFile,omitempty"`
-	AbsolutePath string `json:"absolutePath,omitempty"`
-	Path string `json:"path,omitempty"`
-	UsableSpace int64 `json:"usableSpace,omitempty"`
 	Absolute bool `json:"absolute,omitempty"`
+	AbsolutePath string `json:"absolutePath,omitempty"`
+	Parent string `json:"parent,omitempty"`
+	AbsoluteFile **os.File `json:"absoluteFile,omitempty"`
+	Hidden bool `json:"hidden,omitempty"`
 	Writable bool `json:"writable,omitempty"`
 	File bool `json:"file,omitempty"`
-	Readable bool `json:"readable,omitempty"`
-	AbsoluteFile **os.File `json:"absoluteFile,omitempty"`
-	Name string `json:"name,omitempty"`
-	ParentFile **os.File `json:"parentFile,omitempty"`
-	FreeSpace int64 `json:"freeSpace,omitempty"`
-	Hidden bool `json:"hidden,omitempty"`
-	Parent string `json:"parent,omitempty"`
+	CanonicalFile **os.File `json:"canonicalFile,omitempty"`
+	Path string `json:"path,omitempty"`
 	Executable bool `json:"executable,omitempty"`
-	TotalSpace int64 `json:"totalSpace,omitempty"`
+	ParentFile **os.File `json:"parentFile,omitempty"`
+	Readable bool `json:"readable,omitempty"`
+	UsableSpace int64 `json:"usableSpace,omitempty"`
+	FreeSpace int64 `json:"freeSpace,omitempty"`
 	LastModified int64 `json:"lastModified,omitempty"`
 	CanonicalPath string `json:"canonicalPath,omitempty"`
+	TotalSpace int64 `json:"totalSpace,omitempty"`
 	Directory bool `json:"directory,omitempty"`
+	Name string `json:"name,omitempty"`
 }

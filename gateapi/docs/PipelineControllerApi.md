@@ -178,7 +178,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **id** | **string**| id | 
-  **pipelineExpression** | **string**| pipelineExpression | 
+  **pipelineExpression** | [**interface{}**](interface{}.md)| pipelineExpression | 
 
 ### Return type
 
@@ -190,7 +190,7 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: text/plain
+ - **Content-Type**: application/json
  - **Accept**: */*
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
