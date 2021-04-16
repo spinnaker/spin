@@ -10,6 +10,6 @@
 package swagger
 
 type DeckPluginVersion struct {
-	Version string `json:"version"`
 	Id string `json:"id"`
+	Version string `json:"version"`
 }
