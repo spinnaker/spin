@@ -9,15 +9,10 @@
 
 package swagger
 
-type ConstraintState struct {
-	EnvironmentName string `json:"environmentName,omitempty"`
+type OverrideVerificationRequest struct {
 	ArtifactVersion string `json:"artifactVersion,omitempty"`
-	DeliveryConfigName string `json:"deliveryConfigName,omitempty"`
+	VerificationId string `json:"verificationId,omitempty"`
+	ArtifactReference string `json:"artifactReference,omitempty"`
 	Comment string `json:"comment,omitempty"`
-	CreatedAt string `json:"createdAt,omitempty"`
-	Attributes *interface{} `json:"attributes,omitempty"`
-	JudgedBy string `json:"judgedBy,omitempty"`
 	Status string `json:"status,omitempty"`
-	JudgedAt string `json:"judgedAt,omitempty"`
-	Type_ string `json:"type,omitempty"`
 }

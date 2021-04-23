@@ -10,9 +10,10 @@
 package swagger
 
 type Environment struct {
-	Locations *interface{} `json:"locations,omitempty"`
-	Constraints []Mapstringobject `json:"constraints,omitempty"`
-	Name string `json:"name,omitempty"`
-	Notifications []Notification `json:"notifications,omitempty"`
+	VerifyWith []Mapstringobject `json:"verifyWith,omitempty"`
 	Resources []Resource `json:"resources,omitempty"`
+	Name string `json:"name,omitempty"`
+	Constraints []Mapstringobject `json:"constraints,omitempty"`
+	Locations *interface{} `json:"locations,omitempty"`
+	Notifications []Notification `json:"notifications,omitempty"`
 }

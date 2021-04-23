@@ -10,17 +10,17 @@
 package swagger
 
 type Url struct {
-	UserInfo string `json:"userInfo,omitempty"`
-	File string `json:"file,omitempty"`
-	Query string `json:"query,omitempty"`
-	Ref string `json:"ref,omitempty"`
-	Path string `json:"path,omitempty"`
-	DefaultPort int32 `json:"defaultPort,omitempty"`
-	SerializedHashCode int32 `json:"serializedHashCode,omitempty"`
-	DeserializedFields *UrlStreamHandler `json:"deserializedFields,omitempty"`
 	Content *interface{} `json:"content,omitempty"`
+	File string `json:"file,omitempty"`
+	DefaultPort int32 `json:"defaultPort,omitempty"`
+	Ref string `json:"ref,omitempty"`
+	Authority string `json:"authority,omitempty"`
+	Path string `json:"path,omitempty"`
+	DeserializedFields *UrlStreamHandler `json:"deserializedFields,omitempty"`
 	Protocol string `json:"protocol,omitempty"`
 	Host string `json:"host,omitempty"`
-	Authority string `json:"authority,omitempty"`
+	UserInfo string `json:"userInfo,omitempty"`
+	SerializedHashCode int32 `json:"serializedHashCode,omitempty"`
+	Query string `json:"query,omitempty"`
 	Port int32 `json:"port,omitempty"`
 }
