@@ -9,8 +9,8 @@
 
 package swagger
 
-type PluginDependency struct {
-	PluginId string `json:"pluginId,omitempty"`
-	Optional bool `json:"optional,omitempty"`
-	PluginVersionSupport string `json:"pluginVersionSupport,omitempty"`
+type Headers struct {
+	InvokeHeaders map[string]string `json:"invokeHeaders,omitempty"`
+	ReadHeaders map[string]string `json:"readHeaders,omitempty"`
+	WriteHeaders map[string]string `json:"writeHeaders,omitempty"`
 }

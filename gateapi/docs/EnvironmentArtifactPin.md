@@ -3,8 +3,8 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Reference** | **string** |  | [optional] [default to null]
 **PinnedBy** | **string** |  | [optional] [default to null]
+**Reference** | **string** |  | [optional] [default to null]
 **Comment** | **string** |  | [optional] [default to null]
 **Version** | **string** |  | [optional] [default to null]
 **TargetEnvironment** | **string** |  | [optional] [default to null]

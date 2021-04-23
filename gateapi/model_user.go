@@ -11,14 +11,14 @@ package swagger
 
 type User struct {
 	Username string `json:"username,omitempty"`
-	AccountNonLocked bool `json:"accountNonLocked,omitempty"`
 	Email string `json:"email,omitempty"`
-	Roles []string `json:"roles,omitempty"`
-	CredentialsNonExpired bool `json:"credentialsNonExpired,omitempty"`
 	AllowedAccounts []string `json:"allowedAccounts,omitempty"`
-	AccountNonExpired bool `json:"accountNonExpired,omitempty"`
-	Authorities []GrantedAuthority `json:"authorities,omitempty"`
 	LastName string `json:"lastName,omitempty"`
-	Enabled bool `json:"enabled,omitempty"`
+	AccountNonExpired bool `json:"accountNonExpired,omitempty"`
+	Roles []string `json:"roles,omitempty"`
+	AccountNonLocked bool `json:"accountNonLocked,omitempty"`
+	CredentialsNonExpired bool `json:"credentialsNonExpired,omitempty"`
+	Authorities []GrantedAuthority `json:"authorities,omitempty"`
 	FirstName string `json:"firstName,omitempty"`
+	Enabled bool `json:"enabled,omitempty"`
 }
