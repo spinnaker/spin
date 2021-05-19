@@ -1,5 +1,7 @@
 builds:
-- main: .
+- env:
+    - CGO_ENABLED=0
+  main: .
   ldflags: 
     - -s 
     - -w 
