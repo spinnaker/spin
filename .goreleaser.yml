@@ -1,0 +1,11 @@
+builds:
+- main: .
+  ldflags: 
+    - -s 
+    - -w 
+    - -X github.com/spinnaker/spin/version.Version={{.Tag}} 
+    - -X github.com/spinnaker/spin/version.RevisionPhase=""
+  goos:
+    - linux
+    - darwin
+    - windows
