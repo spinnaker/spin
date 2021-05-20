@@ -6,7 +6,7 @@ Interested in contributing to Spinnaker? Please review the [contribution documen
 
 ### Go
 
-[Install Go 1.13.x](https://golang.org/doc/install).
+[Install Go 1.16.x](https://golang.org/doc/install).
 
 ### Go modules
 
@@ -66,7 +66,7 @@ To update the client library:
 
 - Use the Swagger Codegen to generate the new library and drop it into the spin project
     ```bash
-    GATE_REPO_PATH=PATH_TO_YOUR_GATE_REPO
+    GATE_REPO_PATH=../gate
     SWAGGER_CODEGEN_VERSION=$(cat gateapi/.swagger-codegen/VERSION)
     rm -rf gateapi/ \
     && docker run -it \
