@@ -20,7 +20,7 @@ type Config struct {
 	CertPath string `json:"certPath" yaml:"certPath"`
 	KeyPath  string `json:"keyPath" yaml:"keyPath"`
 	Cert     string `json:"cert" yaml:"cert"` // Cert is base64 encoded PEM block.
-	Key      string `json:"key" yaml:"key"`  // Key is base64 encoded PEM block.
+	Key      string `json:"key" yaml:"key"`   // Key is base64 encoded PEM block.
 }
 
 func (x *Config) IsValid() bool {
