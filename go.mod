@@ -16,6 +16,7 @@ require (
 	github.com/posener/complete v1.2.1 // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/spf13/cobra v0.0.5
+	golang.org/dl v0.0.0-20210713194856-38ddc79c2163 // indirect
 	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
