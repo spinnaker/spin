@@ -21,6 +21,6 @@ require (
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/sys v0.0.0-20190910064555-bbd175535a8b // indirect
 	google.golang.org/appengine v1.6.2 // indirect
-	k8s.io/client-go v11.0.0+incompatible
+	k8s.io/client-go v0.20.2
 	sigs.k8s.io/yaml v1.2.0
 )
