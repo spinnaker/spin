@@ -388,10 +388,14 @@ func authenticateOAuth2(output func(string), httpClient *http.Client, endpoint s
 			return false, errors.New("incorrect OAuth2 auth configuration")
 		}
 
+		redirectURL := url.URL{
+			Scheme: "http",
+			Host:   localWebServer,
+		}
 		config := &oauth2.Config{
 			ClientID:     OAuth2.ClientId,
 			ClientSecret: OAuth2.ClientSecret,
-			RedirectURL:  "http://localhost:8085",
+			RedirectURL:  redirectURL.String(),
 			Scopes:       OAuth2.Scopes,
 			Endpoint: oauth2.Endpoint{
 				AuthURL:  OAuth2.AuthUrl,
@@ -409,14 +413,6 @@ func authenticateOAuth2(output func(string), httpClient *http.Client, endpoint s
 				return false, errors.Wrapf(err, "Could not refresh token from source: %v", tokenSource)
 			}
 		} else {
-			// Do roundtrip.
-			http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				code := r.FormValue("code")
-				fmt.Fprintln(w, code)
-			}))
-			go http.ListenAndServe(":8085", nil)
-			// Note: leaving server connection open for scope of request, will be reaped on exit.
-
 			verifier, verifierCode, err := generateCodeVerifier()
 			if err != nil {
 				return false, err
@@ -427,10 +423,8 @@ func authenticateOAuth2(output func(string), httpClient *http.Client, endpoint s
 			challengeMethod := oauth2.SetAuthURLParam("code_challenge_method", "S256")
 
 			authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline, oauth2.ApprovalForce, challengeMethod, codeChallenge)
-			output(fmt.Sprintf("Navigate to %s and authenticate", authURL))
-			code := prompt(output, "Paste authorization code:")
-
-			newToken, err = config.Exchange(context.Background(), code, codeVerifier)
+			output("Trying to get token from web")
+			newToken, err = getTokenFromWeb(output, config, authURL, codeVerifier)
 			if err != nil {
 				return false, err
 			}
