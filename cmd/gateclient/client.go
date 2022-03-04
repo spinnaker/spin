@@ -76,6 +76,8 @@ type GatewayClient struct {
 
 	ignoreCertErrors bool
 
+	ignoreRedirects bool
+
 	// Location of the spin config.
 	configLocation string
 
@@ -96,10 +98,11 @@ func (m *GatewayClient) GateEndpoint() string {
 }
 
 // Create new spinnaker gateway client with flag
-func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation string, ignoreCertErrors bool) (*GatewayClient, error) {
+func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation string, ignoreCertErrors bool, ignoreRedirects bool) (*GatewayClient, error) {
 	gateClient := &GatewayClient{
 		gateEndpoint:     gateEndpoint,
 		ignoreCertErrors: ignoreCertErrors,
+		ignoreRedirects:  ignoreRedirects,
 		ui:               ui,
 		Context:          context.Background(),
 	}
@@ -114,6 +117,14 @@ func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation st
 	if err != nil {
 		ui.Error("Could not initialize http client, failing.")
 		return nil, unwrapErr(ui, err)
+	}
+
+	// If IgnoreRedirects is set to true, CheckRedirect will return a special error type
+	// 'ErrUseLastResponse', telling the client not to follow redirects
+	if ignoreRedirects || gateClient.Config.Auth.IgnoreRedirects {
+		httpClient.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		}
 	}
 
 	gateClient.Context, err = ContextWithAuth(gateClient.Context, gateClient.Config.Auth)
@@ -238,6 +249,7 @@ func userConfig(gateClient *GatewayClient, configLocation string) error {
 // InitializeHTTPClient will return an *http.Client configured with
 // optional TLS keys as specified in the auth.Config
 func InitializeHTTPClient(auth *auth.Config) (*http.Client, error) {
+
 	cookieJar, _ := cookiejar.New(nil)
 	client := http.Client{
 		Jar:       cookieJar,
@@ -494,15 +506,14 @@ func authenticateGoogleServiceAccount(httpClient *http.Client, endpoint string, 
 }
 
 func login(httpClient *http.Client, endpoint string, accessToken string) error {
-	loginReq, err := http.NewRequest("GET", endpoint+"/login", nil)
-	if err != nil {
-		return err
+	loginReq, errs := http.NewRequest("GET", endpoint+"/login", nil)
+	if errs != nil {
+		return errs
 	}
 	loginReq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
-
-	_, err = httpClient.Do(loginReq) // Login to establish session.
+	_, err := httpClient.Do(loginReq)
 	if err != nil {
-		return errors.New("login failed")
+		return errors.New(fmt.Sprintf("login failed: %s", err))
 	}
 	return nil
 }
