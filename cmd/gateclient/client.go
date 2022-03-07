@@ -506,12 +506,12 @@ func authenticateGoogleServiceAccount(httpClient *http.Client, endpoint string, 
 }
 
 func login(httpClient *http.Client, endpoint string, accessToken string) error {
-	loginReq, errs := http.NewRequest("GET", endpoint+"/login", nil)
-	if errs != nil {
-		return errs
+	loginReq, err := http.NewRequest("GET", endpoint+"/login", nil)
+	if err != nil {
+		return err
 	}
 	loginReq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
-	_, err := httpClient.Do(loginReq)
+	_, err = httpClient.Do(loginReq)
 	if err != nil {
 		return errors.New(fmt.Sprintf("login failed: %s", err))
 	}
