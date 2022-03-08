@@ -121,7 +121,7 @@ func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation st
 
 	// If IgnoreRedirects is set to true, CheckRedirect will return a special error type
 	// 'ErrUseLastResponse', telling the client not to follow redirects
-	if ignoreRedirects || gateClient.Config.Auth.IgnoreRedirects {
+	if ignoreRedirects || (gateClient.Config.Auth != nil && gateClient.Config.Auth.IgnoreRedirects) {
 		httpClient.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
 		}
