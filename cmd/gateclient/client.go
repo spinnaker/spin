@@ -249,7 +249,6 @@ func userConfig(gateClient *GatewayClient, configLocation string) error {
 // InitializeHTTPClient will return an *http.Client configured with
 // optional TLS keys as specified in the auth.Config
 func InitializeHTTPClient(auth *auth.Config) (*http.Client, error) {
-
 	cookieJar, _ := cookiejar.New(nil)
 	client := http.Client{
 		Jar:       cookieJar,
@@ -511,7 +510,7 @@ func login(httpClient *http.Client, endpoint string, accessToken string) error {
 		return err
 	}
 	loginReq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
-	_, err = httpClient.Do(loginReq)
+	_, err = httpClient.Do(loginReq) // Login to establish session.
 	if err != nil {
 		return errors.New(fmt.Sprintf("login failed: %s", err))
 	}
