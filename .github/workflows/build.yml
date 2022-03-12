@@ -11,6 +11,8 @@ env:
 
 jobs:
   lint:
+    # Only run this on repositories in the 'spinnaker' org, not on forks.
+    if: startsWith(github.repository, 'spinnaker/')
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -21,6 +23,8 @@ jobs:
         version: v1.32
 
   test:
+    # Only run this on repositories in the 'spinnaker' org, not on forks.
+    if: startsWith(github.repository, 'spinnaker/')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
