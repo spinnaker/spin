@@ -35,8 +35,6 @@ jobs:
       run: go test -v ./...
 
   build:
-    # Only run this on repositories in the 'spinnaker' org, not on forks.
-    if: startsWith(github.repository, 'spinnaker/')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -46,18 +44,7 @@ jobs:
       - name: Get date
         id: get_date
         run: echo ::set-output name=DATETIME::$(date --utc +'%Y%m%d%H%M')
-      - name: Login to GAR
-        # Only run this on repositories in the 'spinnaker' org, not on forks.
-        if: startsWith(github.repository, 'spinnaker/')
-        uses: docker/login-action@v1
-        # use service account flow defined at: https://github.com/docker/login-action#service-account-based-authentication-1
-        with:
-          registry: us-docker.pkg.dev
-          username: _json_key
-          password: ${{ secrets.GAR_JSON_KEY }}
       - name: Build container image
-        # Only run this on repositories in the 'spinnaker' org, not on forks.
-        if: startsWith(github.repository, 'spinnaker/')
         uses: docker/build-push-action@v2
         with:
           context: .
