@@ -6,7 +6,7 @@ Interested in contributing to Spinnaker? Please review the [contribution documen
 
 ### Go
 
-[Install Go 1.13.x](https://golang.org/doc/install).
+[Install Go 1.15.x](https://golang.org/doc/install).
 
 ### Go modules
 
@@ -28,7 +28,6 @@ To verify dependencies match checksums under go.sum, run `go mod verify`.
 
 To clean up any old, unused go.mod or go.sum lines, run `go mod tidy`.
 
-
 ## Running Spin
 
 Run using
@@ -36,7 +35,6 @@ Run using
 ```bash
 ./spin <cmds> <flags>
 ```
-
 
 ## Running tests
 
@@ -52,26 +50,41 @@ from the root `spin/` directory.
 
 Spin CLI uses [Swagger](https://swagger.io/) to generate the API client library for [Gate](https://github.com/spinnaker/gate).
 
-Spin CLI's `master` should be using Gate's `master` swagger definition. Similarly, each [spin release version](https://github.com/spinnaker/spin/tags) `v{major}.{minor}.{patch}` semver should match [Gate's tag](https://github.com/spinnaker/gate/tags) `version-{major}.{minor}`.
+Spin CLI's `master` should be using Gate's `master` swagger definition.
+
+Similarly, each [spin release version](https://github.com/spinnaker/spin/tags) `v{major}.{minor}.{patch}` SemVer should match [Gate's tag](https://github.com/spinnaker/gate/tags) `version-{major}.{minor}`.
 
 Example:
+
 | Spin CLI version | Gate version   |
 | ---------------- | ------------   |
 |      v1.17.3     | version-1.17.0 |
 |      v1.17.2     | version-1.17.0 |
 |      v1.17.1     | version-1.17.0 |
 
-
 To update the client library:
 
 - Use the Swagger Codegen to generate the new library and drop it into the spin project
-    ```bash
-    GATE_REPO_PATH=PATH_TO_YOUR_GATE_REPO
-    SWAGGER_CODEGEN_VERSION=$(cat gateapi/.swagger-codegen/VERSION)
-    rm -rf gateapi/ \
-    && docker run -it \
-        -v "${GATE_REPO_PATH}/swagger/:/tmp/gate" \
-        -v "$PWD/gateapi/:/tmp/go/" \
-        "swaggerapi/swagger-codegen-cli:${SWAGGER_CODEGEN_VERSION}" generate -i /tmp/gate/swagger.json -l go -o /tmp/go/
-    ```
+
+  ```bash
+  GATE_REPO_ABSPATH=$(readlink -f ../gate)
+  cd $GATE_REPO_ABSPATH
+
+  # checkout release branch at tag, eg: v1.22.1
+  TAG=v1.22.1
+  git checkout $TAG
+
+  # generate Gate swagger client library branch
+  swagger/generate_swagger.sh
+
+  cd ../spin
+  SWAGGER_CODEGEN_VERSION=$(cat gateapi/.swagger-codegen/VERSION)
+  rm -rf gateapi/ \
+  && docker run -it \
+    --user $(id -u):$(id -g) \
+    -v "${GATE_REPO_ABSPATH}/swagger/:/tmp/gate" \
+    -v "$PWD/gateapi/:/tmp/go/" \
+    "swaggerapi/swagger-codegen-cli:${SWAGGER_CODEGEN_VERSION}" generate -i /tmp/gate/swagger.json -l go -o /tmp/go/
+  ```
+
 - Commit the changes and open a PR.
