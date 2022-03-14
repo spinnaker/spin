@@ -81,6 +81,56 @@ jobs:
           tags: |
             "${{ env.CONTAINER_REGISTRY }}/${{ steps.extract_repo_name.outputs.REPO }}:${{ steps.release_info.outputs.RELEASE_VERSION }}"
             "${{ env.CONTAINER_REGISTRY }}/${{ steps.extract_repo_name.outputs.REPO }}:${{ steps.release_info.outputs.RELEASE_VERSION }}-${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}"
+      - name: Build binaries
+        env:
+          LDFLAGS: "-X github.com/spinnaker/spin/version.Version=${{ steps.release_info.outputs.RELEASE_VERSION }}"
+        run: |
+          GOARCH=amd64 GOOS=darwin go build -ldflags "${LDFLAGS}" -o dist/${{ steps.release_info.outputs.RELEASE_VERSION }}/darwin/amd64/spin .
+          GOARCH=amd64 GOOS=linux go build -ldflags "${LDFLAGS}" -o dist/${{ steps.release_info.outputs.RELEASE_VERSION }}/linux/amd64/spin .
+          GOARCH=amd64 GOOS=windows go build -ldflags "${LDFLAGS}" -o dist/${{ steps.release_info.outputs.RELEASE_VERSION }}/windows/amd64/spin.exe .
+      - name: Login to Google Cloud
+        # Only run this on repositories in the 'spinnaker' org, not on forks.
+        if: startsWith(github.repository, 'spinnaker/')
+        uses: 'google-github-actions/auth@v0'
+        # use service account flow defined at: https://github.com/google-github-actions/upload-cloud-storage#authenticating-via-service-account-key-json
+        with:
+          credentials_json: '${{ secrets.GAR_JSON_KEY }}'
+      - name: Upload spin CLI binaries to GCS
+        # Only run this on repositories in the 'spinnaker' org, not on forks.
+        if: startsWith(github.repository, 'spinnaker/')
+        uses: 'google-github-actions/upload-cloud-storage@v0'
+        with:
+          path: 'dist/'
+          destination: 'spinnaker-artifacts/spin'
+          parent: false
+      - name: Determine latest spin CLI version and write to '(MAJOR.MINOR.x-)latest' files
+        run: |
+          gcs_latest="$(curl -s https://storage.googleapis.com/spinnaker-artifacts/spin/latest)"
+          release=${{ steps.release_info.outputs.RELEASE_VERSION }}
+          # SemVer sort 1.22.0 as later than 1.21.1
+          latest="$(printf "%s\n%s" "${gcs_latest}" "${release}" | sort -V | tail -n1)"
+
+          cat <<EOF
+          gcs_latest: $gcs_latest
+          release: $release
+          latest: $latest
+          EOF
+
+          mkdir -p dist/latests
+          echo "$latest" > dist/latests/latest
+
+          # Bump latest version in MAJOR.MINOR
+          major_minor="$(echo "$release" | cut -d '.' -f1-2)"
+          echo "$release" > dist/latests/"${major_minor}.x-latest"
+      - name: Upload latest version reference files
+        # Only run this on repositories in the 'spinnaker' org, not on forks.
+        if: startsWith(github.repository, 'spinnaker/')
+        # See: https://spinnaker.io/docs/setup/other_config/spin/
+        uses: 'google-github-actions/upload-cloud-storage@v0'
+        with:
+          path: 'dist/latests'
+          destination: 'spinnaker-artifacts/spin'
+          parent: false
       - name: Create release
         if: steps.release_info.outputs.SKIP_RELEASE == 'false'
         uses: actions/create-release@v1

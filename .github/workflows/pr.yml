@@ -55,3 +55,10 @@ jobs:
           tags: |
             "${{ env.CONTAINER_REGISTRY }}/${{ steps.extract_repo_name.outputs.REPO }}:latest"
             "${{ env.CONTAINER_REGISTRY }}/${{ steps.extract_repo_name.outputs.REPO }}:${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}"
+      - name: Build binaries
+        env:
+          LDFLAGS: "-X github.com/spinnaker/spin/version.Version=${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}"
+        run: |
+          GOARCH=amd64 GOOS=darwin go build -ldflags "${LDFLAGS}" -o dist/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/darwin/amd64/spin .
+          GOARCH=amd64 GOOS=linux go build -ldflags "${LDFLAGS}" -o dist/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/linux/amd64/spin .
+          GOARCH=amd64 GOOS=windows go build -ldflags "${LDFLAGS}" -o dist/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/windows/amd64/spin.exe .
