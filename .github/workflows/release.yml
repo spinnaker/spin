@@ -20,24 +20,6 @@ jobs:
       with:
         version: v1.32
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-go@v2
-      with:
-        go-version: 1.15
-    - uses: actions/cache@v2
-      with:
-        path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
-    - name: Install
-      run: go get -d -v
-    - name: Test
-      run: go test -v ./...
-
   release:
     runs-on: ubuntu-latest
     steps:
@@ -59,28 +41,20 @@ jobs:
       - name: Get date
         id: get_date
         run: echo ::set-output name=DATETIME::$(date --utc +'%Y%m%d%H%M')
-      - name: Login to GAR
-        # Only run this on repositories in the 'spinnaker' org, not on forks.
-        if: startsWith(github.repository, 'spinnaker/')
-        uses: docker/login-action@v1
-        # use service account flow defined at: https://github.com/docker/login-action#service-account-based-authentication-1
+
+      - uses: actions/setup-go@v2
         with:
-          registry: us-docker.pkg.dev
-          username: _json_key
-          password: ${{ secrets.GAR_JSON_KEY }}
-      - name: Build and publish container image
-        # Only run this on repositories in the 'spinnaker' org, not on forks.
-        if: startsWith(github.repository, 'spinnaker/')
-        uses: docker/build-push-action@v2
+          go-version: 1.15
+      - uses: actions/cache@v2
         with:
-          context: .
-          file: Dockerfile.slim
-          push: true
-          build-args: |
-            "VERSION=${{ steps.release_info.outputs.RELEASE_VERSION }}"
-          tags: |
-            "${{ env.CONTAINER_REGISTRY }}/${{ steps.extract_repo_name.outputs.REPO }}:${{ steps.release_info.outputs.RELEASE_VERSION }}"
-            "${{ env.CONTAINER_REGISTRY }}/${{ steps.extract_repo_name.outputs.REPO }}:${{ steps.release_info.outputs.RELEASE_VERSION }}-${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}"
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Fetch dependencies
+        run: go get -d -v
+      - name: Test
+        run: go test -v ./...
       - name: Build binaries
         env:
           LDFLAGS: "-X github.com/spinnaker/spin/version.Version=${{ steps.release_info.outputs.RELEASE_VERSION }}"
@@ -88,6 +62,7 @@ jobs:
           GOARCH=amd64 GOOS=darwin go build -ldflags "${LDFLAGS}" -o dist/${{ steps.release_info.outputs.RELEASE_VERSION }}/darwin/amd64/spin .
           GOARCH=amd64 GOOS=linux go build -ldflags "${LDFLAGS}" -o dist/${{ steps.release_info.outputs.RELEASE_VERSION }}/linux/amd64/spin .
           GOARCH=amd64 GOOS=windows go build -ldflags "${LDFLAGS}" -o dist/${{ steps.release_info.outputs.RELEASE_VERSION }}/windows/amd64/spin.exe .
+          dist/${{ steps.release_info.outputs.RELEASE_VERSION }}/linux/amd64/spin --version
       - name: Login to Google Cloud
         # Only run this on repositories in the 'spinnaker' org, not on forks.
         if: startsWith(github.repository, 'spinnaker/')
@@ -131,6 +106,30 @@ jobs:
           path: 'dist/latests'
           destination: 'spinnaker-artifacts/spin'
           parent: false
+
+      - name: Login to GAR
+        # Only run this on repositories in the 'spinnaker' org, not on forks.
+        if: startsWith(github.repository, 'spinnaker/')
+        uses: docker/login-action@v1
+        # use service account flow defined at: https://github.com/docker/login-action#service-account-based-authentication-1
+        with:
+          registry: us-docker.pkg.dev
+          username: _json_key
+          password: ${{ secrets.GAR_JSON_KEY }}
+      - name: Build and publish container image
+        # Only run this on repositories in the 'spinnaker' org, not on forks.
+        if: startsWith(github.repository, 'spinnaker/')
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile.slim
+          push: true
+          build-args: |
+            "VERSION=${{ steps.release_info.outputs.RELEASE_VERSION }}"
+          tags: |
+            "${{ env.CONTAINER_REGISTRY }}/${{ steps.extract_repo_name.outputs.REPO }}:${{ steps.release_info.outputs.RELEASE_VERSION }}"
+            "${{ env.CONTAINER_REGISTRY }}/${{ steps.extract_repo_name.outputs.REPO }}:${{ steps.release_info.outputs.RELEASE_VERSION }}-${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}"
+
       - name: Create release
         if: steps.release_info.outputs.SKIP_RELEASE == 'false'
         uses: actions/create-release@v1

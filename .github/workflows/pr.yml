@@ -16,24 +16,6 @@ jobs:
       with:
         version: v1.32
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-go@v2
-      with:
-        go-version: 1.15
-    - uses: actions/cache@v2
-      with:
-        path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
-    - name: Install
-      run: go get -d -v
-    - name: Test
-      run: go test -v ./...
-
   build:
     runs-on: ubuntu-latest
     steps:
@@ -44,6 +26,29 @@ jobs:
       - name: Get date
         id: get_date
         run: echo ::set-output name=DATETIME::$(date --utc +'%Y%m%d%H%M')
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Fetch dependencies
+        run: go get -d -v
+      - name: Test
+        run: go test -v ./...
+      - name: Build binaries
+        env:
+          LDFLAGS: "-X github.com/spinnaker/spin/version.Version=${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}"
+        run: |
+          GOARCH=amd64 GOOS=darwin go build -ldflags "${LDFLAGS}" -o dist/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/darwin/amd64/spin .
+          GOARCH=amd64 GOOS=linux go build -ldflags "${LDFLAGS}" -o dist/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/linux/amd64/spin .
+          GOARCH=amd64 GOOS=windows go build -ldflags "${LDFLAGS}" -o dist/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/windows/amd64/spin.exe .
+          dist/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/linux/amd64/spin --version
+
       - name: Build container image
         uses: docker/build-push-action@v2
         with:
@@ -55,10 +60,3 @@ jobs:
           tags: |
             "${{ env.CONTAINER_REGISTRY }}/${{ steps.extract_repo_name.outputs.REPO }}:latest"
             "${{ env.CONTAINER_REGISTRY }}/${{ steps.extract_repo_name.outputs.REPO }}:${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}"
-      - name: Build binaries
-        env:
-          LDFLAGS: "-X github.com/spinnaker/spin/version.Version=${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}"
-        run: |
-          GOARCH=amd64 GOOS=darwin go build -ldflags "${LDFLAGS}" -o dist/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/darwin/amd64/spin .
-          GOARCH=amd64 GOOS=linux go build -ldflags "${LDFLAGS}" -o dist/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/linux/amd64/spin .
-          GOARCH=amd64 GOOS=windows go build -ldflags "${LDFLAGS}" -o dist/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/windows/amd64/spin.exe .
