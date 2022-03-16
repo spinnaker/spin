@@ -28,12 +28,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Extract repository name
-        id: extract_repo_name
-        run: echo ::set-output name=REPO::${GITHUB_REPOSITORY##*/}
-      - name: Get date
-        id: get_date
-        run: echo ::set-output name=DATETIME::$(date --utc +'%Y%m%d%H%M')
+      - name: Prepare build variables
+        id: build_variables
+        run: |
+          echo ::set-output name=REPO::${GITHUB_REPOSITORY##*/}
+          echo ::set-output name=VERSION::"${GITHUB_REF_NAME}-$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo ::set-output name=VERSION_WITHOUT_BRANCH::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
 
       - uses: actions/setup-go@v2
         with:
@@ -50,12 +50,12 @@ jobs:
         run: go test -v ./...
       - name: Build binaries
         env:
-          LDFLAGS: "-X github.com/spinnaker/spin/version.Version=${{ github.ref_name }}-${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}"
+          LDFLAGS: "-X github.com/spinnaker/spin/version.Version=${{ steps.build_variables.outputs.VERSION }}"
         run: |
-          GOARCH=amd64 GOOS=darwin go build -ldflags "${LDFLAGS}" -o dist/${{ github.ref_name }}/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/darwin/amd64/spin .
-          GOARCH=amd64 GOOS=linux go build -ldflags "${LDFLAGS}" -o dist/${{ github.ref_name }}/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/linux/amd64/spin .
-          GOARCH=amd64 GOOS=windows go build -ldflags "${LDFLAGS}" -o dist/${{ github.ref_name }}/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/windows/amd64/spin.exe .
-          dist/${{ github.ref_name }}/${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}/linux/amd64/spin --version
+          GOARCH=amd64 GOOS=darwin go build -ldflags "${LDFLAGS}" -o dist/${{ github.ref_name }}/${{ steps.build_variables.outputs.VERSION_WITHOUT_BRANCH }}/darwin/amd64/spin .
+          GOARCH=amd64 GOOS=linux go build -ldflags "${LDFLAGS}" -o dist/${{ github.ref_name }}/${{ steps.build_variables.outputs.VERSION_WITHOUT_BRANCH }}/linux/amd64/spin .
+          GOARCH=amd64 GOOS=windows go build -ldflags "${LDFLAGS}" -o dist/${{ github.ref_name }}/${{ steps.build_variables.outputs.VERSION_WITHOUT_BRANCH }}/windows/amd64/spin.exe .
+          dist/${{ github.ref_name }}/${{ steps.build_variables.outputs.VERSION_WITHOUT_BRANCH }}/linux/amd64/spin --version
       - name: Login to Google Cloud
         uses: 'google-github-actions/auth@v0'
         # use service account flow defined at: https://github.com/google-github-actions/upload-cloud-storage#authenticating-via-service-account-key-json
@@ -86,7 +86,7 @@ jobs:
           file: Dockerfile
           push: true
           build-args: |
-            "VERSION=${{ github.ref_name }}-${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}"
+            "VERSION=${{ steps.build_variables.outputs.VERSION }}"
           tags: |
-            "${{ env.CONTAINER_REGISTRY }}/${{ steps.extract_repo_name.outputs.REPO }}:${{ github.ref_name }}-latest"
-            "${{ env.CONTAINER_REGISTRY }}/${{ steps.extract_repo_name.outputs.REPO }}:${{ github.ref_name }}-${{ github.sha }}-${{ steps.get_date.outputs.DATETIME }}"
+            "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ github.ref_name }}-latest"
+            "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
