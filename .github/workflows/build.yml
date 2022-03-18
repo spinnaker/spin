@@ -88,6 +88,9 @@ jobs:
           build-args: |
             "VERSION=${{ steps.build_variables.outputs.VERSION }}"
           tags: |
+<<<<<<< HEAD
             "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:latest"
+=======
+>>>>>>> 95b72f7 (chore(ci): GHA - artifact build and push to GAR & GCS (#329))
             "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ github.ref_name }}-latest"
             "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}"
