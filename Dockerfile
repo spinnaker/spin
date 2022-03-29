@@ -1,10 +1,13 @@
 FROM golang:1.15 as build
-ARG VERSION
+ARG VERSION=dev
 
 WORKDIR /app
 COPY ./ ./
 
-RUN ./build.sh --go-os linux --go-arch amd64 --version "${VERSION:-}"
+ENV LD_VERSION="-X github.com/spinnaker/spin/version.Version=${VERSION}"
+
+RUN GOARCH=amd64 GOOS=linux CGO_ENABLED=0 go build \
+    -ldflags "${LD_VERSION}" .
 
 FROM alpine
 
@@ -14,4 +17,8 @@ RUN apk update \
 
 COPY --from=build /app/spin /usr/local/bin
 
-CMD ["/bin/sh"]
+RUN addgroup -S -g 10111 spinnaker
+RUN adduser -S -G spinnaker -u 10111 spinnaker
+USER spinnaker
+
+ENTRYPOINT ["spin"]
