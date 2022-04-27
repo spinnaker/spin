@@ -6168,7 +6168,7 @@ paths:
       tags:
       - "pipeline-controller"
       summary: "Evaluate a pipeline expression using the provided execution as context"
-      operationId: "evaluateExpressionForExecutionViaPOSTUsingPOST"
+      operationId: "evaluateExpressionForExecutionViaPOSTUsingPOST_1"
       consumes:
       - "application/json"
       produces:
