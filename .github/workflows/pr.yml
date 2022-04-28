@@ -14,7 +14,7 @@ jobs:
     - name: Ensure code formatting and style is consistent
       uses: golangci/golangci-lint-action@v2
       with:
-        version: v1.32
+        version: v1.45.2
 
   build:
     runs-on: ubuntu-latest
