@@ -9,8 +9,7 @@
 
 package swagger
 
-type PluginDependency struct {
-	Optional bool `json:"optional,omitempty"`
-	PluginId string `json:"pluginId,omitempty"`
-	PluginVersionSupport string `json:"pluginVersionSupport,omitempty"`
+type AccountDefinition struct {
+	Name string `json:"name,omitempty"`
+	Type_ string `json:"type,omitempty"`
 }
