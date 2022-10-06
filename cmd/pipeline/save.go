@@ -33,8 +33,9 @@ type saveOptions struct {
 }
 
 var (
-	savePipelineShort = "Save the provided pipeline"
-	savePipelineLong  = "Save the provided pipeline"
+	savePipelineShort   = "Save the provided pipeline"
+	savePipelineLong    = "Save the provided pipeline"
+	overwritePipelineId bool
 )
 
 func NewSaveCmd(pipelineOptions *PipelineOptions) *cobra.Command {
@@ -52,7 +53,7 @@ func NewSaveCmd(pipelineOptions *PipelineOptions) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVarP(&options.pipelineFile, "file", "f", "", "path to the pipeline file")
-	cmd.PersistentFlags().BoolVarP(&options.overwritePipelineId, "overwrite-pipeline-id", "o", false, "Danger. Forcely set existing pipeline id")
+	cmd.PersistentFlags().BoolVar(&overwritePipelineId, "overwrite-pipeline-id", false, "Danger. Forcely set existing pipeline id")
 
 	return cmd
 }
