@@ -27,8 +27,9 @@ import (
 
 type saveOptions struct {
 	*PipelineOptions
-	output       string
-	pipelineFile string
+	output              string
+	pipelineFile        string
+	overwritePipelineId bool
 }
 
 var (
@@ -51,6 +52,7 @@ func NewSaveCmd(pipelineOptions *PipelineOptions) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVarP(&options.pipelineFile, "file", "f", "", "path to the pipeline file")
+	cmd.PersistentFlags().BoolVarP(&options.overwritePipelineId, "overwrite-pipeline-id", "o", false, "Danger. Forcely set existing pipeline id")
 
 	return cmd
 }
@@ -89,8 +91,8 @@ func savePipeline(cmd *cobra.Command, options *saveOptions) error {
 	foundPipeline, queryResp, _ := options.GateClient.ApplicationControllerApi.GetPipelineConfigUsingGET(options.GateClient.Context, application, pipelineName)
 	switch queryResp.StatusCode {
 	case http.StatusOK:
-		// pipeline found, let's use Spinnaker's known Pipeline ID, otherwise we'll get one created for us
-		if len(foundPipeline) > 0 {
+		// pipeline found, let's use Spinnaker's known Pipeline ID and we didn't set flag to overwrite it, otherwise we'll get one created for us
+		if len(foundPipeline) > 0 && !options.overwritePipelineId {
 			pipelineJson["id"] = foundPipeline["id"].(string)
 		}
 	case http.StatusNotFound:
