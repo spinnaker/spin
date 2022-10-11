@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Ensure code formatting and style is consistent
       uses: golangci/golangci-lint-action@v2
       with:
@@ -27,7 +27,7 @@ jobs:
     if: startsWith(github.repository, 'spinnaker/')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Prepare build variables
         id: build_variables
         run: |
@@ -35,10 +35,10 @@ jobs:
           echo ::set-output name=VERSION::"${GITHUB_REF_NAME}-$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
           echo ::set-output name=VERSION_WITHOUT_BRANCH::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
 
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
           go-version: 1.17
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
