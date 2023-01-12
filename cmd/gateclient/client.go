@@ -235,7 +235,7 @@ func userConfig(gateClient *GatewayClient, configLocation string) error {
 	// but unmarshal to an upstream oauth package, so the cached token needs to match
 	// https://godoc.org/golang.org/x/oauth2#Token
 	if yamlFile != nil {
-		err = yaml.UnmarshalStrict([]byte(os.ExpandEnv(string(yamlFile))), &gateClient.Config)
+		err = yaml.UnmarshalStrict([]byte(string(yamlFile)), &gateClient.Config)
 		if err != nil {
 			gateClient.ui.Error(fmt.Sprintf("Could not deserialize config file with contents: %s, failing.", yamlFile))
 			return err
