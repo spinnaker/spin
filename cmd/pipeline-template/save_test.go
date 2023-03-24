@@ -387,7 +387,7 @@ func testGatePipelineTemplateUpdateTagSuccess(buffer io.Writer, method *string, 
 			util.NewTestBufferHandlerFunc(http.MethodPost, buffer, http.StatusAccepted, "").ServeHTTP(w, r)
 		}),
 	)
-	// Return that we found an MPT to signal that we should update.
+	// Return that we found an MPT if a tag from the request equals to expectedTag.
 	mux.Handle("/v2/pipelineTemplates/testSpelTemplate", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Query().Get("tag") == expectedTag {
 			w.WriteHeader(http.StatusOK)
