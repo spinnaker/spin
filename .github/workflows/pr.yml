@@ -34,7 +34,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: false
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -56,7 +56,7 @@ jobs:
           dist/${{ steps.build_variables.outputs.VERSION }}/linux/amd64/spin --version
 
       - name: Build container image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: Dockerfile
