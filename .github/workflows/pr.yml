@@ -10,26 +10,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
+        cache: false
     - name: Ensure code formatting and style is consistent
-      uses: golangci/golangci-lint-action@v2
+      uses: golangci/golangci-lint-action@v3
       with:
         version: v1.45.2
 
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Prepare build variables
         id: build_variables
         run: |
-          echo ::set-output name=REPO::${GITHUB_REPOSITORY##*/}
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo REPO="${GITHUB_REPOSITORY##*/}" >> $GITHUB_OUTPUT
+          echo VERSION="$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
 
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v5
         with:
-          go-version: 1.17
-      - uses: actions/cache@v2
+          go-version-file: go.mod
+          cache: false
+      - uses: actions/cache@v4
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -45,12 +50,13 @@ jobs:
         run: |
           GOARCH=amd64 GOOS=darwin go build -ldflags "${LDFLAGS}" -o dist/${{ steps.build_variables.outputs.VERSION }}/darwin/amd64/spin .
           GOARCH=amd64 GOOS=linux go build -ldflags "${LDFLAGS}" -o dist/${{ steps.build_variables.outputs.VERSION }}/linux/amd64/spin .
+          GOARCH=arm64 GOOS=linux go build -ldflags "${LDFLAGS}" -o dist/${{ steps.build_variables.outputs.VERSION }}/linux/arm64/spin .
           GOARCH=amd64 GOOS=windows go build -ldflags "${LDFLAGS}" -o dist/${{ steps.build_variables.outputs.VERSION }}/windows/amd64/spin.exe .
           GOARCH=arm64 GOOS=darwin go build -ldflags "${LDFLAGS}" -o dist/${{ steps.build_variables.outputs.VERSION }}/darwin/arm64/spin .
           dist/${{ steps.build_variables.outputs.VERSION }}/linux/amd64/spin --version
 
       - name: Build container image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: Dockerfile

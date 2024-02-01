@@ -14,10 +14,12 @@ type RootOptions struct {
 	configPath       string
 	gateEndpoint     string
 	ignoreCertErrors bool
+	ignoreRedirects  bool
 	quiet            bool
 	color            bool
 	outputFormat     string
 	defaultHeaders   string
+	retryTimeout     int
 
 	Ui         output.Ui
 	GateClient *gateclient.GatewayClient
@@ -40,7 +42,9 @@ func NewCmdRoot(outWriter, errWriter io.Writer) (*cobra.Command, *RootOptions) {
 	cmd.PersistentFlags().StringVar(&options.configPath, "config", "", "path to config file (default $HOME/.spin/config)")
 	cmd.PersistentFlags().StringVar(&options.gateEndpoint, "gate-endpoint", "", "Gate (API server) endpoint (default http://localhost:8084)")
 	cmd.PersistentFlags().BoolVarP(&options.ignoreCertErrors, "insecure", "k", false, "ignore certificate errors")
+	cmd.PersistentFlags().BoolVarP(&options.ignoreRedirects, "ignore-redirects", "", false, "ignore redirects")
 	cmd.PersistentFlags().StringVar(&options.defaultHeaders, "default-headers", "", "configure default headers for gate client as comma separated list (e.g. key1=value1,key2=value2)")
+	cmd.PersistentFlags().IntVar(&options.retryTimeout, "retry-timeout", 0, "maximum time to wait for tasks to complete in seconds (default 60)")
 
 	// UI Flags
 	cmd.PersistentFlags().BoolVarP(&options.quiet, "quiet", "q", false, "squelch non-essential output")
@@ -63,6 +67,8 @@ func NewCmdRoot(outWriter, errWriter io.Writer) (*cobra.Command, *RootOptions) {
 			options.defaultHeaders,
 			options.configPath,
 			options.ignoreCertErrors,
+			options.ignoreRedirects,
+			options.retryTimeout,
 		)
 		if err != nil {
 			return err

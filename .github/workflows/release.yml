@@ -14,16 +14,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
+        cache: false
     - name: Ensure code formatting and style is consistent
-      uses: golangci/golangci-lint-action@v2
+      uses: golangci/golangci-lint-action@v3
       with:
         version: v1.45.2
 
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Assemble release info
@@ -32,20 +36,21 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           . .github/workflows/release_info.sh ${{ github.event.repository.full_name }}
-          echo ::set-output name=CHANGELOG::$(echo -e "${CHANGELOG}")
-          echo ::set-output name=SKIP_RELEASE::${SKIP_RELEASE}
-          echo ::set-output name=IS_CANDIDATE::${IS_CANDIDATE}
-          echo ::set-output name=RELEASE_VERSION::${RELEASE_VERSION}
+          echo CHANGELOG=$(echo -e "${CHANGELOG}") >> $GITHUB_OUTPUT
+          echo SKIP_RELEASE="${SKIP_RELEASE}" >> $GITHUB_OUTPUT
+          echo IS_CANDIDATE="${IS_CANDIDATE}" >> $GITHUB_OUTPUT
+          echo RELEASE_VERSION="${RELEASE_VERSION}" >> $GITHUB_OUTPUT
       - name: Prepare build variables
         id: build_variables
         run: |
-          echo ::set-output name=REPO::${GITHUB_REPOSITORY##*/}
-          echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
+          echo REPO="${GITHUB_REPOSITORY##*/}" >> $GITHUB_OUTPUT
+          echo VERSION="$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
 
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v5
         with:
-          go-version: 1.17
-      - uses: actions/cache@v2
+          go-version-file: go.mod
+          cache: false
+      - uses: actions/cache@v4
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -61,20 +66,21 @@ jobs:
         run: |
           GOARCH=amd64 GOOS=darwin go build -ldflags "${LDFLAGS}" -o dist/${{ steps.release_info.outputs.RELEASE_VERSION }}/darwin/amd64/spin .
           GOARCH=amd64 GOOS=linux go build -ldflags "${LDFLAGS}" -o dist/${{ steps.release_info.outputs.RELEASE_VERSION }}/linux/amd64/spin .
+          GOARCH=arm64 GOOS=linux go build -ldflags "${LDFLAGS}" -o dist/${{ steps.release_info.outputs.RELEASE_VERSION }}/linux/arm64/spin .
           GOARCH=amd64 GOOS=windows go build -ldflags "${LDFLAGS}" -o dist/${{ steps.release_info.outputs.RELEASE_VERSION }}/windows/amd64/spin.exe .
           GOARCH=arm64 GOOS=darwin go build -ldflags "${LDFLAGS}" -o dist/${{ steps.release_info.outputs.RELEASE_VERSION }}/darwin/arm64/spin .
           dist/${{ steps.release_info.outputs.RELEASE_VERSION }}/linux/amd64/spin --version
       - name: Login to Google Cloud
         # Only run this on repositories in the 'spinnaker' org, not on forks.
         if: startsWith(github.repository, 'spinnaker/')
-        uses: 'google-github-actions/auth@v0'
+        uses: 'google-github-actions/auth@v2'
         # use service account flow defined at: https://github.com/google-github-actions/upload-cloud-storage#authenticating-via-service-account-key-json
         with:
           credentials_json: '${{ secrets.GAR_JSON_KEY }}'
       - name: Upload spin CLI binaries to GCS
         # Only run this on repositories in the 'spinnaker' org, not on forks.
         if: startsWith(github.repository, 'spinnaker/')
-        uses: 'google-github-actions/upload-cloud-storage@v0'
+        uses: 'google-github-actions/upload-cloud-storage@v2'
         with:
           path: 'dist/'
           destination: 'spinnaker-artifacts/spin'
@@ -102,7 +108,7 @@ jobs:
         # Only run this on repositories in the 'spinnaker' org, not on forks.
         if: startsWith(github.repository, 'spinnaker/')
         # See: https://spinnaker.io/docs/setup/other_config/spin/
-        uses: 'google-github-actions/upload-cloud-storage@v0'
+        uses: 'google-github-actions/upload-cloud-storage@v2'
         with:
           path: 'dist/latests'
           destination: 'spinnaker-artifacts/spin'
@@ -111,7 +117,7 @@ jobs:
       - name: Login to GAR
         # Only run this on repositories in the 'spinnaker' org, not on forks.
         if: startsWith(github.repository, 'spinnaker/')
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         # use service account flow defined at: https://github.com/docker/login-action#service-account-based-authentication-1
         with:
           registry: us-docker.pkg.dev
@@ -120,10 +126,10 @@ jobs:
       - name: Build and publish container image
         # Only run this on repositories in the 'spinnaker' org, not on forks.
         if: startsWith(github.repository, 'spinnaker/')
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: .
-          file: Dockerfile.slim
+          file: Dockerfile
           push: true
           build-args: |
             "VERSION=${{ steps.release_info.outputs.RELEASE_VERSION }}"
@@ -133,13 +139,12 @@ jobs:
 
       - name: Create release
         if: steps.release_info.outputs.SKIP_RELEASE == 'false'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.event.repository.name }} ${{ github.ref }}
           body: |
             ${{ steps.release_info.outputs.CHANGELOG }}
           draft: false
+          name: ${{ github.event.repository.name }} ${{ github.ref_name }}
           prerelease: ${{ steps.release_info.outputs.IS_CANDIDATE }}
+          tag_name: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
