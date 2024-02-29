@@ -85,6 +85,9 @@ type GatewayClient struct {
 	httpClient *http.Client
 
 	ui output.Ui
+
+	// Maximum time to wait (when polling) for a task to become completed.
+	retryTimeout int
 }
 
 func (m *GatewayClient) GateEndpoint() string {
@@ -97,13 +100,24 @@ func (m *GatewayClient) GateEndpoint() string {
 	return m.Config.Gate.Endpoint
 }
 
+func (m *GatewayClient) RetryTimeout() int {
+	if m.Config.Gate.RetryTimeout == 0 && m.retryTimeout == 0 {
+		return 60
+	}
+	if m.retryTimeout != 0 {
+		return m.retryTimeout
+	}
+	return m.Config.Gate.RetryTimeout
+}
+
 // Create new spinnaker gateway client with flag
-func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation string, ignoreCertErrors bool, ignoreRedirects bool) (*GatewayClient, error) {
+func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation string, ignoreCertErrors bool, ignoreRedirects bool, retryTimeout int) (*GatewayClient, error) {
 	gateClient := &GatewayClient{
 		gateEndpoint:     gateEndpoint,
 		ignoreCertErrors: ignoreCertErrors,
 		ignoreRedirects:  ignoreRedirects,
 		ui:               ui,
+		retryTimeout:     retryTimeout,
 		Context:          context.Background(),
 	}
 
@@ -144,6 +158,20 @@ func NewGateClient(ui output.Ui, gateEndpoint, defaultHeaders, configLocation st
 	updatedMessage := ""
 
 	if gateClient.Config.Auth != nil && gateClient.Config.Auth.OAuth2 != nil {
+		// The below will fail if the token is expired and there is no refresh token.
+		// This may happen if refresh tokens are not supported on the identity provider
+		if gateClient.Config.Auth.OAuth2.CachedToken != nil {
+			token := gateClient.Config.Auth.OAuth2.CachedToken
+
+			// The valid method below will return true if the token is set and not expired
+			// So, to check if it is expired. The token has an internal method to do this, and it is done
+			// as a part of the "Valid" method. So just use that, but ensure we are only checking if there
+			// is indeed an access token set
+			if token.AccessToken != "" && !token.Valid() && token.RefreshToken == "" {
+				gateClient.Config.Auth.OAuth2.CachedToken = nil
+			}
+		}
+
 		updatedConfig, err = authenticateOAuth2(ui.Output, httpClient, gateClient.GateEndpoint(), gateClient.Config.Auth)
 		if err != nil {
 			ui.Error(fmt.Sprintf("OAuth2 Authentication failed: %v", err))
