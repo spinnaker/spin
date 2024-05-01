@@ -81,19 +81,20 @@ func (u *ColorizeUi) JsonOutput(data interface{}) {
 	output, err := u.OutputFormater(data)
 	if err != nil {
 		u.Error(fmt.Sprintf("%v", err))
+		return
 	}
 	u.Output(string(output))
 }
 
 func (u *ColorizeUi) Success(message string) {
 	if !u.Quiet {
-		u.Ui.Info(u.colorize(message, u.SuccessColor))
+		u.Ui.Warn(u.colorize(message, u.SuccessColor))
 	}
 }
 
 func (u *ColorizeUi) Info(message string) {
 	if !u.Quiet {
-		u.Ui.Info(u.colorize(message, u.InfoColor))
+		u.Ui.Warn(u.colorize(message, u.InfoColor))
 	}
 }
 
