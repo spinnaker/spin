@@ -4,6 +4,8 @@ gate:
   endpoint: https://my-spinnaker-gate:8084
   retryTimeout: 300
 auth:
+  # If your user or password contains "$" character, you need to escape it with this flag:
+  disabeSystemEnvironment: true
   enabled: true
   x509:
     # See https://www.spinnaker.io/setup/security/ssl/ and
