@@ -29,12 +29,13 @@ import (
 
 type executeOptions struct {
 	*PipelineOptions
-	output        string
-	application   string
-	name          string
-	parameterFile string
-	artifactsFile string
-	parameters    []string
+	output            string
+	application       string
+	name              string
+	parameterFile     string
+	artifactsFile     string
+	parameters        []string
+	triggerProperties []string
 }
 
 var (
@@ -61,6 +62,7 @@ func NewExecuteCmd(pipelineOptions *PipelineOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&options.parameterFile, "parameter-file", "f", "", "file to load pipeline parameter values from")
 	cmd.PersistentFlags().StringVarP(&options.artifactsFile, "artifacts-file", "t", "", "file to load pipeline artifacts from")
 	cmd.PersistentFlags().StringSliceVarP(&options.parameters, "parameter", "p", []string{}, "parameter in the form of key=value. can be used repeatedly.")
+	cmd.PersistentFlags().StringSliceVarP(&options.triggerProperties, "trigger-property", "g", []string{}, "trigger property in the form of key=value. can be used repeatedly.")
 
 	return cmd
 }
@@ -96,6 +98,16 @@ func executePipeline(cmd *cobra.Command, options *executeOptions) error {
 	trigger := map[string]interface{}{"type": "manual"}
 	if len(parameters) > 0 {
 		trigger["parameters"] = parameters
+	}
+
+	if len(options.triggerProperties) > 0 {
+		for _, tp := range options.triggerProperties {
+			// split each passed parameter on =
+			kv := strings.SplitN(tp, "=", 2)
+			if len(kv) == 2 {
+				trigger[kv[0]] = kv[1]
+			}
+		}
 	}
 
 	if _, ok := artifactsFile["artifacts"]; ok {
